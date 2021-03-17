@@ -1,0 +1,3 @@
+[submodule "catalogue/slicer-catalogue"]
+	path = catalogue/slicer-catalogue
+	url = https://github.com/Rafaelyot/slicer-catalogue.git
