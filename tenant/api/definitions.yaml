@@ -1,0 +1,20 @@
+---
+definitions:
+  Acknowledge:
+    type: object
+    properties:
+      message:
+        type: string
+        example: Success
+  Tenant:
+    type: object
+    properties:
+      username:
+        type: string
+        example: admin
+  Group:
+    type: object
+    properties:
+      message:
+        type: string
+        example: Success

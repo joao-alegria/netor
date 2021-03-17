@@ -1,0 +1,87 @@
+---
+definitions:
+  Acknowledge:
+    type: object
+    properties:
+      message:
+        type: string
+        example: Success
+  Domain:
+    type: object
+    required:
+      - name
+      - vsdId
+      - tenantId
+    properties:
+      domainId:
+        type: number
+        example: 1
+      name:
+        type: string
+        example: test
+      description:
+        type: string
+        example: test
+      owner:
+        type: string
+        example: IT
+      admin:
+        type: string
+        example: joao
+      domainStatus:
+        type: string
+        example: active
+      domainInterface:
+        type: object
+        properties:
+          url:
+            type: string
+            example: 10.0.12.118
+          port:
+            type: number
+            example: 80
+          auth:
+            type: bool
+            example: true
+          interfaceType:
+            type: string
+            example: HTTP
+      ownedLayers:
+        type: array
+        items:
+          type: object
+          properties:
+            domainLayerId:
+              type: string
+              example: 1
+            domainLayerType:
+              type: string
+              example: NETWORK_SLICE_PROVIDER
+            type:
+              type: string
+              example: OSM
+            username:
+              type: string
+              example: admin
+            password:
+              type: string
+              example: admin
+            project:
+              type: string
+              example: admin
+            vimAccount:
+              type: string
+              example: microstack
+      domainAgreement:
+        type: array
+        items:
+          type: object
+          properties:
+            domainAgreeWithId:
+              type: string
+              example: 1
+            domainLayersListAgreeWith:
+              type: array
+              items:
+                type: string
+                example: 1

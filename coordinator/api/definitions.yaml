@@ -1,0 +1,116 @@
+---
+definitions:
+  Acknowledge:
+    type: object
+    properties:
+      message:
+        type: string
+        example: Success
+  VS:
+    type: object
+    required:
+      - name
+      - vsdId
+    properties:
+      vsiId:
+        type: string
+        example: 1
+      vsdId:
+        type: string
+        example: 1
+      # tenantId:
+      #   type: string
+      #   example: 1
+      name:
+        type: string
+        example: vetService
+      description:
+        type: string
+        example: desc
+      domainId:
+        type: string
+        example: 1
+      mappedInstanceId:
+        type: string
+        example: 1
+      status:
+        type: string
+        example: online
+      userData:
+        type: object
+        properties:
+          dynamicKey:
+            type: string
+            example: dynamicValue
+      locationConstraints:
+        type: object
+        properties:
+          lat:
+            type: number
+            example: 1.1
+          long:
+            type: number
+            example: 1.1
+          alt:
+            type: number
+            example: 1.1
+          range:
+            type: number
+            example: 1.1
+      ranEndPointId:
+        type: string
+        example: 1
+      networkSliceId:
+        type: string
+        example: 1
+      nssis:
+        type: object
+        properties:
+          nssiId:
+            type: string
+            example: 1
+          nsstId:
+            type: string
+            example: 1
+          nsDeploymentFlavorId:
+            type: string
+            example: 1
+          nsInstantiationLevelId:
+            type: string
+            example: 1
+          domainId:
+            type: string
+            example: 1
+          status:
+            type: string
+            example: SUCCESS
+      vssis:
+        type: object
+        properties:
+          domainId:
+            type: string
+            example: 1
+          blueprintId:
+            type: string
+            example: 1
+          descriptorId:
+            type: string
+            example: 1
+          instanceId:
+            type: string
+            example: 1
+          verticalServiceStatus:
+            type: string
+            example: SUCCESS
+      nestedVsi:
+        type: array
+        items:
+          type: string
+          example: 1
+      errorMessage:
+        type: string
+        example: error
+info:
+  title: VS LCM API
+  swagger_ui: True
+openapi: 3.0.3

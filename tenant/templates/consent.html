@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="../static/index.css">
+    </head>
+    <body>
+        <div class="consent">
+            <h1>An application would like to connect to your account</h1>
+            <form action="" method="post">
+                <span style="text-align: center; color: white;">
+                    <p>The app <b>{{g.client.name}}</b> would like the ability to access your basic information.</p>
+                    <p>Allow <b>{{g.client.name}}</b> access?</p>
+                </span>
+                <span style="display: inline;margin:auto; display:table">
+                    <button name="confirm" value="no" class="btn btn-secondary btn-large" style="width:200px">Deny</button>
+                    <button name="confirm" value="yes" class="btn btn-primary btn-large" style="width:200px; margin-left: 10px;">Allow</button>
+                </span>
+            </form>
+        </div>
+    </body>
+</html>
