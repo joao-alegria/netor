@@ -17,7 +17,7 @@ services:
       - thesisRabbitVolume:/var/lib/rabbitmq
   postgres:
     image: postgres:12.2-alpine
-    volumes:
+    volumes:  
       - thesisPostgresVolume:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=postgres 

@@ -3,6 +3,7 @@ import requests
 
 loginManager=LoginManager()
 current_user=current_user
+login_required=login_required
 
 class Tenant(UserMixin):
     def __init__(self, tenantName):

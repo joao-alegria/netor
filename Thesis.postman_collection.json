@@ -1,0 +1,116 @@
+{
+	"info": {
+		"_postman_id": "240c6c27-1fa5-4173-801e-2523769bad2d",
+		"name": "Thesis",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "newVS",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "7pK9aFEjBeY9ylUloinXKiBTeDcb2r",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"test\",\n    \"vsdId\":\"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/vs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"vs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "authenticateAdmin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "confirm",
+							"value": "yes",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:5002/oauth/token?grant_type=password&client_id=portal&password=banana&username=admin&response_type=code&client_secret=portal",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5002",
+					"path": [
+						"oauth",
+						"token"
+					],
+					"query": [
+						{
+							"key": "grant_type",
+							"value": "password"
+						},
+						{
+							"key": "client_id",
+							"value": "portal"
+						},
+						{
+							"key": "password",
+							"value": "banana"
+						},
+						{
+							"key": "username",
+							"value": "admin"
+						},
+						{
+							"key": "code",
+							"value": "nTAC5UKeEUsnNqKdEg05kHZNLNTBHr",
+							"disabled": true
+						},
+						{
+							"key": "redirect_uri",
+							"value": "http://127.0.0.1:8000/authorized",
+							"disabled": true
+						},
+						{
+							"key": "response_type",
+							"value": "code"
+						},
+						{
+							"key": "client_secret",
+							"value": "portal"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

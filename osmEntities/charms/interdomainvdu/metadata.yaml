@@ -1,0 +1,16 @@
+name: interdomainvdu
+summary: "interdomain vdu juju charm"
+maintainer: joaoalegria <joaoalegria@pc>
+tags:
+- misc
+- osm
+- vnf
+- network
+- vpn
+- nfv
+series:
+- xenial
+- bionic
+- focal
+- trusty
+subordinate: !!bool "false"

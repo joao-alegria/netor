@@ -1,8 +1,8 @@
 from flask import Flask, jsonify, request
 from flasgger import Swagger, validate
-import persistance
+import db.persistance
 import service as vsService
-from api.loginConfig import loginManager, current_user
+from api.loginConfig import loginManager, current_user, login_required
 
 app = Flask(__name__)
 
