@@ -1,9 +1,8 @@
 from rabbitmq.adaptor import Messaging
 import json
 from threading import Thread
-from db.persistance import persistance
-from osmclient import client
-from osmclient.common.exceptions import ClientException
+import db.persistance as persistance
+import driver.osm as osm
 
 class MessageReceiver(Thread):
 
@@ -16,22 +15,34 @@ class MessageReceiver(Thread):
         self.messaging.consumeQueue("vsDomain",self.myCallback)
 
     def myCallback(self, ch, method, properties, body):
-        print(" Last Step - Pedido para instanciar %r" % body)
+        print(" Last Step - Received %r" % body)
         data=json.loads(body)
         #TODO colocar logica no service
-        domain=persistance.session.query(persistance.Domain).filter(persistance.Domain.domainId==data["data"]["domainId"]).first()
-        print(domain.url)
-        myClient = client.Client(host=domain.url)
-        # myClient.ns.create("72f9e7d3-41d1-4dab-b6ae-bd1ee514bd93", "test", "microstack")
-        myClient.ns.create(data["data"]["nsId"], data["data"]["name"], "microstack")
+        if data["msgType"] == "instantiateNs":
+            domain=persistance.session.query(persistance.Domain).filter(persistance.Domain.domainId==data["data"]["domainId"]).first()
+            osm.instantiateNs(domain.url, data["data"]["name"], data["data"]["nsId"], domain.vim)
+        elif data["msgType"] == "instantiateNsi":
+            return
+        elif data["msgType"] == "deleteNs":
+            return
+        elif data["msgType"] == "deleteNsi":
+            return
+        elif data["msgType"] == "actionNs":
+            return
 
     def callback(self, ch, method, properties, body):
         print(" [x] Received %r" % body)
         data=json.loads(body)
         # messaging.consumeQueue("vsLCM_"+str(data["vsiId"]),simplecallback)
         if data["msgType"] == "createVSI":
-            message={"msgType":"domainInfo", "data":"test"}
-            self.messaging.publish2Queue("vsLCM_"+str(data["vsiId"]), json.dumps(message))
+            try:
+                domainId=data["data"]["domainId"]
+                domain=service.getDomain(domainId)
+                message={"msgType":"domainInfo", "data":domain}
+                self.messaging.publish2Queue("vsLCM_"+str(data["vsiId"]), json.dumps(message))
+            except Exception as e:
+                statusUpdate={"vsiId":self.vsiId, "status":"error", "msg":"Invalid domain."}
+                messaging.publish2Queue("vsCoordinator", json.dumps(statusUpdate))
 
     def run(self):
         print(' [*] Waiting for messages. To exit press CTRL+C')

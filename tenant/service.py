@@ -1,6 +1,5 @@
 import db.schemas as schemas
 import db.persistance as persistance
-from flask import jsonify
 
 def getAllGroups():
     schema=schemas.GroupSchema()
@@ -8,35 +7,35 @@ def getAllGroups():
     groupsDict=[]
     for group in groups:
         groupsDict.append(schema.dump(groups))
-    return jsonify(groupsDict),200
+    return groupsDict
 
 def createGroup(tenantName, groupData):
     if tenantName != "admin":
         message={"msg":"Invalid user. No permissions to create a new Group."}
-        return jsonify(message),500
+        return message
     schema=schemas.GroupSchema()
     group=schema.load(groupData, session=persistance.session)
     persistance.persist(group)
     message={"msg":"Acknowledge"}
     #TODO verifications
-    return jsonify(message),200
+    return message
 
 def getGroupById(groupName):
     schema=schemas.GroupSchema()
     group=persistance.session.query(persistance.Group).filter(persistance.Group.name==groupName).first()
-    return jsonify(schema.dump(group)),200
+    return schema.dump(group)
 
 def modifyGroup(groupName):
     schema=schemas.GroupSchema()
     group=persistance.session.query(persistance.Group).filter(persistance.Group.name==groupName).first()
-    return jsonify(schema.dump(group)),200
+    return schema.dump(group)
 
 def removeGroup(groupName):
     group=persistance.session.query(persistance.Group).filter(persistance.Group.name==groupName).first()
     #TODO: add deletion verification
     persistance.delete(group)
     message={"msg":"Acknowledge"}
-    return jsonify(message),200
+    return message
 
 def getAllTenants():
     schema=schemas.TenantSchema()
@@ -44,32 +43,37 @@ def getAllTenants():
     tenantsDict=[]
     for tenant in tenants:
         tenantsDict.append(schema.dump(tenant))
-    return jsonify(tenantsDict),200
+    return tenantsDict
 
 def createTenant(tenantName, tenantData):
     if tenantName != "admin":
         message={"msg":"Invalid user. No permissions to create a new Tenant."}
-        return jsonify(message),500
+        return jsonify(message)
     schema=schemas.TenantSchema()
     tenant=schema.load(tenantData, session=persistance.session)
     persistance.persist(tenant)
     message={"msg":"Acknowledge"}
     #TODO verifications
-    return jsonify(message),200
+    return message
 
 def getTenantById(tenantName):
     schema=schemas.TenantSchema()
-    tenant=persistance.session.query(persistance.Tenant).query(persistance.Tenant.username==tenantName).first()
-    return jsonify(schema.dump(tenant)),200
+    tenant=persistance.session.query(persistance.Tenant).filter(persistance.Tenant.username==tenantName).first()
+    return schema.dump(tenant)
+
+def addVsiToTenant(tenantName, vsiId):
+    vsi=persistance.VSI(id=vsiId, tenantUsername=tenantName)
+    persistance.persist(vsi)
+    return
 
 def modifyTenant(tenantName):
     schema=schemas.TenantSchema()
-    tenant=persistance.session.query(persistance.Tenant).query(persistance.Tenant.username==tenantName).first()
-    return jsonify(schema.dump(tenant)),200
+    tenant=persistance.session.query(persistance.Tenant).filter(persistance.Tenant.username==tenantName).first()
+    return schema.dump(tenant)
 
 def removeTenant(tenantName):
-    tenant=persistance.session.query(persistance.Tenant).query(persistance.Tenant.username==tenantName).first()
+    tenant=persistance.session.query(persistance.Tenant).filter(persistance.Tenant.username==tenantName).first()
     #TODO: add deletion verification
     persistance.delete(tenant)
     message={"msg":"Acknowledge"}
-    return jsonify(message),200
+    return message

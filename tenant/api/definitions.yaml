@@ -12,9 +12,24 @@ definitions:
       username:
         type: string
         example: admin
+      password:
+        type: string
+        example: password
+      storage:
+        type: integer
+        example: 1
+      memory:
+        type: integer
+        example: 1
+      vcpu:
+        type: integer
+        example: 1
+      groupName:
+        type: string
+        example: admin
   Group:
     type: object
     properties:
-      message:
+      name:
         type: string
-        example: Success
+        example: admin

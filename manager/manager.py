@@ -2,13 +2,15 @@ import json
 from messaging import Messaging
 from threading import Thread
 
-class VSMF(Thread):
+class Polling(Thread):
+
+class CSMF(Thread):
     def __init__(self, vsiId, info):
         super().__init__()
         self.vsiId=vsiId
         # self.action=action
         self.info=info
-        self.receivedData=set()
+        self.createVSI=True
         self.received={}
         self.messaging=Messaging()
         self.messaging.consumeQueue("vsLCM_"+str(vsiId),self.vsCallback)
@@ -20,16 +22,28 @@ class VSMF(Thread):
         th.start()
 
     def processAction(self, data):
+        if data["msgType"]=="modifyVSI":
+            return
+        elif data["msgType"]=="terminateVSI":
+            return
+        else:
+            self.received[data["msgType"]]=data
+            if self.createVSI and "placementInfo" in self.received.keys() and "domainInfo" in self.received.keys() and "tenantInfo" in self.received.keys():
+                self.createVSI()
+            return
+
+    def createVSI(self):
         messaging=Messaging()
-        self.receivedData.add(data["msgType"])
-        self.received[data["msgType"]]=data
-        if "placementInfo" in self.receivedData and "domainInfo" in self.receivedData and "tenantInfo" in self.receivedData:
-            data=self.received["placementInfo"]["data"]
-            data["name"]=self.info["data"]["name"]
-            message={"action":"instantiateNS", "data":data}
-            messaging.publish2Queue("vsDomain", json.dumps(message))
-            statusUpdate={"vsiId":self.vsiId, "status":"instantiating"}
-            messaging.publish2Queue("vsCoordinator", json.dumps(statusUpdate))
+
+        placementData=self.received["placementInfo"]["data"]
+        placementData["name"]=self.info["data"]["name"]
+        message={"action":"instantiateNS", "data":placementData}
+        messaging.publish2Queue("vsDomain", json.dumps(message))
+        statusUpdate={"vsiId":self.vsiId, "status":"instantiating"}
+        messaging.publish2Queue("vsCoordinator", json.dumps(statusUpdate))
+
+        self.createVSI=False
+        return
 
     def run(self):
         print(' [*] Waiting for messages. To exit press CTRL+C')

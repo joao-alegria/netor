@@ -11,22 +11,22 @@ def getAllDomains():
     domainsDict=[]
     for domain in domains:
         domainsDict.append(schema.dump(domain))
-    return jsonify(domainsDict),200
+    return domainsDict
 
 def getDomain(domainId):
     schema=schemas.DomainSchema()
     domain=persistance.session.query(persistance.Domain).filter(persistance.Domain.domainId==domainId).first()
-    return jsonify(schema.dump(domain)),200
+    return schema.dump(domain)
 
 
 def updateDomain(domainId):
     domain=persistance.session.query(persistance.Domain).filter(persistance.Domain.domainId==domainId).first()
     #update Domain
     message={"msg":"Success"}
-    return jsonify(message),200
+    return message
 
 def removeDomain(domainId):
     domain=persistance.session.query(persistance.Domain).filter(persistance.Domain.domainId==domainId).first()
     persistance.delete(domain)
     message={"msg":"Success"}
-    return jsonify(message),200
+    return message

@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from flasgger import Swagger, validate
 import service as domainService
-from api.loginConfig import loginManager
+from api.loginConfig import loginManager, login_required
 
 app = Flask(__name__)
 
@@ -32,7 +32,7 @@ def getAllDomains():
                             $ref: '#/definitions/Domain'
     """
 
-    return domainService.getAllDomains()
+    return jsonify(domainService.getAllDomains())
 
 @app.route('/domain', methods=["POST"])
 @login_required
@@ -60,7 +60,7 @@ def createNewDomain():
 
     # response = vsService.createNewVS(data)
 
-    return domainService.createDomain()
+    return jsonify(domainService.createDomain())
 
 @app.route('/domain/<domainId>', methods=["GET"])
 @login_required
@@ -76,7 +76,7 @@ def getDomainById(domainId):
                     schema:
                         $ref: '#/definitions/Domain'
     """
-    return domainService.getDomain(domainId)
+    return jsonify(domainService.getDomain(domainId))
 
 @app.route('/domain/<domainId>', methods=["PUT"])
 @login_required
@@ -92,7 +92,7 @@ def updateDomain(domainId):
                     schema:
                         $ref: '#/definitions/Acknowledge'
     """
-    return domainService.updateDomain(domainId)
+    return jsonify(domainService.updateDomain(domainId))
 
 @app.route('/domain/<domainId>', methods=["DELETE"])
 @login_required
@@ -108,4 +108,4 @@ def removeDomain(domainId):
                     schema:
                         $ref: '#/definitions/Acknowledge'
     """
-    return domainService.removeDomain(domainId)
+    return jsonify(domainService.removeDomain(domainId))

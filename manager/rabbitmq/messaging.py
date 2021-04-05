@@ -14,8 +14,9 @@ class MessageReceiver(Thread):
     def callback(self, channel, method_frame, header_frame, body):
         print(" [x] Received %r" % body)
         data=json.loads(body)
-        vsmf=VSMF(data["vsiId"], data)
-        vsmf.start()
+        if data["msgType"]=="createVSI":
+            csmf=CSMF(data["vsiId"], data)
+            csmf.start()
 
     def run(self):
         print(' [*] Waiting for messages. To exit press CTRL+C')

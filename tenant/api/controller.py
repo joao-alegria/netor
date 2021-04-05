@@ -82,7 +82,7 @@ def revoke_token():
 @app.route('/validate')
 @oauth.require_oauth()
 def validateToken():
-    return jsonify(msg="Valid"), 200
+    return jsonify(service.getTenantById(request.oauth.user.username))
 
 @oauth.invalid_response
 def require_oauth_invalid(req):
@@ -107,7 +107,7 @@ def getAllGroups():
                         items:
                             $ref: '#/definitions/Group'
     """
-    return service.getAllGroups()
+    return jsonify(service.getAllGroups())
 
 @app.route('/group', methods=["POST"])
 @oauth.require_oauth()
@@ -133,7 +133,7 @@ def createNewGroup():
     data=request.json
     validate(data, 'Group', 'definitions.yaml')
 
-    return service.createGroup(request.oauth.user.username,data)
+    return jsonify(service.createGroup(request.oauth.user.username,data))
 
 @app.route('/group/<groupId>', methods=["GET"])
 @oauth.require_oauth()
@@ -149,7 +149,7 @@ def getGroupById(groupId):
                     schema:
                         $ref: '#/definitions/Group'
     """
-    return service.getGroupById(groupId)
+    return jsonify(service.getGroupById(groupId))
 
 @app.route('/group/<groupId>', methods=["PUT"])
 @oauth.require_oauth()
@@ -165,7 +165,7 @@ def modifyGroup(groupId):
                     schema:
                         $ref: '#/definitions/Acknowledge'
     """
-    return service.modifyGroup(groupId)
+    return jsonify(service.modifyGroup(groupId))
 
 @app.route('/group/<groupId>', methods=["DELETE"])
 @oauth.require_oauth()
@@ -181,7 +181,7 @@ def removeGroup(groupId):
                     schema:
                         $ref: '#/definitions/Acknowledge'
     """
-    return service.removeGroup(groupId)
+    return jsonify(service.removeGroup(groupId))
 
 @app.route('/tenant', methods=["GET"])
 @oauth.require_oauth()
@@ -199,7 +199,7 @@ def getAllTenants():
                         items:
                             $ref: '#/definitions/Tenant'
     """
-    return service.getAllTenants()
+    return jsonify(service.getAllTenants())
 
 @app.route('/tenant', methods=["POST"])
 @oauth.require_oauth()
@@ -225,7 +225,7 @@ def createNewTenant():
     data=request.json
     validate(data, 'Tenant', 'definitions.yaml')
 
-    return service.createTenant(request.oauth.user.username,data)
+    return jsonify(service.createTenant(request.oauth.user.username,data))
 
 @app.route('/tenant/<tenantId>', methods=["GET"])
 @oauth.require_oauth()
@@ -241,7 +241,7 @@ def getTenantById(tenantId):
                     schema:
                         $ref: '#/definitions/Tenant'
     """
-    return service.getTenantById(tenantId)
+    return jsonify(service.getTenantById(tenantId))
 
 @app.route('/tenant/<tenantId>', methods=["PUT"])
 @oauth.require_oauth()
@@ -257,7 +257,7 @@ def modifyTenant(tenantId):
                     schema:
                         $ref: '#/definitions/Acknowledge'
     """
-    return service.modifyTenant(tenantId)
+    return jsonify(service.modifyTenant(tenantId))
 
 @app.route('/tenant/<tenantId>', methods=["DELETE"])
 @oauth.require_oauth()
@@ -273,4 +273,4 @@ def removeTenant(tenantId):
                     schema:
                         $ref: '#/definitions/Acknowledge'
     """
-    return service.removeTenant(tenantId)
+    return jsonify(service.removeTenant(tenantId))

@@ -2,6 +2,7 @@ from db.persistance import VerticalServiceInstance, persist, session
 from flask import jsonify
 import db.schemas as schemas
 from rabbitmq.adaptor import Messaging
+import json
 
 messaging=Messaging()
 
@@ -13,7 +14,7 @@ def createNewVS(tenantName,request):
     persist(vsInstance)
     #create vsi queue
     messaging.createQueue("vsLCM_"+str(vsInstance.vsiId))
-    message={"msgType":"createVSI","vsiId": vsInstance.vsiId, "data": request}
+    message={"msgType":"createVSI","vsiId": vsInstance.vsiId, "tenantId":tenantName, "data": request}
     #send needed info
     messaging.publish2Exchange('vsLCM_Management',json.dumps(message))
 

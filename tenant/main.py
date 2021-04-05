@@ -2,7 +2,7 @@ from api.controller import app
 from rabbitmq.messaging import MessageReceiver
 
 if __name__ == '__main__':
-    messageReceiver=MessageReceiver()
+    messageReceiver=MessageReceiver(app)
     messageReceiver.start()
 
     app.debug = True

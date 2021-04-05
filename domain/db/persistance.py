@@ -43,7 +43,7 @@ class OsmDomainLayer(DomainLayer):
     username=Column(String)
     password=Column(String)
     project=Column(String)
-    vimAccount=Column(Integer)
+    vimAccount=Column(String)
     ranEnabled=Column(Boolean)
     __mapper_args__ = {
         'polymorphic_identity':'osmDomainLayer',
@@ -63,3 +63,14 @@ def persist(entity):
 def delete(entity):
   session.delete(entity)
   session.commit()
+
+  def initDB():
+    domain=session.query(Domain).filter(Domain.domainId=="ITAV").first()
+    if domain==None:
+      domain=persistance.Domain(domainId="ITAV",admin="ITAV",description="test domain",auth=False,interfaceType="HTTP",url="10.0.12.118",name="ITAV",owner="joao")
+
+      domainLayer=OsmDomainLayer(domainLayerId="OSM",domainLayerType="osmDomainLayer",username="admin", password="admin", project="admin", vimAccount="microstack")
+      domainLayer.domains.append(domain)
+
+      persist(domain)
+      persist(domainLayer)

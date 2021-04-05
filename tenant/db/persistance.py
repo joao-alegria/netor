@@ -44,7 +44,6 @@ class VSI(Base):
     id = Column(Integer, primary_key=True)
     tenantUsername=Column(String, ForeignKey('Tenant.username'), primary_key=True)
     tenant=relationship("Tenant", back_populates="vsis")
-    
 
 class Tenant(Base, UserMixin):
     __tablename__ = 'Tenant'
@@ -201,7 +200,7 @@ def initDB():
     )
 
     
-    password=blake2b('banana'.encode("utf-8")).hexdigest()
+    password=blake2b('admin'.encode("utf-8")).hexdigest()
     group=Group(name="admin")
     admin = Tenant(username='admin', storage=100, memory=100, vcpu=100, group=group, password=password)
 

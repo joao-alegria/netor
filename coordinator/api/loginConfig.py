@@ -21,6 +21,6 @@ def request_loader(request):
         token = request.headers.get('Authorization')
         response=requests.get("http://localhost:5002/validate", headers={"Authorization":token})
         if response.status_code==200:
-            # userInfo=requests.get("http://localhost:5002/tenant", headers={"Authorization":token})
-            user=Tenant("1")
+            data=response.json()
+            user=Tenant(data["username"])
     return user
