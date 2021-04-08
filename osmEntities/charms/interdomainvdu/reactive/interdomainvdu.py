@@ -500,8 +500,7 @@ def sendVnfIp():
         vnfMgmtIp = config['ssh-hostname']
         tunnelAddress = config['tunnel_address']
         tunnelId = config['tunnel_id']
-        nsId = config['ns_id']
-        vnfId = config['vnf_id']
+        vsiId = config['vsi_id']
         vsEndpoint = action_get('vsEndpoint')
 
         log(config)
@@ -539,7 +538,7 @@ def sendVnfIp():
                     config["data_address"]=vnfIp
                     config["data_interface"]=key
 
-            data={"publicKey": publicKey,"vnfIp":vnfIp, "tunnelId":tunnelId, "nsId":nsId, "vnfId":vnfId}
+            data={"vsiId":vsiId,"publicKey": publicKey,"vnfIp":vnfIp, "tunnelId":tunnelId}
   
             cmd = ['curl -X POST -H "Content-Type: application/json"  -d {} {}'.format(json.dumps(json.dumps(data)),vsEndpoint)]
             log(cmd)

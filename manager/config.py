@@ -1,0 +1,12 @@
+import os
+# POSTGRES_USER=os.getenv("POSTGRES_USER","admin")
+# POSTGRES_PASS=os.getenv("POSTGRES_PASS","admin")
+# POSTGRES_DB=os.getenv("POSTGRES_DB","vsLCM")
+# POSTGRES_IP=os.getenv("POSTGRES_IP","localhost")
+# POSTGRES_PORT=os.getenv("POSTGRES_PORT",5432)
+APP_SECRET=os.getenv("APP_SECRET","tenantManager")
+APP_PORT=os.getenv("APP_PORT",5555)
+RABBIT_USER=os.getenv("RABBIT_USER","admin")
+RABBIT_PASS=os.getenv("RABBIT_PASS","admin")
+RABBIT_IP=os.getenv("RABBIT_IP","localhost")
+RABBIT_PORT=os.getenv("RABBIT_PORT",5672)

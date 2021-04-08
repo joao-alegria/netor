@@ -1,5 +1,5 @@
 netslice-subnet:
-- id: interdomain-ns_1
+- id: interdomain-tunnel-peer
   additionalParamsForVnf:
   - member-vnf-index: "1"
     additionalParams:

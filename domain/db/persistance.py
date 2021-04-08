@@ -1,4 +1,4 @@
-from sqlalchemy_utils import database_exists, create_database
+import config
 from sqlalchemy import Table, Column, Integer, Float, String, Boolean, ForeignKey, create_engine, inspect
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -49,9 +49,7 @@ class OsmDomainLayer(DomainLayer):
         'polymorphic_identity':'osmDomainLayer',
     }
 
-engine = create_engine('postgresql://postgres:postgres@localhost/vsDomain', echo=True)
-if not database_exists(engine.url):
-  create_database(engine.url)
+engine = create_engine('postgresql://'+str(config.POSTGRES_USER)+':'+str(config.POSTGRES_PASS)+'@'+str(config.POSTGRES_IP)+':'+str(config.POSTGRES_PORT)+'/'+str(config.POSTGRES_DB))
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session=Session()
@@ -64,13 +62,13 @@ def delete(entity):
   session.delete(entity)
   session.commit()
 
-  def initDB():
-    domain=session.query(Domain).filter(Domain.domainId=="ITAV").first()
-    if domain==None:
-      domain=persistance.Domain(domainId="ITAV",admin="ITAV",description="test domain",auth=False,interfaceType="HTTP",url="10.0.12.118",name="ITAV",owner="joao")
+def initDB():
+  domain=session.query(Domain).filter(Domain.domainId=="ITAV").first()
+  if domain==None:
+    domain=Domain(domainId="ITAV",admin="ITAV",description="test domain",auth=False,interfaceType="HTTP",url="10.0.12.118",name="ITAV",owner="joao")
 
-      domainLayer=OsmDomainLayer(domainLayerId="OSM",domainLayerType="osmDomainLayer",username="admin", password="admin", project="admin", vimAccount="microstack")
-      domainLayer.domains.append(domain)
+    domainLayer=OsmDomainLayer(domainLayerId="OSM",domainLayerType="osmDomainLayer",username="admin", password="admin", project="admin", vimAccount="microstack")
+    domainLayer.domains.append(domain)
 
-      persist(domain)
-      persist(domainLayer)
+    persist(domain)
+    persist(domainLayer)

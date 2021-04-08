@@ -1,6 +1,7 @@
 from rabbitmq.adaptor import Messaging
 import json
 from threading import Thread
+import logging
 
 class MessageReceiver(Thread):
 
@@ -12,9 +13,9 @@ class MessageReceiver(Thread):
         self.messaging.consumeQueue("vsCoordinator",self.callback)
 
     def callback(self, ch, method, properties, body):
-        print(" [x] Received status update %r" % body)
+        logging.info("Received Message {}".format(body))
         # data=json.loads(body)
 
     def run(self):
-        print(' [*] Waiting for messages. To exit press CTRL+C')
+        logging.info('Started Consuming RabbitMQ Topics')
         self.messaging.startConsuming()

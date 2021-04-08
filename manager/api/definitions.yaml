@@ -1,0 +1,12 @@
+---
+definitions:
+  Acknowledge:
+    type: object
+    properties:
+      message:
+        type: string
+        example: Success
+info:
+  title: Interdomain NetOr(Network Orchestrator) API
+  swagger_ui: True
+openapi: 3.0.3

@@ -1,8 +1,8 @@
-from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy import Table, Column, Integer, Float, String, Boolean, ForeignKey, create_engine, inspect
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import json
+import config
 
 Base = declarative_base()
 
@@ -17,6 +17,7 @@ class VerticalServiceInstance(Base):
 
   description=Column(String)
   domainId=Column(String)
+  additionalConf=Column(String)
   errorMessage=Column(String)
   altitude=Column(Float)
   latitude=Column(Float)
@@ -207,9 +208,7 @@ class NetworkSliceInstanceVnfPlacement(Base):
 
 
 
-engine = create_engine('postgresql://postgres:postgres@localhost/vsLCM', echo=True)
-if not database_exists(engine.url):
-  create_database(engine.url)
+engine = create_engine('postgresql://'+str(config.POSTGRES_USER)+':'+str(config.POSTGRES_PASS)+'@'+str(config.POSTGRES_IP)+':'+str(config.POSTGRES_PORT)+'/'+str(config.POSTGRES_DB))
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session=Session()

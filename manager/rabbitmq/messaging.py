@@ -1,7 +1,8 @@
 from rabbitmq.adaptor import Messaging
 import json
 from threading import Thread
-from manager import VSMF
+from manager import newCSMF,newCsmfMessage
+import logging
 
 class MessageReceiver(Thread):
 
@@ -10,14 +11,16 @@ class MessageReceiver(Thread):
         self.messaging=Messaging()
         self.messaging.createExchange("vsLCM_Management")
         self.messaging.consumeExchange("vsLCM_Management",self.callback)
+        self.csmfs={}
 
     def callback(self, channel, method_frame, header_frame, body):
-        print(" [x] Received %r" % body)
+        logging.info("Received Message {}".format(body))
         data=json.loads(body)
         if data["msgType"]=="createVSI":
-            csmf=CSMF(data["vsiId"], data)
-            csmf.start()
+            newCSMF(data)
+        else:
+            newCsmfMessage(data)
 
     def run(self):
-        print(' [*] Waiting for messages. To exit press CTRL+C')
+        logging.info('Started Consuming RabbitMQ Topics')
         self.messaging.startConsuming()

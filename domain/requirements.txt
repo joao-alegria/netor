@@ -1,0 +1,11 @@
+flask
+flasgger
+SQLAlchemy
+pika
+Flask-OAuthlib
+psycopg2-binary
+flask-login
+marshmallow_sqlalchemy
+verboselogs
+importlib-metadata
+jsonschema

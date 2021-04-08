@@ -1,10 +1,10 @@
 from sqlalchemy import Table, Column, Integer, Float, String, Boolean, ForeignKey, create_engine, inspect, Text, DateTime
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy_utils import database_exists, create_database
 import json
 from datetime import timedelta, datetime
 from hashlib import blake2b
+import config
 from flask_login import UserMixin
 
 Base = declarative_base()
@@ -212,10 +212,7 @@ def initDB():
     except:
         session.rollback()
 
-# engine = create_engine('postgresql://postgres:postgres@localhost/vsTenant', echo=True)
-engine = create_engine('postgresql://postgres:postgres@localhost/vsTenant', echo=True)
-if not database_exists(engine.url):
-  create_database(engine.url)
+engine = create_engine('postgresql://'+str(config.POSTGRES_USER)+':'+str(config.POSTGRES_PASS)+'@'+str(config.POSTGRES_IP)+':'+str(config.POSTGRES_PORT)+'/'+str(config.POSTGRES_DB))
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session=Session()

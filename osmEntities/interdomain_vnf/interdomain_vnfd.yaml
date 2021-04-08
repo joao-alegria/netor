@@ -101,10 +101,8 @@ vnfd:
         value: <tunnel_address>
       - name: tunnel_id
         value: <tunnel_id>
-      - name: ns_id
-        value: <ns_id>
-      - name: vnf_id
-        value: <vnf_id>
+      - name: vsi_id
+        value: <vsi_id>
     # - seq: 2
     #   name: touch
     #   parameter:

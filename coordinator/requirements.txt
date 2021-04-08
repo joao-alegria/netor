@@ -3,8 +3,6 @@ flasgger
 SQLAlchemy
 pika
 Flask-OAuthlib
-Flask-SQLAlchemy
 psycopg2-binary
-sqlalchemy-utils
 flask-login
 marshmallow_sqlalchemy

@@ -2,48 +2,39 @@ from rabbitmq.adaptor import Messaging
 import json
 from threading import Thread
 import db.persistance as persistance
-import driver.osm as osm
+import service
+import logging
 
 class MessageReceiver(Thread):
 
     def __init__(self):
-        super().__init__()
+        Thread.__init__(self)
         self.messaging=Messaging()
         self.messaging.createExchange("vsLCM_Management")
         self.messaging.createQueue("vsDomain")
         self.messaging.consumeExchange("vsLCM_Management",self.callback)
         self.messaging.consumeQueue("vsDomain",self.myCallback)
 
-    def myCallback(self, ch, method, properties, body):
-        print(" Last Step - Received %r" % body)
+    def myCallback(self, channel, method, properties, body):
+        logging.info("ActionHandler - Received {}".format(body))
         data=json.loads(body)
-        #TODO colocar logica no service
-        if data["msgType"] == "instantiateNs":
-            domain=persistance.session.query(persistance.Domain).filter(persistance.Domain.domainId==data["data"]["domainId"]).first()
-            osm.instantiateNs(domain.url, data["data"]["name"], data["data"]["nsId"], domain.vim)
-        elif data["msgType"] == "instantiateNsi":
-            return
-        elif data["msgType"] == "deleteNs":
-            return
-        elif data["msgType"] == "deleteNsi":
-            return
-        elif data["msgType"] == "actionNs":
-            return
+        handler=service.DomainActionHandler(data)
+        handler.start()
 
     def callback(self, ch, method, properties, body):
-        print(" [x] Received %r" % body)
+        logging.info("Received Message {}".format(body))
         data=json.loads(body)
         # messaging.consumeQueue("vsLCM_"+str(data["vsiId"]),simplecallback)
         if data["msgType"] == "createVSI":
             try:
                 domainId=data["data"]["domainId"]
-                domain=service.getDomain(domainId)
-                message={"msgType":"domainInfo", "data":domain}
-                self.messaging.publish2Queue("vsLCM_"+str(data["vsiId"]), json.dumps(message))
+                domainsId=service.getDomainsIds()
+                message={"vsiId":data["vsiId"],"msgType":"domainInfo", "data":domainsId, "error":False}
+                self.messaging.publish2Exchange("vsLCM_Management", json.dumps(message))
             except Exception as e:
-                statusUpdate={"vsiId":self.vsiId, "status":"error", "msg":"Invalid domain."}
-                messaging.publish2Queue("vsCoordinator", json.dumps(statusUpdate))
+                message={"vsiId":data["vsiId"],"msgType":"domainInfo", "error":True, "message":"Error when fetching domains ids"}
+                self.messaging.publish2Exchange("vsLCM_Management", json.dumps(message))
 
     def run(self):
-        print(' [*] Waiting for messages. To exit press CTRL+C')
+        logging.info('Started Consuming RabbitMQ Topics')
         self.messaging.startConsuming()

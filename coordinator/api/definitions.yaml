@@ -110,6 +110,9 @@ definitions:
       errorMessage:
         type: string
         example: error
+      additionalConf:
+        type: string
+        example: yaml
 info:
   title: VS LCM API
   swagger_ui: True

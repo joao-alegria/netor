@@ -1,5 +1,6 @@
 from flask_login import login_required, LoginManager, current_user, UserMixin
 import requests
+import config
 
 loginManager=LoginManager()
 current_user=current_user
@@ -19,7 +20,7 @@ def request_loader(request):
     user=None
     if "Authorization" in request.headers:
         token = request.headers.get('Authorization')
-        response=requests.get("http://localhost:5002/validate", headers={"Authorization":token})
+        response=requests.get("http://"+str(config.IDP_IP)+":"+str(config.IDP_PORT)+str(config.IDP_ENDPOINT), headers={"Authorization":token})
         if response.status_code==200:
             data=response.json()
             user=Tenant(data["username"])

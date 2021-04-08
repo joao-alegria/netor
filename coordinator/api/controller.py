@@ -34,7 +34,7 @@ def getAllVSs():
                             $ref: '#/definitions/VS'
     """
 
-    return vsService.getAllVSIs(current_user.tenantName)
+    return jsonify(vsService.getAllVSIs(current_user.tenantName))
 
 @app.route('/vs', methods=["POST"])
 @login_required
@@ -60,7 +60,7 @@ def createNewVS():
     data=request.json
     validate(data, 'VS', 'definitions.yaml')
 
-    return vsService.createNewVS(current_user.tenantName,data)
+    return jsonify(vsService.createNewVS(current_user.tenantName,data))
 
 @app.route('/vs/<vsiId>', methods=["GET"])
 @login_required
@@ -77,7 +77,7 @@ def getVSById(vsiId):
                         $ref: '#/definitions/VS'
     """
 
-    return vsService.getVSI(current_user.tenantName, vsiId)
+    return jsonify(vsService.getVSI(current_user.tenantName, vsiId))
 
 @app.route('/vs/<vsiId>', methods=["PUT"])
 @login_required
@@ -94,7 +94,7 @@ def modifyVs(vsiId):
                         $ref: '#/definitions/Acknowledge'
     """
 
-    return vsService.modifyVSI(current_user.tenantName, vsiId)
+    return jsonify(vsService.modifyVSI(current_user.tenantName, vsiId))
 
 @app.route('/vs/<vsiId>', methods=["DELETE"])
 @login_required
@@ -111,4 +111,4 @@ def removeVs(vsiId):
                         $ref: '#/definitions/Acknowledge'
     """
 
-    return vsService.removeVSI(current_user.tenantName, vsiId)
+    return jsonify(vsService.removeVSI(current_user.tenantName, vsiId))

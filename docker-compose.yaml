@@ -24,6 +24,67 @@ services:
       - POSTGRES_USER=postgres
     ports:
       - 5432:5432
+
+  netor_coordinator:
+    build: ./coordinator
+    ports:
+      - '5000:5000'
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASS: "postgres"
+      POSTGRES_DB: "vsLCM"
+      POSTGRES_IP: postgres
+      APP_SECRET: "tenantManager"
+      RABBIT_USER: "admin"
+      RABBIT_PASS: "admin"
+      RABBIT_IP: rabbitmq
+      IDP_IP: netor_tenant
+
+  netor_domain:
+    build: ./domain
+    ports:
+      - '5001:5001'
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASS: "postgres"
+      POSTGRES_DB: "vsDomain"
+      POSTGRES_IP: postgres
+      APP_SECRET: "tenantManager"
+      RABBIT_USER: "admin"
+      RABBIT_PASS: "admin"
+      RABBIT_IP: rabbitmq
+      IDP_IP: netor_tenant
+
+  netor_manager:
+    build: ./manager
+    ports:
+      - '5555:5555'
+    environment:
+      APP_SECRET: "tenantManager"
+      RABBIT_USER: "admin"
+      RABBIT_PASS: "admin"
+      RABBIT_IP: rabbitmq
+
+  netor_placement:
+    build: ./placement
+    environment:
+      RABBIT_USER: "admin"
+      RABBIT_PASS: "admin"
+      RABBIT_IP: rabbitmq
+
+  netor_tenant:
+    build: ./tenant
+    ports:
+      - '5002:5002'
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASS: "postgres"
+      POSTGRES_DB: "vsTenant"
+      POSTGRES_IP: postgres
+      APP_SECRET: "tenantManager"
+      RABBIT_USER: "admin"
+      RABBIT_PASS: "admin"
+      RABBIT_IP: rabbitmq
 volumes:
   thesisPostgresVolume:
     external: false

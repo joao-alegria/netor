@@ -1,0 +1,5 @@
+flask
+flasgger
+pika
+psycopg2-binary
+flask-login
