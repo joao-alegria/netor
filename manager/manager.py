@@ -148,10 +148,10 @@ def newCsmfMessage(data):
         logging.warning("VSI Id not found: "+str(vsiId))
 
 def newVnfInfo(data):
-    vsiId=data["vsiId"]
-    if data["vsiId"] in csmfs:
-        csmfs[data["vsiId"]].interdomainHandler(data)
+    vsiId=int(data["vsiId"])
+    if vsiId in csmfs:
+        csmfs[vsiId].interdomainHandler(data)
     else:
-        logging.warning("VSI Id not found during newVnfInfo: "+data["vsiId"])
-        return {"error":True,"message": "Error: VSI Id not found during newVnfInfo: "+data["vsiId"]}
+        logging.warning("VSI Id not found during newVnfInfo: "+str(vsiId))
+        return {"error":True,"message": "Error: VSI Id not found during newVnfInfo: "+str(vsiId)}
     return {"error":False,"message": "Acknowledge"}
