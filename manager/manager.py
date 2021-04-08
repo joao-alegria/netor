@@ -67,13 +67,13 @@ class CSMF(Thread):
                     if domainInfo["data"]["vs_blueprint_info"]["vs_blueprint"]["inter-site"]:
                         config=yaml.safe_load(confStr)
                         if "netslice-subnet" in config:
-                            config["netslice-subnet"].append({'id':'interdomain-tunnel-peer','additionalParamsForVnf':[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':self.vsiId,'tunnel_address': '10.0.0.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]})
+                            config["netslice-subnet"].append({'id':'interdomain-tunnel-peer','additionalParamsForVnf':[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':str(self.vsiId),'tunnel_address': '10.0.0.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]})
                         else:
-                            config["netslice-subnet"]=[{'id':'interdomain-tunnel-peer','additionalParamsForVnf':[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':self.vsiId,'tunnel_address': '10.0.0.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]}]
+                            config["netslice-subnet"]=[{'id':'interdomain-tunnel-peer','additionalParamsForVnf':[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':str(self.vsiId),'tunnel_address': '10.0.0.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]}]
                         confStr=yaml.safe_dump(config)
                     message["data"]["additionalConf"]=confStr
                 else:
-                    config={"netslice-subnet":[{'id':'interdomain-tunnel-peer','additionalParamsForVnf':[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':self.vsiId,'tunnel_address': '10.0.0.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]}]}
+                    config={"netslice-subnet":[{'id':'interdomain-tunnel-peer','additionalParamsForVnf':[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':str(self.vsiId),'tunnel_address': '10.0.0.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]}]}
                     confStr=yaml.safe_dump(config)
                     message["data"]["additionalConf"]=confStr
 
@@ -84,13 +84,13 @@ class CSMF(Thread):
                     if domainInfo["data"]["vs_blueprint_info"]["vs_blueprint"]["inter-site"]:
                         config=yaml.safe_load(confStr)
                         if "additionalParamsForVnf" in config:
-                            config["additionalParamsForVnf"].append({'member-vnf-index': '1', 'additionalParams': {'vsi_id':self.vsiId,'tunnel_address': '10.0.0.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}})
+                            config["additionalParamsForVnf"].append({'member-vnf-index': '1', 'additionalParams': {'vsi_id':str(self.vsiId),'tunnel_address': '10.0.0.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}})
                         else:
-                            config["additionalParamsForVnf"]=[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':self.vsiId,'tunnel_address': '10.0.0.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]
+                            config["additionalParamsForVnf"]=[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':str(self.vsiId),'tunnel_address': '10.0.0.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]
                         confStr=yaml.safe_dump(config)
                     message["data"]["additionalConf"]=confStr
                 else:
-                    config={"additionalParamsForVnf":[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':self.vsiId,'tunnel_address': '10.0.0.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]}
+                    config={"additionalParamsForVnf":[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':str(self.vsiId),'tunnel_address': '10.0.0.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]}
                     confStr=yaml.safe_dump(config)
                     message["data"]["additionalConf"]=confStr
             self.serviceComposition[componentName]={"sliceEnabled":creationData["sliceEnabled"],"domainId":creationData["domainId"]}
