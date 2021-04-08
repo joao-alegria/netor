@@ -115,6 +115,7 @@ class CSMF(Thread):
                 self.instantiateVSI()
 
     def interdomainHandler(self,data):
+        logging.info("Received interdomain info: {}".format(data))
         self.interdomainInfo[data["tunnelId"]]=data
         if len(self.interdomainInfo)==len(self.serviceComposition):
             for componentSend, infoSend in self.interdomainInfo.items():
@@ -125,6 +126,7 @@ class CSMF(Thread):
                         #     message={"msgType":"actionNSI", "domainId":self.serviceComposition[componentReceive]["domainId"], "data":{"nsiId":self.serviceComposition[componentReceive]["nfvoId"], "vnfId":1,"action":"addpeer","params":{'peer_endpoint': infoSend["vnfIp"],'peer_key' : infoSend["publicKey"],'peer_network': "0.0.0.0/0"}}}
                         # else:
                         message={"msgType":"actionNs", "data":{"domainId":self.serviceComposition[componentReceive]["domainId"], "nsId":self.serviceComposition[componentReceive]["nfvoId"], "additionalConf":{"member_vnf_index":1,"action":"addpeer","params":{'peer_endpoint': infoSend["vnfIp"],'peer_key' : infoSend["publicKey"],'peer_network': "0.0.0.0/0"}}}}
+                        logging.info("Sending interdomain addpeer action: {}".format(message))
                         self.messaging.publish2Queue("vsDomain", json.dumps(message))
 
     def run(self):
