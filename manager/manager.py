@@ -94,7 +94,7 @@ class CSMF(Thread):
                     confStr=yaml.safe_dump(config)
                     message["data"]["additionalConf"]=confStr
             self.serviceComposition[componentName]={"sliceEnabled":creationData["sliceEnabled"],"domainId":creationData["domainId"]}
-            message["vsiId"]=self.vsiId
+            message["vsiId"]=str(self.vsiId)
             messaging.publish2Queue("vsDomain", json.dumps(message))
             composingComponentId+=1
 
@@ -141,10 +141,11 @@ def newCSMF(data):
     csmf.start()
 
 def newCsmfMessage(data):
-    if data["vsiId"] in csmfs:
-        csmfs[data["vsiId"]].newMessage(data)
+    vsiId=int(data["vsiId"])
+    if vsiId in csmfs:
+        csmfs[vsiId].newMessage(data)
     else:
-        logging.warning("VSI Id not found: "+data["vsiId"])
+        logging.warning("VSI Id not found: "+str(vsiId))
 
 def newVnfInfo(data):
     vsiId=data["vsiId"]

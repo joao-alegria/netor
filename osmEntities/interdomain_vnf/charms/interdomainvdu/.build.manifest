@@ -26,7 +26,7 @@
     },
     {
       "branch": "refs/heads/main",
-      "rev": "b34c047c05f0ebacd34d6cf6cf5c65e9e7e9eadc",
+      "rev": "cc867286040be638375abf8072374c257e23656c",
       "url": "interdomainvdu"
     }
   ],
@@ -299,7 +299,7 @@
     "version": [
       "interdomainvdu",
       "dynamic",
-      "c28238c430861488c382c94ccc174c42248011a815b2b5d54e0ed8849fe2d2b8"
+      "5edd137c2d96a5e763049d4a7a33e8e0889e42394358ab78ed268f0dea1f0a4b"
     ],
     "wheelhouse.txt": [
       "layer:sshproxy",

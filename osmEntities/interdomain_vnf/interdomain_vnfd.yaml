@@ -114,7 +114,7 @@ vnfd:
       parameter:
       - data-type: STRING
         name: vsEndpoint  
-        value: "10.0.12.118:5555/vnf"
+        value: "10.0.12.117:5555/interdomain"
     id: default-vnf-configuration
     juju:
       charm: interdomainvdu
