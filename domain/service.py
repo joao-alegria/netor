@@ -82,5 +82,5 @@ class DomainActionHandler(Thread):
             elif self.data["msgType"] == "actionNsi":
                 return
         except Exception as e:
-            print("Error while performing action '"+self.data["msgType"]+"' in domain '"+str(self.data["data"]["domainId"])+"': "+str(e))
+            logging.info("Error while performing action '"+self.data["msgType"]+"' in domain '"+str(self.data["data"]["domainId"])+"': "+str(e))
             return
