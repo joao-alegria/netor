@@ -125,7 +125,7 @@ class CSMF(Thread):
                         # if self.serviceComposition[componentReceive]["sliceEnabled"]:
                         #     message={"msgType":"actionNSI", "domainId":self.serviceComposition[componentReceive]["domainId"], "data":{"nsiId":self.serviceComposition[componentReceive]["nfvoId"], "vnfId":1,"action":"addpeer","params":{'peer_endpoint': infoSend["vnfIp"],'peer_key' : infoSend["publicKey"],'peer_network': "0.0.0.0/0"}}}
                         # else:
-                        message={"msgType":"actionNs", "data":{"domainId":self.serviceComposition[componentReceive]["domainId"], "nsId":self.serviceComposition[componentReceive]["nfvoId"], "additionalConf":{"member_vnf_index":1,"primitive":"addpeer","primitive_params":{'peer_endpoint': infoSend["vnfIp"],'peer_key' : infoSend["publicKey"],'peer_network': "0.0.0.0/0"}}}}
+                        message={"msgType":"actionNs", "data":{"domainId":self.serviceComposition[componentReceive]["domainId"], "nsId":self.serviceComposition[componentReceive]["nfvoId"], "additionalConf":{"member_vnf_index":"1","primitive":"addpeer","primitive_params":{'peer_endpoint': infoSend["vnfIp"],'peer_key' : infoSend["publicKey"],'peer_network': "0.0.0.0/0"}}}}
                         logging.info("Sending interdomain addpeer action: {}".format(message))
                         self.messaging.publish2Queue("vsDomain", json.dumps(message))
 
