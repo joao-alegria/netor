@@ -2,6 +2,7 @@ version: "3.6"
 services:
   rabbitmq:
     image: 'rabbitmq:3.6-management-alpine'
+    restart: always
     ports:
       - '5672:5672'
       - '15672:15672'
@@ -17,6 +18,7 @@ services:
       - thesisRabbitVolume:/var/lib/rabbitmq
   postgres:
     image: postgres:12.2-alpine
+    restart: always
     volumes:  
       - thesisPostgresVolume:/var/lib/postgresql/data
     environment:
@@ -27,6 +29,7 @@ services:
 
   netor_coordinator:
     build: ./coordinator
+    restart: always
     ports:
       - '5000:5000'
     environment:
@@ -42,6 +45,7 @@ services:
 
   netor_domain:
     build: ./domain
+    restart: always
     ports:
       - '5001:5001'
     environment:
@@ -57,6 +61,7 @@ services:
 
   netor_manager:
     build: ./manager
+    restart: always
     ports:
       - '5555:5555'
     environment:
@@ -74,6 +79,7 @@ services:
 
   netor_tenant:
     build: ./tenant
+    restart: always
     ports:
       - '5002:5002'
     environment:
