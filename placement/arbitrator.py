@@ -83,6 +83,7 @@ class Arbitrator(Thread):
     def processEntitiesPlacement(self):
         # message={"msgType":"placementInfo", "data":{"nsId":"72f9e7d3-41d1-4dab-b6ae-bd1ee514bd93", "domainId":"osm"}}
         # messaging.publish2Queue("vsLCM_"+str(self.vsiId), json.dumps(message))
+        self.createVSI=False
         domainInfo=self.received["domainInfo"]
         tenantInfo=self.received["tenantInfo"]
         catalogueInfo=self.received["catalogueInfo"]
@@ -103,8 +104,6 @@ class Arbitrator(Thread):
 
         message={"vsiId":self.vsiId,"msgType":"placementInfo", "error":False, "message":"Success", "data":translation}
         self.messaging.publish2Exchange("vsLCM_Management", json.dumps(message))
-
-        self.createVSI=False
         return
 
     def newMessage(self, data):

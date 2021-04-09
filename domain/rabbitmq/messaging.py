@@ -27,7 +27,6 @@ class MessageReceiver(Thread):
         # messaging.consumeQueue("vsLCM_"+str(data["vsiId"]),simplecallback)
         if data["msgType"] == "createVSI":
             try:
-                domainId=data["data"]["domainId"]
                 domainsId=service.getDomainsIds()
                 message={"vsiId":data["vsiId"],"msgType":"domainInfo", "data":domainsId, "error":False}
                 self.messaging.publish2Exchange("vsLCM_Management", json.dumps(message))
