@@ -1,0 +1,64 @@
+<h2 style="float: left">Network Slice Templates</h2>
+<button style="float: right; margin: 2px; background-color: #4489eb; margin-left: auto" id="yes" type="button" class="btn btn-primary" (click)="update()"><i class="fa fa-refresh"></i> Refresh</button>
+<div style="clear: both;" class="container-fluid" (click)="containerClick($event)">
+    <hr />
+    <div class="row" style="margin-top: 5px;">
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let element of listData"
+            style="display: flex;flex-direction: column;">
+            <div [attr.id]="element.nst.nstId" class="card mb-3"
+                style="border-width: 2px; cursor: pointer; height:100%; border-color: #4489EB;"
+                (click)="clickEvent($event, element)" (mouseenter)="onEnter(element.nst.nstId)"
+                (mouseleave)="onLeave(element.nst.nstId)">
+                <div *ngIf="element.control" class="card-body"
+                    style="text-align: center;display: flex; justify-content: center; align-items: center;"
+                    (click)="onboardNST($event)">
+                    <div style="color: #4489EB; opacity: 0.7;">
+                        <i class="fa fa-plus fa-4x"></i>
+                        <h4>{{element.name}}</h4>
+                    </div>
+                </div>
+
+
+                <div *ngIf="!element.control" class="card-body" style="clear: none;">
+                    <i class="fa fa-plus fa-4x" style="float: right; color:lightgray;"></i>
+                    <h3 class="card-title">{{element.nst.nstName}}</h3>
+                    <p class="card-text">
+                        <b>NST Provider:</b> {{element.nst.nstProvider}}
+                    </p>
+                    <p *ngIf="element.nst.nstServiceProfile" class="card-text">
+                        <b>Service Type:</b> {{element.nst.nstServiceProfile.sST}}
+                    </p>
+                    <p *ngIf="element.nst.nstServiceProfile" class="card-text">
+                        <b>Availability:</b> {{element.nst.nstServiceProfile.availability}}
+                    </p>
+                    <p class="card-text" *ngIf="element.nst.nstServiceProfile">
+                        <b>Latency:</b> {{element.nst.nstServiceProfile.latency}}
+                    </p>
+                    <p class="card-text" *ngIf="element.nst.nstServiceProfile">
+                        <b>Max # UE:</b> {{element.nst.nstServiceProfile.maxNumberofUEs}}
+                    </p>
+                    <p class="card-text" *ngIf="element.nst.nstServiceProfile">
+                        <b>UE Mobility:</b> {{element.nst.nstServiceProfile.uEMobilityLevel}}
+                    </p>
+                    <div *ngIf="element.nst.nstServiceProfile">
+                        <h5>Coverage Area</h5>
+                        <div *ngFor="let area of element.nst.nstServiceProfile.coverageAreaTAList">
+                            <p>{{area}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<span id="tooltip-span" style="display: none;" (mouseleave)="mouseLeftTooltip()">
+    <div class="list-group">
+        <div *ngIf="tenant">
+            <a class="list-group-item list-group-item-action" type="button" (click)="instantiateNs()">Instantiate NS</a>
+        </div>
+        <div *ngIf="!tenant">
+            <a class="list-group-item list-group-item-action" type="button" (click)="viewMoreInfo()">View More</a>
+            <a class="list-group-item list-group-item-action" type="button" (click)="deleteNst()">Delete</a>
+        </div>
+    </div>
+</span>

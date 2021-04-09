@@ -1,0 +1,15 @@
+<div class="container-fluid" id="modal-content-wrapper" style="height: 100%; display: flex; flex-flow: column; position: relative;">
+    <div class="row">
+        <h2 id="modal-title" style="color: #4489eb;">Are you sure?</h2>
+        <i style="margin-left: auto;cursor: pointer;" class="fa fa-times fa-lg" aria-hidden="true" type=" button"
+            (click)="closeModal()"></i>
+    </div>
+    <div style="width: 80%; height: 1px; margin: 0px auto; border-bottom: 1px solid #969696;">&nbsp;</div>
+
+    <div class="row" style="bottom: 5px; position: absolute; width: 100%;">
+        <button autofocus style="margin: 2px;" id="no" type="button" class="btn btn-secondary"
+            (click)="no()">No</button>
+        <button style="margin: 2px; background-color: #4489eb; margin-left:auto;" id="yes" type="button"
+            class="btn btn-primary" (click)="yes()">Yes</button>
+    </div>
+</div>

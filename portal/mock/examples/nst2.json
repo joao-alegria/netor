@@ -1,0 +1,9 @@
+{
+    "nstId": "5gr_e2e_slice",
+    "nstName": "5gr_e2e_slice",
+    "nstVersion": "0.1",
+    "nstProvider": "NXW",
+    "nsstIds": [
+        "5gr_local_nsst"
+    ]
+}

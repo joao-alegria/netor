@@ -1,0 +1,270 @@
+<div class="container-fluid" id="modal-content-wrapper" style="height: 100%; display: flex; flex-flow: column;">
+    <div class="row">
+        <h2 id="modal-title" style="color: #4489eb;">Onboard New VSB</h2>
+        <i style="margin-left: auto;cursor: pointer;" class="fa fa-times fa-lg" aria-hidden="true" type=" button"
+            (click)="closeModal()"></i>
+    </div>
+    <div style="width: 80%; height: 1px; margin: 0px auto; border-bottom: 1px solid #969696;">&nbsp;</div>
+
+    <div id="modal-body-extra container" style="overflow-y: auto; padding-top: 10px;">
+        <div class="container">
+            <div class="row" style="margin-bottom: 10px;">
+                <div class="col-sm-12 col-md-4">
+                    <h3>VSB Description File</h3>
+                    <div style="padding: 15px" class="dropArea" (fileDropped)="vsbDropped($event)">
+                        <input type="file" id="vsbDrop" (change)="vsbDropped($event.target.files)" />
+                        <label for="vsbDrop" class="btn-primary" style="background-color: #4489eb;">Choose file</label>
+                        <h5>or drop it here</h5>
+                    </div>
+                    <div class="files-list" style="margin-top: 5px;">
+                        <div class="single-file" *ngFor="let file of vsbFiles; let i = index">
+                            <i class="fa fa-file-o" aria-hidden="true"></i>
+                            {{ file.name }}
+                            <i (click)="deleteVSBFile(i)" class="fa fa-trash" aria-hidden="true"
+                                style="float: right; color: rgb(184, 59, 59); cursor: pointer;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-4">
+                    <h3>NSD Description File</h3>
+                    <div style="padding: 15px" class="dropArea" (fileDropped)="nsdDropped($event)">
+                        <input type="file" id="nsdDrop" multiple (change)="nsdDropped($event.target.files)" />
+                        <label for="nsdDrop" class="btn-primary" style="background-color: #4489eb;">Choose files</label>
+                        <h5>or drop them here</h5>
+                    </div>
+                    <div class="files-list" style="margin-top: 5px;">
+                        <div class="single-file" *ngFor="let file of nsdFiles; let i = index">
+                            <i class="fa fa-file-o" aria-hidden="true"></i>
+                            {{ file.name }}
+                            <i (click)="deleteNSDFile(i)" class="fa fa-trash" aria-hidden="true"
+                            style="float: right; color: rgb(184, 59, 59); cursor: pointer;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-4">
+                    <h3>NST Description File</h3>
+                    <div style="padding: 15px" class="dropArea" (fileDropped)="nstDropped($event)">
+                        <input type="file" id="nstDrop" multiple (change)="nstDropped($event.target.files)" />
+                        <label for="nstDrop" class="btn-primary" style="background-color: #4489eb;">Choose files</label>
+                        <h5>or drop them here</h5>
+                    </div>
+                    <div class="files-list" style="margin-top: 5px;">
+                        <div class="single-file" *ngFor="let file of nstFiles; let i = index">
+                            <i class="fa fa-file-o" aria-hidden="true"></i>
+                            {{ file.name }}
+                            <i (click)="deleteNSTFile(i)" class="fa fa-trash" aria-hidden="true"
+                            style="float: right; color: rgb(184, 59, 59); cursor: pointer;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3>VNF Packages</h3>
+        <form>
+            <div class="container" *ngFor="let vnfNumber of vnfNumbers; let i=index">
+                <div class="row">
+                    <div class="col-md-1" style="margin:auto;">
+                        <i *ngIf="i!=0" style="float:right; cursor: pointer;" class=" fa fa-trash fa-2x"
+                            (click)="removeVNF(i)"></i>
+                    </div>
+                    <div class="col-md-11">
+                        <div class="container-fluid" [ngStyle]="myStyle(i)">
+                            <div class="row form-group">
+                                <div class="col">
+                                    <label class="col-form-label" [attr.for]="'vnfname'+vnfNumber">Name</label>
+                                    <input type="text" class="form-control" placeholder="Enter name"
+                                        [attr.id]="'vnfname'+vnfNumber">
+                                </div>
+                                <div class="col">
+                                    <label class="col-form-label" [attr.for]="'vnfversion'+vnfNumber">Version</label>
+                                    <input type="text" class="form-control" placeholder="Enter version"
+                                        [attr.id]="'vnfversion'+vnfNumber">
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col">
+                                    <label class="col-form-label" [attr.for]="'vnfprovider'+vnfNumber">Provider</label>
+                                    <input type="text" class="form-control" placeholder="Enter provider"
+                                        [attr.id]="'vnfprovider'+vnfNumber">
+                                </div>
+                                <div class="col">
+                                    <label class="col-form-label" [attr.for]="'vnfchecksum'+vnfNumber">Checksum</label>
+                                    <input type="text" class="form-control" placeholder="Enter checksum"
+                                        [attr.id]="'vnfchecksum'+vnfNumber">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label" [attr.for]="'vnfpath'+vnfNumber">VNFD Path</label>
+                                <input type="text" class="form-control" placeholder="Enter URL"
+                                    [attr.id]="'vnfpath'+vnfNumber">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <button style="background-color: #4489eb;" type="button" class="btn btn-primary"
+                    (click)="addVNFForm()">Add +1 VNF Package</button>
+            </div>
+        </form>
+
+        <h3>App Packages</h3>
+        <form>
+            <div class="container" *ngFor="let appNumber of appNumbers; let j=index">
+                <div class="row">
+                    <div class="col-md-1" style="margin:auto;">
+                        <i *ngIf="j!=0" style="float:right; cursor: pointer;" class=" fa fa-trash fa-2x"
+                            (click)="removeAPP(j)"></i>
+                    </div>
+                    <div class="col-md-11">
+                        <div class="container-fluid" [ngStyle]="myStyle(j)">
+                            <div class="row form-group">
+                                <div class="col">
+                                    <label class="col-form-label" [attr.for]="'appname'+appNumber">Name</label>
+                                    <input type="text" class="form-control" placeholder="Enter name"
+                                        [attr.id]="'appname'+appNumber">
+                                </div>
+                                <div class="col">
+                                    <label class="col-form-label" [attr.for]="'appversion'+appNumber">Version</label>
+                                    <input type="text" class="form-control" placeholder="Enter version"
+                                        [attr.id]="'appversion'+appNumber">
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col">
+                                    <label class="col-form-label" [attr.for]="'appprovider'+appNumber">Provider</label>
+                                    <input type="text" class="form-control" placeholder="Enter provider"
+                                        [attr.id]="'appprovider'+appNumber">
+                                </div>
+                                <div class="col">
+                                    <label class="col-form-label" [attr.for]="'appchecksum'+appNumber">Checksum</label>
+                                    <input type="text" class="form-control" placeholder="Enter checksum"
+                                        [attr.id]="'appchecksum'+appNumber">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label" [attr.for]="'apppath'+appNumber">App Path</label>
+                                <input type="text" class="form-control" placeholder="Enter URL"
+                                    [attr.id]="'apppath'+appNumber">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <button style="background-color: #4489eb;" type="button" class="btn btn-primary"
+                    (click)="addAPPForm()">Add +1 App Package</button>
+            </div>
+        </form>
+
+        <h3>Translation Rules</h3>
+        <form>
+            <div class="container" *ngFor="let ruleNumber of rulesNumbers; let k = index;">
+                <div class="row">
+                    <div class="col-md-1" style="margin:auto;">
+                        <i *ngIf="k!=0" style="float:right; cursor: pointer;" class=" fa fa-trash fa-2x"
+                            (click)="removeRule(k)"></i>
+                    </div>
+                    <div class="col-md-11">
+                        <div class="container-fluid" [ngStyle]="myStyle(k)">
+                            <div class="row form-group">
+                                <div class="col">
+                                    <label class="col-form-label" [attr.for]="'ruleNstId'+k">NST ID</label>
+                                    <input type="text" class="form-control" placeholder="Enter ID"
+                                        [attr.id]="'ruleNstId'+k">
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col">
+                                    <label class="col-form-label" [attr.for]="'ruleNSDid'+k">NSD ID</label>
+                                    <input type="text" class="form-control" placeholder="Enter ID"
+                                        [attr.id]="'ruleNSDid'+k">
+                                </div>
+                                <div class="col">
+                                    <label class="col-form-label" [attr.for]="'ruleNSDversion'+k">NSD Version</label>
+                                    <input type="text" class="form-control" placeholder="Enter version"
+                                        [attr.id]="'ruleNSDversion'+k">
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col">
+                                    <label class="col-form-label" [attr.for]="'ruleNSflavourid'+k">NS Flavour ID</label>
+                                    <input type="text" class="form-control" placeholder="Enter ID"
+                                        [attr.id]="'ruleNSflavourid'+k">
+                                </div>
+                                <div class="col">
+                                    <label class="col-form-label" [attr.for]="'ruleinstlevelid'+k">NS Instantiation
+                                        Level ID</label>
+                                    <input type="text" class="form-control" placeholder="Enter level ID"
+                                        [attr.id]="'ruleinstlevelid'+k">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <form>
+                                    <div style="width:90%" class="container"
+                                        *ngFor="let parameterNumber of rulesNumbers[k]; let l=index">
+                                        <div class="row">
+                                            <div class="col-md-1" style="margin:auto;; cursor: pointer;">
+                                                <i *ngIf="l!=0" style="float:right" class=" fa fa-trash fa-2x"
+                                                    (click)="removeParameter(k,l)"></i>
+                                            </div>
+                                            <div class="col-md-11">
+                                                <div class="container-fluid" [ngStyle]="myStyle(l)">
+                                                    <div class="row form-group">
+                                                        <div class="col">
+                                                            <label class="col-form-label"
+                                                                [attr.for]="'ruleparamid'+k+'_'+parameterNumber">Parameter
+                                                                ID</label>
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Enter ID"
+                                                                [attr.id]="'ruleparamid'+k+'_'+parameterNumber">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row form-group">
+                                                        <div class="col">
+                                                            <label class="col-form-label"
+                                                                [attr.for]="'ruleparammin'+k+'_'+parameterNumber">Parameter
+                                                                Min</label>
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Enter min"
+                                                                [attr.id]="'ruleparammin'+k+'_'+parameterNumber">
+                                                        </div>
+                                                        <div class="col">
+                                                            <label class="col-form-label"
+                                                                [attr.for]="'ruleparammax'+k+'_'+parameterNumber">Parameter
+                                                                Max</label>
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Enter max"
+                                                                [attr.id]="'ruleparammax'+k+'_'+parameterNumber">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <button style="margin-bottom: 10px; background-color: #4489eb;" type="button"
+                        class="btn btn-primary" (click)="addInputParameterForm(k)">Add +1 Parameter</button>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <button style="background-color: #4489eb;" type="button" class="btn btn-primary"
+                    (click)="addRuleForm()">Add +1 Rule</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="row" style="margin-top: 5px;">
+        <button style="margin-left: auto; background-color: #4489eb;" id="onboardVsb" type="button"
+            class="btn btn-primary" (click)="onboardVsb()">Submit</button>
+
+    </div>
+</div>

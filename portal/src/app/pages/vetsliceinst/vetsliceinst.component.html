@@ -1,0 +1,60 @@
+<!-- <table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">VSI_ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">VSD_ID</th>
+            <th scope="col">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let element of listData" (click)="modal.openModal(this,element)">
+            <th scope="row">{{element.vsiId}}</th>
+            <td>{{element.name}}</td>
+            <td>{{element.description}}</td>
+            <td>{{element.vsdId}}</td>
+            <td>{{element.status}}</td>
+        </tr>
+    </tbody>
+</table> -->
+<h2 style="float: left;">Vertical Slices Instances</h2>
+<button style="float: right; margin: 2px; background-color: #4489eb; margin-left: auto" id="yes" type="button" class="btn btn-primary" (click)="update()"><i class="fa fa-refresh"></i> Refresh</button>
+<div style="clear: both;" class="container-fluid" (click)="containerClick($event)">
+    <hr />
+    <div class="row" style="margin-top: 5px;">
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let element of listData"
+            style="display: flex;flex-direction: column;">
+            <div [attr.id]="element.vsiId" class="card mb-3"
+                style="border-color: #4489eb; border-width: 2px; cursor: pointer; height:100%"
+                (click)="clickEvent($event, element)" (mouseenter)="onEnter(element.vsiId)"
+                (mouseleave)="onLeave(element.vsiId)">
+                <div class="card-body" style="clear: none;">
+                    <i class="fa fa-plus fa-4x" style="float: right; color:lightgray;"></i>
+                    <h2 class="card-title">{{element.name}}</h2>
+                    <p class="card-text">
+                        <b>Description:</b> {{element.description}}
+                    </p>
+                    <p class="card-text">
+                        <b>VSD ID:</b> {{element.vsdId}}
+                    </p>
+                    <p class="card-text">
+                        <b>Status:</b> {{element.status}}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<span id="tooltip-span" style="display: none; cursor: pointer;" (mouseleave)="mouseLeftTooltip()">
+    <div class="list-group">
+        <div *ngIf="tenant">
+            <a class="list-group-item list-group-item-action" (click)="scaleVs()">Modify</a>
+            <a class="list-group-item list-group-item-action" (click)="terminateVs()">Terminate</a>
+            <a class="list-group-item list-group-item-action" (click)="removeVs()">Remove</a>
+        </div>
+        <div *ngIf="!tenant">
+            <a class="list-group-item list-group-item-action" (click)="viewMoreInfo()">View More</a>
+        </div>
+    </div>
+</span>

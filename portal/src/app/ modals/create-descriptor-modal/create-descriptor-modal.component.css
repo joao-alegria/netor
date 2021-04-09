@@ -1,0 +1,7 @@
+/deep/ .ui-inputtext {
+    width: 100%;
+  }
+
+  ::ng-deep .mat-focused .mat-form-field-underline .mat-form-field-ripple{
+    background-color: #007bff !important;
+    }

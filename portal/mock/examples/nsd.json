@@ -1,0 +1,198 @@
+{
+    "nsdIdentifier": "nsVS",
+    "designer": "SSSA-NXW",
+    "version": "0.1",
+    "nsdName": "VS service @ 5GT",
+    "nsdInvariantId": "VS service @ 5GT\"",
+    "vnfdId": [
+        "vVS",
+        "vVS_Algorithm"
+    ],
+    "pnfdId": [
+        "pEPC"
+    ],
+    "sapd": [
+        {
+            "cpdId": "vs_sap_data",
+            "description": "SAP for all the nsVS VNFs",
+            "layerProtocol": "IPV4",
+            "cpRole": "ROOT",
+            "addressData": [
+                {
+                    "addressType": "IP_ADDRESS",
+                    "iPAddressAssignment": false,
+                    "floatingIpActivated": true,
+                    "iPAddressType": "IPv4",
+                    "numberOfIpAddress": 1
+                }
+            ],
+            "sapAddressAssignment": false,
+            "nsVirtualLinkDescId": "vs_vl_data"
+        }
+    ],
+    "virtualLinkDesc": [
+        {
+            "virtualLinkDescId": "vs_vl_data",
+            "virtualLinkDescProvider": "NXW",
+            "virtuaLinkDescVersion": "0.1",
+            "connectivityType": {
+                "layerProtocol": "IPV4"
+            },
+            "virtualLinkDf": [
+                {
+                    "flavourId": "vs_vl_df_data",
+                    "qos": {
+                        "latency": 0,
+                        "packetDelayVariation": 0,
+                        "packetLossRatio": 0,
+                        "priority": 0
+                    },
+                    "serviceAvaibilityLevel": "LEVEL_1",
+                    "bitrateRequirements": {
+                        "root": 2,
+                        "leaf": 2
+                    }
+                }
+            ],
+            "description": "Network to connect to the users"
+        }
+    ],
+    "nsDf": [
+        {
+            "nsDfId": "nsVS_df",
+            "flavourKey": "nsVS_fk",
+            "vnfProfile": [
+                {
+                    "vnfProfileId": "vVS_profile",
+                    "vnfdId": "vVS",
+                    "flavourId": "vVS_df",
+                    "instantiationLevel": "vVS_il",
+                    "minNumberOfInstances": 1,
+                    "maxNumberOfInstances": 1,
+                    "nsVirtualLinkConnectivity": [
+                        {
+                            "virtualLinkProfileId": "vs_vl_profile_data",
+                            "cpdId": [
+                                "vVS_data_ext"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "vnfProfileId": "vVS_algo_profile",
+                    "vnfdId": "vVS_Algorithm",
+                    "flavourId": "vVS_algo_df",
+                    "instantiationLevel": "vVS_algo_il",
+                    "minNumberOfInstances": 1,
+                    "maxNumberOfInstances": 1,
+                    "nsVirtualLinkConnectivity": [
+                        {
+                            "virtualLinkProfileId": "vs_vl_profile_data",
+                            "cpdId": [
+                                "vVS_algo_data_ext"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "pnfProfile": [
+                {
+                    "pnfProfileId": "pEPC_profile",
+                    "pnfdId": "pEPC",
+                    "pnfVirtualLinkConnectivity": [
+                        {
+                            "virtualLinkProfileId": "vs_vl_profile_data",
+                            "cpdId": [
+                                "pEPC_data"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "virtualLinkProfile": [
+                {
+                    "virtualLinkProfileId": "vs_vl_profile_data",
+                    "virtualLinkDescId": "vs_vl_data",
+                    "flavourId": "vs_vl_df_data",
+                    "maxBitrateRequirements": {
+                        "root": "1",
+                        "leaf": "1"
+                    },
+                    "minBitrateRequirements": {
+                        "root": "1",
+                        "leaf": "1"
+                    }
+                }
+            ],
+            "nsInstantiationLevel": [
+                {
+                    "nsLevelId": "nsVS_il_big",
+                    "description": "Big instantiation level for the VS",
+                    "vnfToLevelMapping": [
+                        {
+                            "vnfProfileId": "vVS_profile",
+                            "numberOfInstances": 1
+                        },
+                        {
+                            "vnfProfileId": "vVS_algo_profile",
+                            "numberOfInstances": 1
+                        }
+                    ],
+                    "virtualLinkToLevelMapping": [
+                        {
+                            "virtualLinkProfileId": "vs_vl_profile_data",
+                            "bitRateRequirements": {
+                                "root": "1",
+                                "leaf": "1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "nsLevelId": "nsVS_il_small",
+                    "description": "Small instantiation level for the VS",
+                    "vnfToLevelMapping": [
+                        {
+                            "vnfProfileId": "vVS_profile",
+                            "numberOfInstances": 1
+                        }
+                    ],
+                    "virtualLinkToLevelMapping": [
+                        {
+                            "virtualLinkProfileId": "vl_profile_data",
+                            "bitRateRequirements": {
+                                "root": "1",
+                                "leaf": "1"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "defaultNsInstantiationLevelId": "nsVS_il_small",
+            "nsProfile": [
+                {
+                    "nsProfileId": "nsVS_profile_big",
+                    "nsdId": "nsVS",
+                    "nsDfId": "nsVS_df",
+                    "nsInstantiationLevelId": "nsVS_il_big",
+                    "minNumberOfInstances": 1,
+                    "maxNumberOfInstances": 1
+                },
+                {
+                    "nsProfileId": "nsVS_profile_small",
+                    "nsdId": "nsVS",
+                    "nsDfId": "nsVS_df",
+                    "nsInstantiationLevelId": "nsVS_il_small",
+                    "minNumberOfInstances": 1,
+                    "maxNumberOfInstances": 1
+                }
+            ],
+            "dependencies": []
+        }
+    ],
+    "security": {
+        "signature": "VS_NSD_SIGNATURE",
+        "algorithm": "VS_NSD_ALGORITHM",
+        "certificate": "VS_NSD_CERTIFICATE"
+    }
+}

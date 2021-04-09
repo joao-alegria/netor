@@ -1,0 +1,38 @@
+{
+    "nsdId": "1",
+    "nsdVersion": "1.0",
+    "nsstIds": [
+        "1"
+    ],
+    "nstId": "1",
+    "nstName": "UrbanMacro",
+    "nstProvider": "string",
+    "nstServiceProfile": {
+        "availability": 100,
+        "coverageAreaTAList": [
+            "ITAV"
+        ],
+        "eMBBPerfReq": [
+            {
+                "activityFactor": 20,
+                "areaTrafficCapDL": 100,
+                "areaTrafficCapUL": 50,
+                "coverage": "FULL",
+                "expDataRateDL": 50,
+                "expDataRateUL": 25,
+                "uESpeed": 120,
+                "userDensity": 10000
+            }
+        ],
+        "latency": 2,
+        "maxNumberofUEs": 10,
+        "pLMNIdList": [
+            "string"
+        ],
+        "resourceSharingLevel": true,
+        "sST": "EMBB",
+        "serviceProfileId": "string",
+        "uEMobilityLevel": "STATIONARY"
+    },
+    "nstVersion": "1.0"
+}

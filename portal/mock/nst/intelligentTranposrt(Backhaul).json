@@ -1,0 +1,40 @@
+{
+    "nsdId": "1",
+    "nsdVersion": "1.0",
+    "nsstIds": [
+        "1"
+    ],
+    "nstId": "15",
+    "nstName": "Intelligent Transport(Backhaul)",
+    "nstProvider": "string",
+    "nstServiceProfile": {
+        "availability": 100,
+        "coverageAreaTAList": [
+            "ITAV"
+        ],
+        "latency": 2,
+        "maxNumberofUEs": 10,
+        "pLMNIdList": [
+            "string"
+        ],
+        "resourceSharingLevel": true,
+        "sST": "URLLC",
+        "serviceProfileId": "string",
+        "uEMobilityLevel": "STATIONARY",
+        "uRLLCPerfReq": [
+            {
+                "cSAvailability": 99.9999,
+                "connDensity": 1000,
+                "e2eLatency": 30,
+                "expDataRate": 10,
+                "jitter": 0,
+                "payloadSize": "BIG",
+                "reliability": 99.999,
+                "serviceAreaDimension": "2000x10x1",
+                "survivalTime": 100,
+                "trafficDensity": 10
+            }
+        ]
+    },
+    "nstVersion": "1.0"
+}

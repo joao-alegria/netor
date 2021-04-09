@@ -1,0 +1,14 @@
+<div class="container-fluid" id="modal-content-wrapper" style="height: 100%; display: flex; flex-flow: column;">
+    <div class="row">
+        <h2 id="modal-title" style="color: #4489eb;">{{ modalData.title }}</h2>
+        <i style="margin-left: auto;cursor: pointer;" class="fa fa-times fa-lg" aria-hidden="true" type=" button"
+            (click)="closeModal()"></i>
+    </div>
+    <div style="width: 80%; height: 1px; margin: 0px auto; border-bottom: 1px solid #969696;">&nbsp;</div>
+
+    <div class="row" id="modal-body" style="overflow-y: auto; padding-top:10px;">
+        <div id="modalContent" class="container" style="font-size: large;">
+        </div>
+    </div>
+</div>
+<p-toast [style]="{width: 'auto'}" position="bottom-center"></p-toast>

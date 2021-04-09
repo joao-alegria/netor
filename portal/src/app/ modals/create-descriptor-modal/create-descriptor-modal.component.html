@@ -1,0 +1,284 @@
+<div class="container-fluid" id="modal-content-wrapper" style="height: 100%; display: flex; flex-flow: column;">
+    <div class="row">
+        <h2 id="modal-title" style="color: #4489eb;">Create VS Descriptor</h2>
+        <i style="margin-left: auto; cursor: pointer;" class="fa fa-times fa-lg" aria-hidden="true" type=" button"
+            (click)="closeModal()"></i>
+    </div>
+    <div style="width: 80%; height: 1px; margin: 0px auto; border-bottom: 1px solid #969696;">&nbsp;</div>
+
+    <div id="modal-body-extra" style="overflow-y: auto; padding-top: 10px;">
+        <h3>Descriptor Metadata</h3>
+        <div id="descriptorMetadata">
+            <form>
+                <div class="container">
+                    <div class="row form-group">
+                        <label for="blueprintId" class="col-sm-3 text-right col-form-label">Blueprint
+                            ID:</label>
+                        <input class="col-sm-9 form-control" type="text" id="blueprintId"
+                            [attr.value]="modalData.blueprint.vsBlueprintId" readonly />
+                    </div>
+                    <div class="row form-group">
+                        <label for="blueprintName" class="col-sm-3 text-right col-form-label">Blueprint
+                            Name:</label>
+                        <input class="col-sm-9 form-control" type="text" id="blueprintName"
+                            [attr.value]="modalData.blueprint.vsBlueprint.name" readonly />
+                    </div>
+                    <div class="row form-group">
+                        <label for="name" class="col-sm-3 text-right col-form-label">Name: </label>
+                        <input class="col-sm-9 form-control" type="text" id="name" placeholder="Enter Name" required>
+                    </div>
+                    <div class="row form-group">
+                        <label for="version" class="col-sm-3 text-right col-form-label">Version</label>
+                        <input class="col-sm-9 form-control" type="text" id="version" placeholder="Enter Version"
+                            required>
+                    </div>
+                    <div class="row form-group">
+                        <label for="sliceServiceType" class="col-sm-3 text-right col-form-label">Slice Service
+                            Type:</label>
+                        <select class="form-control col-sm-9" id="sliceServiceType">
+                            <option>NONE</option>
+                            <option>EMBB</option>
+                            <option>URLLC</option>
+                            <option>M_IOT</option>
+                            <option>ENTERPRISE</option>
+                            <option>NFV_IAAS</option>
+                        </select>
+                    </div>
+                    <div class="form-group row">
+                        <label for="manType" class="col-sm-3 text-right col-form-label">Management Type:</label>
+                        <select class="form-control col-sm-9" id="manType">
+                            <option>PROVIDER_MANAGED</option>
+                            <option>TENANT_MANAGED</option>
+                        </select>
+                    </div>
+                    <div class="form-group row" style="display: flex;">
+                        <label for="isPublic" class="col-sm-3 text-right col-form-label">Public: </label>
+                        <div class="col-sm-9">
+                            <input type="checkbox" id="isPublic">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <h3>QoS Parameters</h3>
+        <div id="qosParameters">
+            <form *ngFor="let parameter of modalData.blueprint.vsBlueprint.parameters">
+                <div class="container">
+                    <div class="form-group row">
+                        <label [attr.for]="parameter.parameterName"
+                            class="col-sm-3 text-right col-form-label">{{parameter.parameterName}}:
+                        </label>
+                        <input class="col-sm-9 form-control" type="text" [attr.id]="parameter.parameterName"
+                            placeholder="Insert Value" required>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- <h3>Multi Domain Control</h3>
+        <div id="multidomainControl">
+            <form *ngFor="let vnf of modalData.blueprint.onBoardedVnfPackageInfoId">
+                <div class="container">
+                    <div class="form-group row">
+                        <label [attr.for]="'vnf'+vnf"
+                            class="col-sm-3 text-right col-form-label">VNF {{vnf}} Domain:
+                        </label>
+                        <input class="col-sm-9 form-control" type="text" [attr.id]="'vnf'+vnf"
+                            placeholder="Insert Value" required>
+                    </div>
+                </div>
+            </form>
+        </div> -->
+
+        <h3>Slice Service Parameters</h3>
+        <div id="sliceParams">
+            <form>
+                <div class="container">
+                    <div class="row form-group">
+                        <label for="sliceServiceDomain" class="col-sm-3 text-right col-form-label">Slice Type:</label>
+                        <input class="form-control col-sm-9" type="text" id="sliceServiceDomain" placeholder="Enter Domain">
+                    </div>
+                    <div class="row form-group">
+                        <label for="sliceServiceType" class="col-sm-3 text-right col-form-label">Slice Type:</label>
+                        <select class="form-control col-sm-9" id="sliceType">
+                            <option>NONE</option>
+                            <option>EMBB</option>
+                            <option>URLLC</option>
+                        </select>
+                    </div>
+                    <div class="form-group row">
+                        <label for="manType" class="col-sm-3 text-right col-form-label">Control Parameters:</label>
+                        <div class="col-sm-12 container" id="manType">
+                            <div *ngFor="let paramNum of nsParams; let l=index">
+                                <div class="row">
+                                    <div class="col-md-1" style="margin:auto;">
+                                        <i *ngIf="l!=0" style="float:right; cursor: pointer;" class=" fa fa-trash fa-2x"
+                                            (click)="removeParameter(l)"></i>
+                                    </div>
+                                    <div class="col-md-11">
+                                        <div class="container-fluid" [ngStyle]="myStyle(l)">
+                                            <div class="row from-group">
+                                                <label [attr.for]="'parameter'+paramNum"
+                                                    class="col-sm-3 text-right col-form-label">Name:</label>
+                                                <!-- <select class="form-control col-sm-9" [attr.id]="'parameter'+paramNum">
+                                                    <option *ngFor="let key of objectKeys(parameterOptions)">{{key}}
+                                                    </option>
+                                                </select> -->
+                                                <input class="form-control col-sm-9" type="text"
+                                                    [attr.id]="'parameter'+paramNum" placeholder="Enter Value">
+                                            </div>
+                                            <div class="row form-group">
+                                                <label [attr.for]="'value'+paramNum"
+                                                    class="col-sm-3 text-right col-form-label">Value:
+                                                </label>
+                                                <input class="form-control col-sm-9" type="text"
+                                                    [attr.id]="'value'+paramNum" placeholder="Enter Value">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align: center;">
+                                <button style="margin-bottom: 10px; background-color: #4489eb;" type="button"
+                                    class="btn btn-primary" (click)="addParameter()">Add Parameter</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <h3>Service Constraints</h3>
+        <div id="serviceCons">
+            <form>
+                <div class="container">
+                    <div class="row form-group">
+                        <label for="priority" class="col-sm-3 text-right col-form-label">Priority:</label>
+                        <select class="form-control col-sm-9" id="priority">
+                            <option>LOW</option>
+                            <option>MEDIUM</option>
+                            <option>HIGH</option>
+                        </select>
+                    </div>
+                    <div class="row form-group">
+                        <label for="isSharable" class="col-sm-3 text-right col-form-label">Sharable: </label>
+                        <div class="col-sm-9">
+                            <input type="checkbox" id="isSharable">
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label for="includesSharedElems" class="col-sm-3 text-right col-form-label">Includes
+                            Shared Elements:
+                        </label>
+                        <div class="col-sm-9">
+                            <input type="checkbox" id="includesSharedElems">
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label for="prefProviders" class="col-sm-3 text-right col-form-label">Preferred
+                            Providers:</label>
+                        <div class="col-sm-9">    
+                            <!-- <p-chips id="prefProviders" [(ngModel)]="preferredProviders" placeholder="Enter Providers">
+                            </p-chips> -->
+                            <mat-form-field class="chip-list" style="width: 100%;margin-top: -15px;">
+                                <mat-chip-list #chipList1>
+                                    <mat-chip *ngFor="let prov of preferredProviders" [selectable]="selectable" [removable]="removable" (removed)="removePreferred(prov)">
+                                        {{prov}}
+                                        <mat-icon matChipRemove>cancel</mat-icon>
+                                    </mat-chip>
+                                    <input [matChipInputFor]="chipList1"
+                                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                        [matChipInputAddOnBlur]="addOnBlur"
+                                        (matChipInputTokenEnd)="addPreferred($event)">
+                                </mat-chip-list>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label for="notPrefProviders" class="col-sm-3 text-right col-form-label">Not Preferred
+                            Providers:</label>
+                        <div class="col-sm-9">
+                            <!-- <p-chips placeholder="Enter Providers" id="notPrefProviders"
+                                [(ngModel)]="notPreferredProviders" styleClass="p-chips">
+                            </p-chips> -->
+                            <mat-form-field class="chip-list" style="width: 100%;margin-top: -15px;">
+                                <mat-chip-list #chipList2>
+                                    <mat-chip *ngFor="let prov of notPreferredProviders" [selectable]="selectable" [removable]="removable" (removed)="removeNonPreferred(prov)">
+                                        {{prov}}
+                                        <mat-icon matChipRemove>cancel</mat-icon>
+                                    </mat-chip>
+                                    <input [matChipInputFor]="chipList2"
+                                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                        [matChipInputAddOnBlur]="addOnBlur"
+                                        (matChipInputTokenEnd)="addNonPreferred($event)">
+                                </mat-chip-list>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label for="prohibitedProviders" class="col-sm-3 text-right col-form-label">Prohibited
+                            Providers:</label>
+                        <div class="col-sm-9">
+                            <!-- <p-chips placeholder="Enter Providers" id="prohibitedProviders"
+                                [(ngModel)]="prohibitedProviders" styleClass="p-chips">
+                            </p-chips> -->
+                            <mat-form-field class="chip-list" style="width: 100%;margin-top: -15px;">
+                                <mat-chip-list #chipList3>
+                                    <mat-chip *ngFor="let prov of prohibitedProviders" [selectable]="selectable" [removable]="removable" (removed)="removeProhibited(prov)">
+                                        {{prov}}
+                                        <mat-icon matChipRemove>cancel</mat-icon>
+                                    </mat-chip>
+                                    <input [matChipInputFor]="chipList3"
+                                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                        [matChipInputAddOnBlur]="addOnBlur"
+                                        (matChipInputTokenEnd)="addProhibited($event)">
+                                </mat-chip-list>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <h3>SLA Requirements</h3>
+        <div id="slaReq">
+            <form>
+                <div class="container">
+                    <div class="row form-group">
+                        <label for="serviceCreationTime" class="col-sm-3 text-right col-form-label">Service
+                            Creation
+                            Time:</label>
+                        <select class="form-control col-sm-9" id="serviceCreationTime">
+                            <option>NO REQUIREMENTS</option>
+                            <option>SERVICE_CREATION_TIME_LOW</option>
+                            <option>SERVICE_CREATION_TIME_MEDIUM</option>
+                            <option>SERVICE_CREATION_TIME_HIGH</option>
+                        </select>
+                    </div>
+                    <div class="row form-group">
+                        <label for="coverageArea" class="col-sm-3 text-right col-form-label">Coverage
+                            Area:</label>
+                        <select class="form-control col-sm-9" id="coverageArea">
+                            <option>NO REQUIREMENTS</option>
+                            <option>AVAILABILITY_COVERAGE_LOW</option>
+                            <option>AVAILABILITY_COVERAGE_MEDIUM</option>
+                            <option>AVAILABILITY_COVERAGE_HIGH</option>
+                        </select>
+                    </div>
+                    <div class="row form-group">
+                        <label for="isLowCost" class="col-sm-3 text-right col-form-label">Low Cost: </label>
+                        <div class="col-sm-9">
+                            <input type="checkbox" id="isLowCost">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 5px;">
+        <button style="margin-left: auto;; background-color: #4489eb;" id="submitNewDescriptor" type="button"
+            class="btn btn-primary" (click)="submitDescriptor()">Submit</button>
+    </div>
+</div>

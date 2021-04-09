@@ -1,0 +1,89 @@
+<div class="container-fluid" id="modal-content-wrapper" style="height: 100%; display: flex; flex-flow: column;">
+    <div class="row">
+        <h2 id="modal-title" style="color: #4489eb;">Add New Tenant</h2>
+        <i style="margin-left: auto;cursor: pointer;" class="fa fa-times fa-lg" aria-hidden="true" type=" button"
+            (click)="closeModal()"></i>
+    </div>
+    <div style="width: 80%; height: 1px; margin: 0px auto; border-bottom: 1px solid #969696;">&nbsp;</div>
+
+    <div id="modal-body-extra" style="overflow-y: auto; height: 90%; padding-top: 10px;">
+        <form>
+            <div class="container">
+                <div class="row form-group">
+                    <label class="col-sm-3 col-form-label" style="text-align: right;">Group:</label>
+                    <div class="col-sm-9">
+                        <input class="form-control" type="text" id="inputGroup" [attr.value]="modalData.group"
+                            readonly />
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="typeTenant" class="col-sm-3 col-form-label" style="text-align: right;">Tenant
+                        Type:</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="typeTenant" (change)="changeTypeTenant()">
+                            <option>LOCAL</option>
+                            <option>REMOTE</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="col-sm-3 col-form-label" style="text-align: right;"
+                        for="inputUsername">Username*</label>
+                    <div class="col-sm-9">
+                        <input type="username" class="form-control" id="inputUsername" placeholder="Enter username"
+                            required>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="col-sm-3 col-form-label" style="text-align: right;"
+                        for="inputPassword1">Password*</label>
+                    <div class="col-sm-9">
+                        <input type="password" class="form-control" id="inputPassword" placeholder="Enter Password"
+                            required>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="col-sm-3 col-form-label" style="text-align: right;"
+                        for="exampleInputPassword1">Confirm Password*</label>
+                    <div class="col-sm-9">
+                        <input type="password" class="form-control" id="inputPasswordConfirm"
+                            placeholder="Confirm Password" required
+                            (keydown)="passwordConfirmCheck($event,modalData.group)">
+                    </div>
+                </div>
+
+                <div id="remoteTenantType" style="display: none;">
+                    <div class="row form-group">
+                        <label class="col-sm-3 col-form-label" style="text-align: right;" for="inputRemoteHost">Remote
+                            Host*</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="inputRemoteHost" placeholder="Enter host"
+                                required>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="col-sm-3 col-form-label" style="text-align: right;"
+                            for="inputRemoteUsername">Remote Username*</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="inputRemoteUsername"
+                                placeholder="Enter username" required>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="col-sm-3 col-form-label" style="text-align: right;"
+                            for="inputRemotePassword">Remote Password*</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="inputRemotePassword"
+                                placeholder="Enter password" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="row" style="margin-top: 5px;">
+        <button style="margin-left: auto; background-color: #4489eb;" id="submitNewTenant" type="button"
+            class="btn btn-primary" (click)="submitTenant()">Submit</button>
+    </div>
+</div>

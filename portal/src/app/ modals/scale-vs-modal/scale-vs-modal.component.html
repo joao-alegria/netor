@@ -1,0 +1,24 @@
+<div class="container-fluid" id="modal-content-wrapper" style="height: 100%; display: flex; flex-flow: column;">
+    <div class="row">
+        <h2 id="modal-title" style="color: #4489eb;">Scale Instance</h2>
+        <i style="margin-left: auto;cursor: pointer;" class="fa fa-times fa-lg" aria-hidden="true" type=" button"
+            (click)="closeModal()"></i>
+    </div>
+    <div style="width: 80%; height: 1px; margin: 0px auto; border-bottom: 1px solid #969696;">&nbsp;</div>
+
+    <div id="modal-body-extra" style="overflow-y: auto; height: 90%; padding-top: 10px;">
+        <form class="container">
+            <div class="row">
+                <label for="chosenVSD" class="col-sm-3 text-right col-form-label">New VSD:</label>
+                <select class="form-control col-sm-9" id="chosenVSD">
+                    <option *ngFor="let vsd of validVSD">Name: {{vsd.name}} (ID: {{vsd.vsdId}})</option>
+                </select>
+            </div>
+        </form>
+
+    </div>
+    <div class="row" style="margin-top: 5px;">
+        <button style="margin-left: auto;; background-color: #4489eb;" id="updateVS" type="button"
+            class="btn btn-primary" (click)="updateVS()">Submit</button>
+    </div>
+</div>

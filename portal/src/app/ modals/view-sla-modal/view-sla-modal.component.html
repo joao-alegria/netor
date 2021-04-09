@@ -1,0 +1,55 @@
+<div class="container-fluid" id="modal-content-wrapper" style="height: 100%; display: flex; flex-flow: column;">
+    <div class="row">
+        <h2 id="modal-title" style="color: #4489eb;">View All SLA</h2>
+
+        <i style="margin-left: auto;cursor: pointer;" class="fa fa-times fa-lg" aria-hidden="true" type=" button"
+            (click)="closeModal()"></i>
+    </div>
+    <div style="width: 80%; height: 1px; margin: 0px auto; border-bottom: 1px solid #969696;">&nbsp;</div>
+
+    <div id="modal-body-extra" style="overflow-y: auto; padding-top: 10px;">
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">SLA</th>
+                    <th scope="col">Delete?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let sla of validSLA">
+                    <td>
+                        <table class="table table-hover">
+                            <thead>
+                                <th scope="col">Scope</th>
+                                <th scope="col">vRAM</th>
+                                <th scope="col">vCPU</th>
+                                <th scope="col">Disk Storage</th>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let maxResources of sla.slaConstraints">
+                                    <td>{{maxResources.scope}}</td>
+                                    <td>{{maxResources.maxResourceLimit.memoryRAM}}</td>
+                                    <td>{{maxResources.maxResourceLimit.vCPU}}</td>
+                                    <td>{{maxResources.maxResourceLimit.diskStorage}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td style="text-align: center; vertical-align: middle;">
+                        <input style="zoom: 1.5;" type="checkbox" [attr.id]="'delete_'+sla.id"
+                            (change)="registerSla(sla.id)" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="row" style="margin-top: 5px;">
+        <button id="createSLA" type="button" class="btn btn-primary" style="background-color: #4489eb;"
+            (click)="createSLA()">New SLA</button>
+        <button style="margin-left: auto; background-color: #4489eb;" id="deleteSLA" type="button"
+            class="btn btn-primary" (click)="deleteSLA()">Delete Selected SLAs</button>
+    </div>
+</div>

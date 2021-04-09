@@ -1,0 +1,52 @@
+{
+    "nsdId": "string",
+    "nsdVersion": "string",
+    "nsstIds": [
+        "string"
+    ],
+    "nstId": "string",
+    "nstName": "string",
+    "nstProvider": "string",
+    "nstServiceProfile": {
+        "availability": 0,
+        "coverageAreaTAList": [
+            "string"
+        ],
+        "eMBBPerfReq": [
+            {
+                "activityFactor": 0,
+                "areaTrafficCapDL": 0,
+                "areaTrafficCapUL": 0,
+                "coverage": "string",
+                "expDataRateDL": 0,
+                "expDataRateUL": 0,
+                "uESpeed": 0,
+                "userDensity": 0
+            }
+        ],
+        "latency": 0,
+        "maxNumberofUEs": 0,
+        "pLMNIdList": [
+            "string"
+        ],
+        "resourceSharingLevel": true,
+        "sST": "EMBB",
+        "serviceProfileId": "string",
+        "uEMobilityLevel": "STATIONARY",
+        "uRLLCPerfReq": [
+            {
+                "cSAvailability": 0,
+                "connDensity": 0,
+                "e2eLatency": 0,
+                "expDataRate": 0,
+                "jitter": 0,
+                "payloadSize": "string",
+                "reliability": 0,
+                "serviceAreaDimension": "string",
+                "survivalTime": 0,
+                "trafficDensity": 0
+            }
+        ]
+    },
+    "nstVersion": "string"
+}

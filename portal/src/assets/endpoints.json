@@ -1,0 +1,17 @@
+{
+    "vsEndpoint": "http://netor_up_nginx",
+    "login": "/tenant/oauth/token",
+    "whoami": "/tenant/whoami",
+    "vsdescriptors": "/vs/catalogue/vsdescriptor",
+    "vsblueprints": "/vs/catalogue/vsblueprint",
+    "vsnst": "/ns/catalogue/nstemplate",
+    "vsgroups": "/vs/admin/group",
+    "vstenants": "/vs/admin/groups/tenants",
+    "vsnstemplates": "/ns/catalogue/nstemplate",
+    "vsverticalslices": "/lcm/vs",
+    "vsverticalslicesID": "/lcm/vs",
+    "vsns": "/vs/basic/nslcm/ns",
+    "vsdomains":"/domainLayer/catalogue",
+    "192.168.85.189": "",
+    "193.136.92.69":""
+}

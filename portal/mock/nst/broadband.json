@@ -1,0 +1,38 @@
+{
+    "nsdId": "1",
+    "nsdVersion": "1.0",
+    "nsstIds": [
+        "1"
+    ],
+    "nstId": "4",
+    "nstName": "Broadband Access Crowd",
+    "nstProvider": "string",
+    "nstServiceProfile": {
+        "availability": 100,
+        "coverageAreaTAList": [
+            "ITAV"
+        ],
+        "eMBBPerfReq": [
+            {
+                "activityFactor": 30,
+                "areaTrafficCapDL": 3750,
+                "areaTrafficCapUL": 7500,
+                "coverage": "CONFINED",
+                "expDataRateDL": 25,
+                "expDataRateUL": 50,
+                "uESpeed": 5,
+                "userDensity": 500000
+            }
+        ],
+        "latency": 2,
+        "maxNumberofUEs": 10,
+        "pLMNIdList": [
+            "string"
+        ],
+        "resourceSharingLevel": true,
+        "sST": "EMBB",
+        "serviceProfileId": "string",
+        "uEMobilityLevel": "STATIONARY"
+    },
+    "nstVersion": "1.0"
+}

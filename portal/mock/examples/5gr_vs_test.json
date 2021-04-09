@@ -1,0 +1,209 @@
+{
+	"info": {
+		"_postman_id": "4485122a-037b-4dbd-9057-474194703ed2",
+		"name": "sebastian_5gr",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "onboard_vsb_automotive_vs",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a81d5247-2029-40e6-9e70-88d0600a4480",
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"",
+							"console.log(\"received vs_vsb_id: \" + JSON.stringify(jsonData));",
+							"",
+							"pm.environment.set(\"vs_vsb_id\", jsonData);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"vsBlueprint\": {\n        \"version\": \"0.5\",\n        \"name\": \"VideoStreaming\",\n        \"description\": \"Automotive Video Streaming Service\",\n        \"sliceServiceType\": \"EMBB\",\n        \"embbServiceCategory\": \"URBAN_MACRO\",\n        \"parameters\": [\n            {\n                \"parameterId\": \"MaximumNumberUsers\",\n                \"parameterName\": \"MaximumNumberUsers\",\n                \"parameterType\": \"number\",\n                \"parameterDescription\": \"Maximum number of users that should be supported by the service\",\n                \"applicabilityField\": \"automotive\"\n            }\n        ],\n        \"atomicComponents\": [\n            {\n                \"componentId\": \"Video_Streamer\",\n                \"serversNumber\": 1,\n                \"endPointsIds\": [\n                    \"vVS_data_ext\"\n                ]\n            },\n            {\n                \"componentId\": \"Video_Streamer_Algorithm\",\n                \"serversNumber\": 1,\n                \"endPointsIds\": [\n                    \"vVS_algo_data_ext\"\n                ]\n            },\n            {\n                \"componentId\": \"EPC\",\n                \"serversNumber\": 1,\n                \"endPointsIds\": [\n                    \"pEPC_data\"\n                ]\n            }\n        ],\n        \"endPoints\": [\n            {\n                \"endPointId\": \"vs_sap_data\",\n                \"external\": true,\n                \"management\": true,\n                \"ranConnection\": true\n            },\n            {\n                \"endPointId\": \"vVS_data_ext\",\n                \"external\": true,\n                \"management\": true,\n                \"ranConnection\": false\n            },\n            {\n                \"endPointId\": \"vVS_algo_data_ext\",\n                \"external\": true,\n                \"management\": true,\n                \"ranConnection\": false\n            },\n            {\n                \"endPointId\": \"pEPC_data\",\n                \"external\": true,\n                \"management\": true,\n                \"ranConnection\": false\n            }\n        ],\n        \"connectivityServices\": [\n            {\n                \"endPointIds\": [\n                    \"vs_sap_data\",\n                    \"vVS_data_ext\",\n                    \"vVS_algo_data_ext\",\n                    \"pEPC_data\"\n                ],\n                \"external\": true\n            }\n        ]\n    },\n    \"nsds\": [\n        {\n            \"nsdIdentifier\": \"nsVS\",\n            \"designer\": \"SSSA-NXW\",\n            \"version\": \"0.1\",\n            \"nsdName\": \"VS service @ 5GT\",\n            \"nsdInvariantId\": \"VS service @ 5GT\\\"\",\n            \"vnfdId\": [\n                \"vVS\",\n                \"vVS_Algorithm\"\n            ],\n            \"pnfdId\": [\n                \"pEPC\"\n            ],\n            \"sapd\": [\n                {\n                    \"cpdId\": \"vs_sap_data\",\n                    \"description\": \"SAP for all the nsVS VNFs\",\n                    \"layerProtocol\": \"IPV4\",\n                    \"cpRole\": \"ROOT\",\n                    \"addressData\": [\n                        {\n                            \"addressType\": \"IP_ADDRESS\",\n                            \"iPAddressAssignment\": false,\n                            \"floatingIpActivated\": true,\n                            \"iPAddressType\": \"IPv4\",\n                            \"numberOfIpAddress\": 1\n                        }\n                    ],\n                    \"sapAddressAssignment\": false,\n                    \"nsVirtualLinkDescId\": \"vs_vl_data\"\n                }\n            ],\n            \"virtualLinkDesc\": [\n                {\n                    \"virtualLinkDescId\": \"vs_vl_data\",\n                    \"virtualLinkDescProvider\": \"NXW\",\n                    \"virtuaLinkDescVersion\": \"0.1\",\n                    \"connectivityType\": {\n                        \"layerProtocol\": \"IPV4\"\n                    },\n                    \"virtualLinkDf\": [\n                        {\n                            \"flavourId\": \"vs_vl_df_data\",\n                            \"qos\": {\n                                \"latency\": 0,\n                                \"packetDelayVariation\": 0,\n                                \"packetLossRatio\": 0,\n                                \"priority\": 0\n                            },\n                            \"serviceAvaibilityLevel\": \"LEVEL_1\",\n                            \"bitrateRequirements\": {\n                                \"root\": 2,\n                                \"leaf\": 2\n                            }\n                        }\n                    ],\n                    \"description\": \"Network to connect to the users\"\n                }\n            ],\n            \"nsDf\": [\n                {\n                    \"nsDfId\": \"nsVS_df\",\n                    \"flavourKey\": \"nsVS_fk\",\n                    \"vnfProfile\": [\n                        {\n                            \"vnfProfileId\": \"vVS_profile\",\n                            \"vnfdId\": \"vVS\",\n                            \"flavourId\": \"vVS_df\",\n                            \"instantiationLevel\": \"vVS_il\",\n                            \"minNumberOfInstances\": 1,\n                            \"maxNumberOfInstances\": 1,\n                            \"nsVirtualLinkConnectivity\": [\n                                {\n                                    \"virtualLinkProfileId\": \"vs_vl_profile_data\",\n                                    \"cpdId\": [\n                                        \"vVS_data_ext\"\n                                    ]\n                                }\n                            ]\n                        },\n                        {\n                            \"vnfProfileId\": \"vVS_algo_profile\",\n                            \"vnfdId\": \"vVS_Algorithm\",\n                            \"flavourId\": \"vVS_algo_df\",\n                            \"instantiationLevel\": \"vVS_algo_il\",\n                            \"minNumberOfInstances\": 1,\n                            \"maxNumberOfInstances\": 1,\n                            \"nsVirtualLinkConnectivity\": [\n                                {\n                                    \"virtualLinkProfileId\": \"vs_vl_profile_data\",\n                                    \"cpdId\": [\n                                        \"vVS_algo_data_ext\"\n                                    ]\n                                }\n                            ]\n                        }\n                    ],\n                    \"pnfProfile\": [\n                        {\n                            \"pnfProfileId\": \"pEPC_profile\",\n                            \"pnfdId\": \"pEPC\",\n                            \"pnfVirtualLinkConnectivity\": [\n                                {\n                                    \"virtualLinkProfileId\": \"vs_vl_profile_data\",\n                                    \"cpdId\": [\n                                        \"pEPC_data\"\n                                    ]\n                                }\n                            ]\n                        }\n                    ],\n                    \"virtualLinkProfile\": [\n                        {\n                            \"virtualLinkProfileId\": \"vs_vl_profile_data\",\n                            \"virtualLinkDescId\": \"vs_vl_data\",\n                            \"flavourId\": \"vs_vl_df_data\",\n                            \"maxBitrateRequirements\": {\n                                \"root\": \"1\",\n                                \"leaf\": \"1\"\n                            },\n                            \"minBitrateRequirements\": {\n                                \"root\": \"1\",\n                                \"leaf\": \"1\"\n                            }\n                        }\n                    ],\n                    \"nsInstantiationLevel\": [\n                        {\n                            \"nsLevelId\": \"nsVS_il_big\",\n                            \"description\": \"Big instantiation level for the VS\",\n                            \"vnfToLevelMapping\": [\n                                {\n                                    \"vnfProfileId\": \"vVS_profile\",\n                                    \"numberOfInstances\": 1\n                                },\n                                {\n                                    \"vnfProfileId\": \"vVS_algo_profile\",\n                                    \"numberOfInstances\": 1\n                                }\n                            ],\n                            \"virtualLinkToLevelMapping\": [\n                                {\n                                    \"virtualLinkProfileId\": \"vs_vl_profile_data\",\n                                    \"bitRateRequirements\": {\n                                        \"root\": \"1\",\n                                        \"leaf\": \"1\"\n                                    }\n                                }\n                            ]\n                        },\n                        {\n                            \"nsLevelId\": \"nsVS_il_small\",\n                            \"description\": \"Small instantiation level for the VS\",\n                            \"vnfToLevelMapping\": [\n                                {\n                                    \"vnfProfileId\": \"vVS_profile\",\n                                    \"numberOfInstances\": 1\n                                }\n                            ],\n                            \"virtualLinkToLevelMapping\": [\n                                {\n                                    \"virtualLinkProfileId\": \"vl_profile_data\",\n                                    \"bitRateRequirements\": {\n                                        \"root\": \"1\",\n                                        \"leaf\": \"1\"\n                                    }\n                                }\n                            ]\n                        }\n                    ],\n                    \"defaultNsInstantiationLevelId\": \"nsVS_il_small\",\n                    \"nsProfile\": [\n                        {\n                            \"nsProfileId\": \"nsVS_profile_big\",\n                            \"nsdId\": \"nsVS\",\n                            \"nsDfId\": \"nsVS_df\",\n                            \"nsInstantiationLevelId\": \"nsVS_il_big\",\n                            \"minNumberOfInstances\": 1,\n                            \"maxNumberOfInstances\": 1\n                        },\n                        {\n                            \"nsProfileId\": \"nsVS_profile_small\",\n                            \"nsdId\": \"nsVS\",\n                            \"nsDfId\": \"nsVS_df\",\n                            \"nsInstantiationLevelId\": \"nsVS_il_small\",\n                            \"minNumberOfInstances\": 1,\n                            \"maxNumberOfInstances\": 1\n                        }\n                    ],\n                    \"dependencies\": []\n                }\n            ],\n            \"security\": {\n                \"signature\": \"VS_NSD_SIGNATURE\",\n                \"algorithm\": \"VS_NSD_ALGORITHM\",\n                \"certificate\": \"VS_NSD_CERTIFICATE\"\n            }\n        }\n    ],\n    \"vnfPackages\": [\n        {\n            \"name\": \"vVS\",\n            \"provider\": \"SSSA-NXW\",\n            \"version\": \"SSSA-NXW\",\n            \"checksum\": \"N/A\",\n            \"vnfPackagePath\": \"http://{{vnf_repo}}/vnfd_vVS.tar\"\n        },\n        {\n            \"name\": \"vVS_algo\",\n            \"provider\": \"SSSA-NXW\",\n            \"version\": \"SSSA-NXW\",\n            \"checksum\": \"N/A\",\n            \"vnfPackagePath\": \"http://{{vnf_repo}}/vnfd_vVS_algo.tar\"\n        }\n    ],\n    \"translationRules\": [\n        {\n            \"nsdId\": \"nsVS\",\n            \"nstId\": \"5gr_e2e_slice\",\n            \"nsdVersion\": \"0.1\",\n            \"nsFlavourId\": \"nsVS_df\",\n            \"nsInstantiationLevelId\": \"nsVS_il_small\",\n            \"input\": [\n                {\n                    \"parameterId\": \"MaximumNumberUsers\",\n                    \"minValue\": 1,\n                    \"maxValue\": 10\n                }\n            ]\n        },\n        {\n            \"nsdId\": \"nsVS\",\n            \"nsdVersion\": \"0.1\",\n            \"nsFlavourId\": \"nsVS_df\",\n            \"nsInstantiationLevelId\": \"nsVS_il_big\",\n            \"input\": [\n                {\n                    \"parameterId\": \"MaximumNumberUsers\",\n                    \"minValue\": 11,\n                    \"maxValue\": 100\n                }\n            ]\n        }\n    ],\n    \"nsts\": [\n        {\n            \"nstId\": \"5gr_local_nsst\",\n            \"nstName\": \"5gr_local_nsst\",\n            \"nstVersion\": \"0.1\",\n            \"nstProvider\": \"NXW\",\n            \"nsdId\": \"nsVS\",\n            \"nsdVersion\": \"0.1\",\n            \"nstServiceProfile\": {\n                \"pLMNIdList\": [\n                    \"pLMNId1\"\n                    \n                ],\n                \"coverageAreaTAList\": [\n                    \"coverageAreaTA1\"\n                ],\n                \"eMBBPerfReq\": [\n                    {\n                        \"expDataRateDL\": 10220,\n                        \"expDataRateUL\": 120,\n                        \"areaTrafficCapDL\": 10220,\n                        \"areaTrafficCapUL\": 210,\n                        \"userDensity\": 22,\n                        \"activityFactor\": 3220,\n                        \"uESpeed\": 3220,\n                        \"coverage\": \"coverage1\"\n                    },\n                    {\n                        \"expDataRateDL\": 100,\n                        \"expDataRateUL\": 10,\n                        \"areaTrafficCapDL\": 100,\n                        \"areaTrafficCapUL\": 10,\n                        \"userDensity\": 200000,\n                        \"activityFactor\": 30,\n                        \"uESpeed\": 30,\n                        \"coverage\": \"coverage2\"\n                    }\n                ],\n                \"uRLLCPerfReq\": [\n                    {\n                        \"e2eLatency\": 20,\n                        \"jitter\": 200,\n                        \"survivalTime\": 300,\n                        \"cSAvailability\": 2.2,\n                        \"reliability\": 99.9,\n                        \"expDataRate\": 121,\n                        \"payloadSize\": \"123\",\n                        \"trafficDensity\": 123,\n                        \"connDensity\": 123,\n                        \"serviceAreaDimension\": \"aaa\"\n                    },\n                    {\n                        \"e2eLatency\": 2880,\n                        \"jitter\": 28800,\n                        \"survivalTime\": 3880,\n                        \"cSAvailability\": 882.2,\n                        \"reliability\": 8899.9,\n                        \"expDataRate\": 18821,\n                        \"payloadSize\": \"12883\",\n                        \"trafficDensity\": 18823,\n                        \"connDensity\": 18823,\n                        \"serviceAreaDimension\": \"serviceAreaDimension1\"\n                    }\n                ],\n                \"availability\": 99.9,\n                \"latency\": 10,\n                \"maxNumberofUEs\": 20000,\n                \"resourceSharingLevel\": false,\n                \"sST\": \"EMBB\",\n                \"uEMobilityLevel\": \"STATIONARY\"\n            }\n        },\n         {\n\t\t\"nstId\": \"5gr_e2e_slice\",\n\t\t\"nstName\": \"5gr_e2e_slice\",\n\t\t\"nstVersion\": \"0.1\",\n\t\t\"nstProvider\": \"NXW\",\n\t\t\"nsstIds\": [\n\t\t\t\"5gr_local_nsst\"\n\t\t\t\n\t\t]\n\t}\n    ]\n}"
+				},
+				"url": {
+					"raw": "http://{{slicer}}:8082/vs/catalogue/vsblueprint",
+					"protocol": "http",
+					"host": [
+						"{{slicer}}"
+					],
+					"port": "8082",
+					"path": [
+						"vs",
+						"catalogue",
+						"vsblueprint"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "onboard_vsd_automotive_vs_small",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4ae98a69-9d41-48f5-95dc-a445c5136387",
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"",
+							"console.log(\"received vs_vsd_id: \" + JSON.stringify(jsonData));",
+							"",
+							"pm.environment.set(\"vs_vsd_id\", jsonData);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"vsd\": {\n        \"name\": \"VS_small\",\n        \"version\": \"0.7\",\n        \"sst\": \"URLLC\",\n        \"vsBlueprintId\":\"{{vs_vsb_id}}\",\n        \"managementType\": \"PROVIDER_MANAGED\",\n        \"qosParameters\": {\n            \"MaximumNumberUsers\": \"5\"\n        },\n        \"serviceConstraints\": [\n            {\n                \"sharable\": false,\n                \"canIncludeSharedElements\": true,\n                \"priority\": \"HIGH\"\n            }\n        ],\n        \"sla\": {\n            \"serviceCreationTime\": \"SERVICE_CREATION_TIME_MEDIUM\",\n            \"availabilityCoverage\": \"AVAILABILITY_COVERAGE_MEDIUM\",\n            \"lowCostRequired\": false\n        },\n        \"sliceServiceParameters\":{\n        \t\"type\": \"embb\",\n        \t\"expDataRateDL\": \"-1\"\n        }\n    },\n    \"tenantId\": \"{{tenant}}\",\n    \"isPublic\": true\n}"
+				},
+				"url": {
+					"raw": "http://{{slicer}}:8082/vs/catalogue/vsdescriptor",
+					"protocol": "http",
+					"host": [
+						"{{slicer}}"
+					],
+					"port": "8082",
+					"path": [
+						"vs",
+						"catalogue",
+						"vsdescriptor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "instantiate_automotive_vs",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"test_instance\",\n\t\"description\":\"Bluespace service instance\",\n\t\"vsdId\":\"{{vs_vsd_id}}\",\n\t\"tenantId\":\"{{tenant}}\",\n\t\"userData\": {\n\t},\n\t\"locationConstraints\":{\n\t\t\"latitude\":\"43.68\",\n\t\t\"longitude\": \"10.35\",\n\t\t\"range\": \"200\"\n\t\t\n\t}\n}\n "
+				},
+				"url": {
+					"raw": "http://{{slicer}}:8082/vs/basic/vslcm/vs/",
+					"protocol": "http",
+					"host": [
+						"{{slicer}}"
+					],
+					"port": "8082",
+					"path": [
+						"vs",
+						"basic",
+						"vslcm",
+						"vs",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_all_nst",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{slicer}}:8082/ns/catalogue/nstemplate",
+					"protocol": "http",
+					"host": [
+						"{{slicer}}"
+					],
+					"port": "8082",
+					"path": [
+						"ns",
+						"catalogue",
+						"nstemplate"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "fcc0ab54-1aaf-413d-b1ed-9c410c7f72f3",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "9bb78c04-a52b-4748-8991-9630bf11436a",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "b527315f-6c5d-40c1-a8dd-9c6c438e9526",
+			"key": "slicer_address",
+			"value": "10.0.8.46",
+			"type": "string"
+		},
+		{
+			"id": "2e185a2e-ba14-440b-bb6b-3b2b4c127914",
+			"key": "group",
+			"value": "NXW",
+			"type": "string"
+		},
+		{
+			"id": "136a58b1-50cc-42a2-96e1-b2e64ed99e2a",
+			"key": "tenant",
+			"value": "NXW",
+			"type": "string"
+		},
+		{
+			"id": "e7218245-7ba0-45f9-8842-0d7c9bc52c4c",
+			"key": "vsi_id",
+			"value": "27",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

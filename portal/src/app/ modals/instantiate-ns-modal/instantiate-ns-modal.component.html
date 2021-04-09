@@ -1,0 +1,125 @@
+<div class="container-fluid" id="modal-content-wrapper" style="height: 100%; display: flex; flex-flow: column;">
+    <div class="row">
+        <h2 id="modal-title" style="color: #007bff;">Instantiate NS</h2>
+        <i style="margin-left: auto; cursor: pointer;" class="fa fa-times fa-lg" aria-hidden="true" type=" button"
+            (click)="closeModal()"></i>
+    </div>
+    <div style="width: 80%; height: 1px; margin: 0px auto; border-bottom: 1px solid #969696;">&nbsp;</div>
+
+    <div id="modal-body-extra" style="overflow-y: auto; height: 90%; padding-top: 10px;">
+        <form>
+            <div class="container">
+                <div class="row form-group">
+                    <label for="nstId" class="col-sm-3 text-right col-form-label"> NST ID: </label>
+                    <input class="form-control col-sm-9" type="text" id="nstId" [attr.value]="modalData.nst.nstId"
+                        readonly>
+                </div>
+                <div class="row form-group">
+                    <label for="nsiId" class="col-sm-3 text-right col-form-label"> NSI ID: </label>
+                    <input class="form-control col-sm-9" type="text" id="nsiId" [attr.value]="modalData.nst.nsiId"
+                        readonly>
+                </div>
+                <div class="row form-group">
+                    <label for="dfId" class="col-sm-3 text-right col-form-label">DF ID: </label>
+                    <input class="form-control col-sm-9" type="text" id="dfId" placeholder="Enter Value" required>
+                </div>
+                <div class="row form-group">
+                    <label for="ilId" class="col-sm-3 text-right col-form-label">IL ID: </label>
+                    <input class="form-control col-sm-9" type="text" id="ilId" placeholder="Enter Value" required>
+                </div>
+                <div class="row form-group">
+                    <label for="ranEndPointId" class="col-sm-3 text-right col-form-label">RAN Endpoint ID: </label>
+                    <input class="form-control col-sm-9" type="text" id="ranEndPointId" placeholder="Enter Value"
+                        required>
+                </div>
+                <div class="row form-group">
+                    <label for="nsSubnetsId" class="col-sm-3 text-right col-form-label">NS Subnet IDs</label>
+                    <div class="col-sm-9">
+                        <p-chips id="nsSubnetsId" [(ngModel)]="nsSubnetsId" styleClass="p-chips"></p-chips>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <h5>Location Constraints</h5>
+
+        <form>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="row form-group">
+                            <label for="altitude" class="col-sm-3 text-right col-form-label">Altitude: </label>
+                            <input class="form-control col-sm-9" type="text" id="altitude" placeholder="Enter Altitude"
+                                required>
+                        </div>
+                        <div class="row form-group">
+                            <label for="latitude" class="col-sm-3 text-right col-form-label">Latitude: </label>
+                            <input class="form-control col-sm-9" type="text" id="latitude" placeholder="Enter Latitude"
+                                required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row form-group">
+                            <label for="longitude" class="col-sm-3 text-right col-form-label">Longitude: </label>
+                            <input class="form-control col-sm-9" type="text" id="longitude"
+                                placeholder="Enter Longitude" required>
+                        </div>
+                        <div class="row form-group">
+                            <label for="range" class="col-sm-3 text-right col-form-label">Range: </label>
+                            <input class="form-control col-sm-9" type="text" id="range" placeholder="Enter Range"
+                                required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="accordion">
+            <div style="cursor: pointer;" data-toggle="collapse" data-target="#nsiParams">
+                <h5 style="display: inline;">Additional Parameters</h5>
+                <i style="display: inline;" class="fa fa-angle-down fa-2x"></i>
+            </div>
+            <div id="nsiParams" class="show" data-parent="#modal-body-extra">
+                <form>
+                    <div class="container" *ngFor="let paramNum of nsParams; let l=index">
+                        <div class="row">
+                            <div class="col-sm-1 col-md-1" style="margin:auto;">
+                                <i *ngIf="l!=0" style="float:right; cursor: pointer;" class=" fa fa-trash fa-2x"
+                                    (click)="removeParameter(l)"></i>
+                            </div>
+                            <div class="col-sm-11 col-ms-11">
+                                <div class="container-fluid" [ngStyle]="myStyle(l)">
+                                    <div class="row form-group">
+                                        <label [attr.for]="'param'+paramNum"
+                                            class="col-sm-3 text-right col-form-label">Parameter:
+                                        </label>
+                                        <input class="form-control col-sm-9" type="text" [attr.id]="'param'+paramNum"
+                                            placeholder="Enter Name">
+                                    </div>
+                                    <div class="row form-group">
+                                        <label [attr.for]="'value'+paramNum"
+                                            class="col-sm-3 text-right col-form-label">Value:
+                                        </label>
+                                        <input class="form-control col-sm-9" type="text" [attr.id]="'value'+paramNum"
+                                            placeholder="Enter Value">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <button style="margin-bottom: 10px;" type="button" class="btn btn-primary"
+                            (click)="addParameter()">Add Parameter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="row" style="margin-top: 5px;">
+        <button style="margin-left: auto;" id="submitNewVS" type="button" class="btn btn-primary"
+            (click)="submitNS()">Submit</button>
+    </div>
+</div>

@@ -1,0 +1,38 @@
+{
+    "nsdId": "1",
+    "nsdVersion": "1.0",
+    "nsstIds": [
+        "1"
+    ],
+    "nstId": "6",
+    "nstName": "Broadcast services",
+    "nstProvider": "string",
+    "nstServiceProfile": {
+        "availability": 100,
+        "coverageAreaTAList": [
+            "ITAV"
+        ],
+        "eMBBPerfReq": [
+            {
+                "activityFactor": 0,
+                "areaTrafficCapDL": 0,
+                "areaTrafficCapUL": 0,
+                "coverage": "FULL",
+                "expDataRateDL": 200,
+                "expDataRateUL": 1,
+                "uESpeed": 500,
+                "userDensity": 15
+            }
+        ],
+        "latency": 2,
+        "maxNumberofUEs": 10,
+        "pLMNIdList": [
+            "string"
+        ],
+        "resourceSharingLevel": true,
+        "sST": "EMBB",
+        "serviceProfileId": "string",
+        "uEMobilityLevel": "STATIONARY"
+    },
+    "nstVersion": "1.0"
+}

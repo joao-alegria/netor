@@ -1,0 +1,334 @@
+<div class="container-fluid" id="modal-content-wrapper" style="height: 100%; display: flex; flex-flow: column;">
+    <div class="row">
+        <h2 id="modal-title" style="color: #007bff;">Onboard New Domain</h2>
+        <i style="margin-left: auto; cursor: pointer;" class="fa fa-times fa-lg" aria-hidden="true" type=" button"
+            (click)="closeModal()"></i>
+    </div>
+    <div style="width: 80%; height: 1px; margin: 0px auto; border-bottom: 1px solid #969696;">&nbsp;</div>
+    
+    <div id="modal-body-extra container" style="overflow-y: auto; height: 90%;">
+        <form>
+            <div class="container">
+                <div class="row form-group" style="padding-top: 10px;">
+                    <label class="col-sm-3 col-form-label" style="text-align: right;">Domain ID:</label>
+                    <div class="col-sm-9">
+                        <input class="form-control" type="text" id="domainId" placeholder="Enter ID"/>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="col-sm-3 col-form-label" style="text-align: right;">Name:</label>
+                    <div class="col-sm-9">
+                        <input class="form-control" type="text" id="domainName" placeholder="Enter Name"/>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="col-sm-3 col-form-label" style="text-align: right;">Description:</label>
+                    <div class="col-sm-9">
+                        <input class="form-control" type="text" id="domainDescription" placeholder="Enter Description"/>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="col-sm-3 col-form-label" style="text-align: right;">Domain Admin:</label>
+                    <div class="col-sm-9">
+                        <input class="form-control" type="text" id="domainAdmin" placeholder="Enter Admin"/>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="typeTenant" class="col-sm-3 col-form-label" style="text-align: right;">Domain Status:</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="domainStatus">
+                            <option>ACTIVE</option>
+                            <option>MAINTENANCE</option>
+                            <option>DISABLED</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <h3>Domain Interface</h3>
+        <form>
+            <div class="container">
+                <div class="row form-group">
+                    <label class="col-sm-3 col-form-label" style="text-align: right;">Url:</label>
+                    <div class="col-sm-9">
+                        <input class="form-control" type="text" id="domainInterUrl" placeholder="Enter Url"/>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="col-sm-3 col-form-label" style="text-align: right;">Port:</label>
+                    <div class="col-sm-9">
+                        <input class="form-control" type="number" id="domainInterPort" placeholder="Enter Port" (keydown)="checkNumber($event)"/>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="col-sm-3 col-form-label" style="text-align: right;">Interface Auth:</label>
+                    <div class="col-sm-9">
+                        <input type="checkbox" id="domainInterAuth"/>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="typeTenant" class="col-sm-3 col-form-label" style="text-align: right;">Interface Type:</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="domainInterType">
+                            <option>HTTP</option>
+                            <option>RABBIT</option>
+                            <option>LOCAL</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- TODO: create list -->
+        <h3>Owned Layers</h3>
+        <form>
+            <div class="container" *ngFor="let layer of ownedLayers; let i=index">
+                <div class="row">
+                    <div class="col-md-1" style="margin:auto;">
+                        <i *ngIf="i!=0" style="float:right; cursor: pointer;" class=" fa fa-trash fa-2x"
+                            (click)="removeLayer(i)"></i>
+                    </div>
+                    <div class="col-md-11">
+                        <div class="container-fluid" [ngStyle]="myStyle(i)">
+                            <div class="row form-group">
+                                <label class="col-form-label col-sm-3" [attr.for]="'domainLayerId'+layer">Layer ID:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" placeholder="Enter ID"
+                                        [attr.id]="'domainLayerId'+layer">
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <label class="col-form-label col-sm-3" [attr.for]="'domainLayerType'+layer">Layer Type:</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control" [attr.id]="'domainLayerType'+layer">
+                                        <option>VERTICAL_SERVICE_PROVIDER</option>
+                                        <option>NETWORK_SLICE_PROVIDER</option>
+                                        <option>NETWORK_SERVICE_PROVIDER</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="row form-group">
+                                <label class="col-form-label col-sm-3" [attr.for]="'domainLayerDriverType'+layer">Driver Type:</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control" [attr.id]="'domainLayerDriverType'+layer" (change)="driverTypeChange($event, i)">
+                                        <option>NFVO</option>
+                                        <option>NSP</option>
+                                        <option>VERTICAL</option>
+                                        <option>OSM_NFVO</option>
+                                        <option>NEUTRAL_HOSTING_NSP</option>
+                                        <option>OSM_NSP</option>
+                                        <option>SONATA_NSP</option>
+                                        <option>EVE_PORTAL_DSP</option>
+                                        <!-- <option>DomainLayer</option> -->
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div [attr.id]="'nfvo'+layer">
+                                <div class="row form-group">
+                                    <label class="col-form-label col-sm-3" [attr.for]="'domainLayerManoNbiType'+layer">MANO NBI Type:</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" [attr.id]="'domainLayerManoNbiType'+layer">
+                                            <option>RAN_CONTROL_DRIVER</option>
+                                            <option>QOS_CONTROL_DRIVER</option>
+                                            <option>NMRO_DRIVER</option>
+                                            <option>OSM_DRIVER</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div [attr.id]="'nsp'+layer" style="display: none;">
+                                <div class="row form-group">
+                                    <label class="col-form-label col-sm-3" [attr.for]="'domainLayerNspNbiType'+layer">NSP NBI Type:</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" [attr.id]="'domainLayerNspNbiType'+layer">
+                                            <option>THREE_GPP</option>
+                                            <option>SONATA</option>
+                                            <option>NEUTRAL_HOSTING</option>
+                                            <option>SEBASTIAN</option>
+                                            <option>OSM</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 col-form-label" [attr.for]="'domainLayerRanEnabled'+layer">RAN Enabled:</label>
+                                    <div class="col-sm-9">
+                                        <input type="checkbox" [attr.id]="'domainLayerRanEnabled'+layer"/>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div [attr.id]="'vertical'+layer" style="display: none;">
+                                <div class="row form-group">
+                                    <label class="col-form-label col-sm-3" [attr.for]="'domainLayerDspType'+layer">DSP Type:</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" [attr.id]="'domainLayerDspType'+layer">
+                                            <option>VERTICAL_SERVICE</option>
+                                            <option>EVE_PORTAL</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div [attr.id]="'osmNfvo'+layer" style="display: none;">
+                                <div class="row form-group">
+                                    <label class="col-sm-3 col-form-label" [attr.for]="'domainLayerOsmNfvoUsername'+layer">OSM_NFVO Username:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" [attr.id]="'domainLayerOsmNfvoUsername'+layer" placeholder="Enter Username"/>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 col-form-label" [attr.for]="'domainLayerOsmNfvoPassword'+layer">OSM_NFVO Password:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" [attr.id]="'domainLayerOsmNfvoPassword'+layer" placeholder="Enter Password"/>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 col-form-label" [attr.for]="'domainLayerOsmNfvoProject'+layer">OSM_NFVO Project:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" [attr.id]="'domainLayerOsmNfvoProject'+layer" placeholder="Enter Project"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div [attr.id]="'nhpNsp'+layer" style="display: none;">
+                                <div class="row form-group">
+                                    <label class="col-sm-3 col-form-label" [attr.for]="'domainLayerNeutralNspUser'+layer">NSP User ID:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" [attr.id]="'domainLayerNeutralNspUser'+layer" placeholder="Enter Id"/>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 col-form-label" [attr.for]="'domainLayerNeutralNspTenant'+layer">NSP Tenant ID:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" [attr.id]="'domainLayerNeutralNspTenant'+layer" placeholder="Enter Id"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div [attr.id]="'osmNsp'+layer" style="display: none;">
+                                <div class="row form-group">
+                                    <label class="col-sm-3 col-form-label" [attr.for]="'domainLayerOsmNspUsername'+layer">OSM NSP Username:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" [attr.id]="'domainLayerOsmNspUsername'+layer" placeholder="Enter Username"/>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 col-form-label" [attr.for]="'domainLayerOsmNspPassword'+layer">OSM NSP Password:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" [attr.id]="'domainLayerOsmNspPassword'+layer" placeholder="Enter Password"/>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 col-form-label" [attr.for]="'domainLayerOsmNspProject'+layer">OSM NSP Project:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" [attr.id]="'domainLayerOsmNspProject'+layer" placeholder="Enter Project"/>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 col-form-label" [attr.for]="'domainLayerOsmNspVim'+layer">OSM NSP VIM:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" [attr.id]="'domainLayerOsmNspVim'+layer" placeholder="Enter VIM Account"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div [attr.id]="'sonataNsp'+layer" style="display: none;">
+                                <div class="row form-group">
+                                    <label class="col-sm-3 col-form-label" [attr.for]="'domainLayerSonataNspUsername'+layer">SONATA NSP Username:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" [attr.id]="'domainLayerSonataNspUsername'+layer" placeholder="Enter Username"/>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 col-form-label" [attr.for]="'domainLayerSonataNspPassword'+layer">SONATA NSP Password:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" [attr.id]="'domainLayerSonataNspPassword'+layer" placeholder="Enter Password"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div [attr.id]="'eve'+layer" style="display: none;">
+                                <div class="row form-group">
+                                    <label class="col-sm-3 col-form-label" [attr.for]="'domainLayerEveRbacUrl'+layer">EVE Rbac Url:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" [attr.id]="'domainLayerEveRbacUrl'+layer" placeholder="Enter Url"/>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 col-form-label" [attr.for]="'domainLayerEveCatalogueUrl'+layer">EVE Catalogue Url:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" [attr.id]="'domainLayerEveCatalogueUrl'+layer" placeholder="Enter Url"/>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 col-form-label" [attr.for]="'domainLayerEveElcmUrl'+layer">EVE Elcm Url:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" [attr.id]="'domainLayerEveElcmUrl'+layer" placeholder="Enter Url"/>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 col-form-label" [attr.for]="'domainLayerEveUsername'+layer">EVE Username:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" [attr.id]="'domainLayerEveUsername'+layer" placeholder="Enter Username"/>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 col-form-label" [attr.for]="'domainLayerEvePassword'+layer">EVE Password:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" [attr.id]="'domainLayerEvePassword'+layer" placeholder="Enter Password"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <button style="background-color: #4489eb;" type="button" class="btn btn-primary"
+                    (click)="addLayer()">Add +1 Layer</button>
+            </div>
+        </form>
+
+        <h3>Domain Agreement</h3>
+        <form>
+            <div class="container">
+                <div class="row form-group">
+                    <label class="col-sm-3 col-form-label" style="text-align: right;">Agree-With ID:</label>
+                    <div class="col-sm-9">
+                        <input class="form-control" type="text" id="domainAgreeId" placeholder="Enter ID"/>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="typeTenant" class="col-sm-3 col-form-label" style="text-align: right;">Agree-With Layers:</label>
+                    <div class="col-sm-9">
+                        <mat-form-field class="chip-list" style="width: 100%;margin-top: -15px;">
+                            <mat-chip-list #chipList>
+                                <mat-chip *ngFor="let layer of layersAgreeList" [selectable]="selectable" [removable]="removable" (removed)="remove(layer)">
+                                    {{layer}}
+                                    <mat-icon matChipRemove>cancel</mat-icon>
+                                </mat-chip>
+                                <input [matChipInputFor]="chipList"
+                                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                    [matChipInputAddOnBlur]="addOnBlur"
+                                    (matChipInputTokenEnd)="add($event)">
+                            </mat-chip-list>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="row" style="margin-top: 5px;">
+        <button style="margin-left: auto;" id="onboardNst" type="button" class="btn btn-primary"
+            (click)="onboardDomain()">Submit</button>
+    </div>
+</div>

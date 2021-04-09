@@ -1,0 +1,38 @@
+<div class="container-fluid" id="modal-content-wrapper" style="height: 100%; display: flex; flex-flow: column;">
+    <div class="row">
+        <h2 id="modal-title" style="color: #007bff;">Onboard New NST</h2>
+        <i style="margin-left: auto; cursor: pointer;" class="fa fa-times fa-lg" aria-hidden="true" type=" button"
+            (click)="closeModal()"></i>
+    </div>
+    <div style="width: 80%; height: 1px; margin: 0px auto; border-bottom: 1px solid #969696;">&nbsp;</div>
+
+    <div id="modal-body-extra container" style="overflow-y: auto; height: 90%;padding-top: 10px;">
+        <div class="container">
+            <div class="row" style="margin-bottom: 10px;">
+                <div class="col-md-12">
+                    <h3>VST Descriptor File</h3>
+                    <div class="dropArea" (fileDropped)="nstDropped($event)">
+                        <input type="file" id="vsbDrop" (change)="nstDropped($event.target.files)" />
+                        <h5>Drop file here</h5>
+                        <h5>or</h5>
+                        <label for="vsbDrop" class="btn-primary">Choose file</label>
+                    </div>
+                    <div class="files-list">
+                        <div class="single-file" *ngFor="let file of nstFiles; let i = index">
+                            <i class="fa fa-file-o" aria-hidden="true"></i>
+                            {{ file.name }}
+                            <i (click)="deleteNSTFile(i)" class="fa fa-trash" aria-hidden="true"
+                                style="float: right;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 5px;">
+        <button style="margin-left: auto;" id="onboardNst" type="button" class="btn btn-primary"
+            (click)="onboardNst()">Submit</button>
+
+    </div>
+</div>

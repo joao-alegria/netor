@@ -1,0 +1,38 @@
+{
+    "nsdId": "1",
+    "nsdVersion": "1.0",
+    "nsstIds": [
+        "1"
+    ],
+    "nstId": "5",
+    "nstName": "Dense Urban",
+    "nstProvider": "string",
+    "nstServiceProfile": {
+        "availability": 100,
+        "coverageAreaTAList": [
+            "ITAV"
+        ],
+        "eMBBPerfReq": [
+            {
+                "activityFactor": 10,
+                "areaTrafficCapDL": 750,
+                "areaTrafficCapUL": 125,
+                "coverage": "DOWNTOWN",
+                "expDataRateDL": 300,
+                "expDataRateUL": 50,
+                "uESpeed": 60,
+                "userDensity": 25000
+            }
+        ],
+        "latency": 2,
+        "maxNumberofUEs": 10,
+        "pLMNIdList": [
+            "string"
+        ],
+        "resourceSharingLevel": true,
+        "sST": "EMBB",
+        "serviceProfileId": "string",
+        "uEMobilityLevel": "STATIONARY"
+    },
+    "nstVersion": "1.0"
+}
