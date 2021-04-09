@@ -5,8 +5,10 @@ from db.persistance import Tenant, OauthClient, session
 from api.oauth import OauthProvider
 import service
 from api.loginConfig import loginManager, loginUser
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+CORS(app)
 
 swagger_config = {
     "headers": [],
@@ -26,7 +28,7 @@ loginManager.init_app(app)
 #---------------------LOGIN----------------------------
 
 @app.route('/login', methods=['GET','POST'])
-def home():
+def login():
     if request.method=='GET':
         return render_template('index.html')
     

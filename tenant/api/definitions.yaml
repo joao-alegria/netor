@@ -15,6 +15,9 @@ definitions:
       password:
         type: string
         example: password
+      role:
+        type: string
+        example: role
       storage:
         type: integer
         example: 1

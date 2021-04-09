@@ -2,8 +2,10 @@ from flask import Flask, jsonify, request
 from flasgger import Swagger, validate
 import service as domainService
 from api.loginConfig import loginManager, login_required
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+CORS(app)
 
 swagger_config = {
     "openapi": "3.0.3",

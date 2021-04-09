@@ -3,8 +3,10 @@ from flasgger import Swagger, validate
 import db.persistance
 import service as vsService
 from api.loginConfig import loginManager, current_user, login_required
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+CORS(app)
 
 swagger_config = {
     "openapi": "3.0.3",

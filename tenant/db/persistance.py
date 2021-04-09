@@ -49,6 +49,7 @@ class Tenant(Base, UserMixin):
     __tablename__ = 'Tenant'
     username = Column(String, primary_key=True)
     password = Column(String)
+    role = Column(String)
     storage = Column(Integer)
     memory = Column(Integer)
     vcpu = Column(Integer)
@@ -202,7 +203,7 @@ def initDB():
     
     password=blake2b('admin'.encode("utf-8")).hexdigest()
     group=Group(name="admin")
-    admin = Tenant(username='admin', storage=100, memory=100, vcpu=100, group=group, password=password)
+    admin = Tenant(username='admin', role='ADMIN', storage=100, memory=100, vcpu=100, group=group, password=password)
 
     try:
         session.add(group)

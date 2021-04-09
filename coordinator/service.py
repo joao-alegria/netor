@@ -21,12 +21,11 @@ def createNewVS(tenantName,request):
     return {"msg": "Acknowledge"}
 
 def getAllVSIs(tenantName):
+    schema = schemas.VerticalServiceInstanceSchema()
     vsis=session.query(VerticalServiceInstance).filter(VerticalServiceInstance.tenantId==tenantName).all()
     vsisDict=[]
     for vsi in vsis:
-        data=vsi.__dict__
-        del data["_sa_instance_state"]
-        vsisDict.append(data)
+        vsisDict.append(schema.dump(vsi))
     return vsisDict
 
 def getVSI(tenantName, vsiId):

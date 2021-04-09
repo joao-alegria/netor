@@ -9,3 +9,4 @@ marshmallow_sqlalchemy
 verboselogs
 importlib-metadata
 jsonschema
+flask-cors
