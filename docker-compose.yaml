@@ -92,13 +92,13 @@ services:
       RABBIT_PASS: "admin"
       RABBIT_IP: rabbitmq
 
-  netor_portal:
-    build: ./portal
-    restart: always
-    ports:
-      - '4200:4200'
-    environment:
-      NETOR_ENDPOINT: netor_up_nginx
+  # netor_portal:
+  #   build: ./portal
+  #   restart: always
+  #   ports:
+  #     - '4200:4200'
+  #   environment:
+  #     NETOR_ENDPOINT: netor_up_nginx
 
   netor_up_nginx: 
     image: nginx:latest
