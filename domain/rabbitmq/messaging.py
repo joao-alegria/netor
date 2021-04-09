@@ -32,7 +32,7 @@ class MessageReceiver(Thread):
                 message={"vsiId":data["vsiId"],"msgType":"domainInfo", "data":domainsId, "error":False}
                 self.messaging.publish2Exchange("vsLCM_Management", json.dumps(message))
             except Exception as e:
-                message={"vsiId":data["vsiId"],"msgType":"domainInfo", "error":True, "message":"Error when fetching domains ids"}
+                message={"vsiId":data["vsiId"],"msgType":"domainInfo", "error":True, "message":"Error when fetching domains ids: "+str(e)}
                 self.messaging.publish2Exchange("vsLCM_Management", json.dumps(message))
 
     def run(self):

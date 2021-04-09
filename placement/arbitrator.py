@@ -15,7 +15,7 @@ class Arbitrator(Thread):
         # self.messaging.consumeQueue("vsLCM_"+str(vsiId),self.vsCallback, ack=False)
 
     def vsCallback(self, channel, method_frame, header_frame, body):
-        print(" [x] Received %r" % body)
+        logging.info("Received Message {}".format(body))
         data=json.loads(body)
         th=Thread(target=self.processAction, args=[data])
         th.start()
@@ -88,7 +88,7 @@ class Arbitrator(Thread):
         catalogueInfo=self.received["catalogueInfo"]
 
         if domainInfo["error"] or tenantInfo["error"] or catalogueInfo["error"]:
-            message={"msgType":"placementInfo","error":True, "message":"Invalid Necessary Information. Error: " + "\nDomain error: "+domainInfo["message"] if domainInfo["error"] else "" + "\nTenant error: "+tenantInfo["message"] if tenantInfo["error"] else "" + "\nCatalogue error: "+catalogueInfo["message"] if catalogueInfo["error"] else "" }
+            message={"vsiId":domainInfo["vsiId"],"msgType":"placementInfo","error":True, "message":"Invalid Necessary Information. Error: " + "\nDomain error: "+domainInfo["message"] if domainInfo["error"] else "" + "\nTenant error: "+tenantInfo["message"] if tenantInfo["error"] else "" + "\nCatalogue error: "+catalogueInfo["message"] if catalogueInfo["error"] else "" }
             self.messaging.publish2Exchange("vsLCM_Management", json.dumps(message))
             return
 
@@ -114,5 +114,5 @@ class Arbitrator(Thread):
         return
 
     def run(self):
-        print(' [*] Waiting for messages. To exit press CTRL+C')
+        logging.info('Started Consuming RabbitMQ Topics')
         self.messaging.startConsuming()
