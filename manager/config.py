@@ -10,3 +10,8 @@ RABBIT_USER=os.getenv("RABBIT_USER","admin")
 RABBIT_PASS=os.getenv("RABBIT_PASS","admin")
 RABBIT_IP=os.getenv("RABBIT_IP","localhost")
 RABBIT_PORT=os.getenv("RABBIT_PORT",5672)
+
+REDIS_HOST=os.getenv("REDIS_HOST","localhost")
+REDIS_PORT=os.getenv("REDIS_PORT",6379)
+REDIS_PASS=os.getenv("REDIS_PASS","netorRedisPassword")
+REDIS_DB=os.getenv("REDIS_DB",1)

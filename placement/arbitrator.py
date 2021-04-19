@@ -2,6 +2,7 @@ from threading import Thread
 from rabbitmq.messaging import Messaging
 import json
 import logging
+import redisHandler as redis
 
 class Arbitrator(Thread):
 
@@ -9,10 +10,11 @@ class Arbitrator(Thread):
         super().__init__()
         self.vsiId=vsiId
         self.info=info
-        self.createVSI=True
-        self.received={}
+        # self.createVSI=True
+        # self.received={}
+        redis.setKeyValue("createVSI",vsiId, "create")
         self.messaging=Messaging()
-        # self.messaging.consumeQueue("vsLCM_"+str(vsiId),self.vsCallback, ack=False)
+        self.messaging.consumeQueue("placementQueue-vsLCM_"+str(vsiId), self.vsCallback, ack=False)
 
     def vsCallback(self, channel, method_frame, header_frame, body):
         logging.info("Received Message {}".format(body))
@@ -23,14 +25,24 @@ class Arbitrator(Thread):
     def processAction(self, data):
         if data["msgType"]=="modifyVSI":
             return
-        # else:
-        #     self.received[data["msgType"]]=data
-        #     if self.createVSI and "catalogueInfo" in self.received.keys() and "domainInfo" in self.received.keys() and "tenantInfo" in self.received.keys():
-        #         self.processEntitiesPlacement()
-        #     return
+        else:
+            # self.received[data["msgType"]]=data
+            # if self.createVSI and "catalogueInfo" in self.received.keys() and "domainInfo" in self.received.keys() and "tenantInfo" in self.received.keys():
+            #     self.processEntitiesPlacement()
+            redis.setKeyValue(self.vsiId, data["msgType"],json.dumps(data))
 
-    def translateVSD(self):
-        catalogueInfo=self.received["catalogueInfo"]["data"]
+            receivedData=[]
+            for key in redis.getHashKeys(self.vsiId):
+                receivedData.append(key.decode("UTF-8"))
+
+            createVsi=redis.getHashValue("createVSI",self.vsiId).decode("UTF-8")
+
+            if createVsi=="create" and set(["catalogueInfo","domainInfo","tenantInfo"]).issubset(receivedData):
+                redis.setKeyValue("createVSI", self.vsiId, "alreadyCreated")
+                self.processEntitiesPlacement()
+            return
+
+    def translateVSD(self, catalogueInfo):
         qosParamsInfo=catalogueInfo["vs_blueprint_info"]["vs_blueprint"]["parameters"]
         qosParams={}
         for parameter in qosParamsInfo:
@@ -81,36 +93,37 @@ class Arbitrator(Thread):
 
 
     def processEntitiesPlacement(self):
-        # message={"msgType":"placementInfo", "data":{"nsId":"72f9e7d3-41d1-4dab-b6ae-bd1ee514bd93", "domainId":"osm"}}
-        # messaging.publish2Queue("vsLCM_"+str(self.vsiId), json.dumps(message))
-        self.createVSI=False
-        domainInfo=self.received["domainInfo"]
-        tenantInfo=self.received["tenantInfo"]
-        catalogueInfo=self.received["catalogueInfo"]
+        allVsiData={}
+        for key,value in redis.getEntireHash(self.vsiId).items():
+            allVsiData[key.decode("UTF-8")]=json.loads(value)
+
+        domainInfo=allVsiData["domainInfo"]
+        tenantInfo=allVsiData["tenantInfo"]
+        catalogueInfo=allVsiData["catalogueInfo"]
 
         if domainInfo["error"] or tenantInfo["error"] or catalogueInfo["error"]:
             message={"vsiId":domainInfo["vsiId"],"msgType":"placementInfo","error":True, "message":"Invalid Necessary Information. Error: " + "\nDomain error: "+domainInfo["message"] if domainInfo["error"] else "" + "\nTenant error: "+tenantInfo["message"] if tenantInfo["error"] else "" + "\nCatalogue error: "+catalogueInfo["message"] if catalogueInfo["error"] else "" }
-            self.messaging.publish2Exchange("vsLCM_Management", json.dumps(message))
+            self.messaging.publish2Exchange("vsLCM_"+str(self.vsiId), json.dumps(message))
             return
 
-        translation=self.translateVSD()
+        translation=self.translateVSD(catalogueInfo["data"])
         for component in translation:
             if component["domainId"] not in domainInfo["data"]:
                 message={"msgType":"placementInfo","error":True, "message":"Invalid Domain Id. Identifier "+component["domainId"]+" not present in the onboarded domains" }
-                self.messaging.publish2Exchange("vsLCM_Management", json.dumps(message))
+                self.messaging.publish2Exchange("vsLCM_"+str(self.vsiId), json.dumps(message))
                 return
 
         #arbitrate the domains (see if user defined domains in instantiation)
 
         message={"vsiId":self.vsiId,"msgType":"placementInfo", "error":False, "message":"Success", "data":translation}
-        self.messaging.publish2Exchange("vsLCM_Management", json.dumps(message))
+        self.messaging.publish2Exchange("vsLCM_"+str(self.vsiId), json.dumps(message))
         return
 
-    def newMessage(self, data):
-        self.received[data["msgType"]]=data
-        if self.createVSI and "catalogueInfo" in self.received.keys() and "domainInfo" in self.received.keys() and "tenantInfo" in self.received.keys():
-            self.processEntitiesPlacement()
-        return
+    # def newMessage(self, data):
+    #     self.received[data["msgType"]]=data
+    #     if self.createVSI and "catalogueInfo" in self.received.keys() and "domainInfo" in self.received.keys() and "tenantInfo" in self.received.keys():
+    #         self.processEntitiesPlacement()
+    #     return
 
     def run(self):
         logging.info('Started Consuming RabbitMQ Topics')

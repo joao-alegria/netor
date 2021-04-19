@@ -34,7 +34,11 @@ def getAllDomains():
                             $ref: '#/definitions/Domain'
     """
 
-    return jsonify(domainService.getAllDomains())
+    try:
+        domains=domainService.getAllDomains()
+        return jsonify({"message":"Success", "data":domains}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500
 
 @app.route('/domain', methods=["POST"])
 @login_required
@@ -57,12 +61,14 @@ def createNewDomain():
                         $ref: '#/definitions/Acknowledge'
     """
 
-    data=request.json
-    validate(data, 'Domain', 'definitions.yaml')
+    try:
+        data=request.json
+        validate(data, 'Domain', 'definitions.yaml')
 
-    # response = vsService.createNewVS(data)
-
-    return jsonify(domainService.createDomain())
+        domainService.createDomain(data)
+        return jsonify({"message":"Success"}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500
 
 @app.route('/domain/<domainId>', methods=["GET"])
 @login_required
@@ -78,7 +84,12 @@ def getDomainById(domainId):
                     schema:
                         $ref: '#/definitions/Domain'
     """
-    return jsonify(domainService.getDomain(domainId))
+
+    try:
+        domain=domainService.getDomain(domainId)
+        return jsonify({"message":"Success", "data":domain}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500
 
 @app.route('/domain/<domainId>', methods=["PUT"])
 @login_required
@@ -94,7 +105,12 @@ def updateDomain(domainId):
                     schema:
                         $ref: '#/definitions/Acknowledge'
     """
-    return jsonify(domainService.updateDomain(domainId))
+
+    try:
+        domainService.updateDomain(domainId)
+        return jsonify({"message":"Success"}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500
 
 @app.route('/domain/<domainId>', methods=["DELETE"])
 @login_required
@@ -110,4 +126,9 @@ def removeDomain(domainId):
                     schema:
                         $ref: '#/definitions/Acknowledge'
     """
-    return jsonify(domainService.removeDomain(domainId))
+
+    try:
+        domainService.removeDomain(domainId)
+        return jsonify({"message":"Success"}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500

@@ -33,14 +33,14 @@ export class VsService {
 
   async whoami() {
     const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
-    return this.http.get(config.vsEndpoint + config.whoami, { headers: headers }).toPromise();
+    return this.http.get(config.vsEndpoint + config.whoami, { headers:headers }).toPromise();
   }
 
   async checkLoggedIn() {
     await $(document).ready(() => this.ngZone.run(() => {
       this.whoami().then(data => {
-        localStorage.setItem("role", data["role"])
-        localStorage.setItem("username", data["username"])
+        localStorage.setItem("role", data["data"]["role"])
+        localStorage.setItem("username", data["data"]["username"])
         if (localStorage.getItem("role") == "ADMIN") {
           $("#adminNav").show()
           $("#tenantNav").hide()
@@ -58,43 +58,53 @@ export class VsService {
   }
 
   async getDescriptors() {
-    return this.http.get(config.vsEndpoint + config.vsdescriptors, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.get(config.vsEndpoint + config.vsdescriptors, { headers:headers }).toPromise();
   }
 
   async getBlueprints() {
-    return this.http.get(config.vsEndpoint + config.vsblueprints, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.get(config.vsEndpoint + config.vsblueprints, { headers:headers }).toPromise();
   }
 
   async getSpecificBlueprint(vsbId) {
-    return this.http.get(config.vsEndpoint + config.vsblueprints+"/"+vsbId, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.get(config.vsEndpoint + config.vsblueprints+"/"+vsbId, { headers:headers }).toPromise();
   }
 
   async getGroups() {
-    return this.http.get(config.vsEndpoint + config.vsgroups, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.get(config.vsEndpoint + config.vsgroups, { headers:headers }).toPromise();
   }
 
   async getAllTenants() {
-    return this.http.get(config.vsEndpoint + config.vstenants, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.get(config.vsEndpoint + config.vstenants, { headers:headers }).toPromise();
   }
 
   async getAllDomains() {
-    return this.http.get(config.vsEndpoint + config.vsdomains, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.get(config.vsEndpoint + config.vsdomains, { headers:headers }).toPromise();
   }
 
   async createNewDomain(data) {
-    return this.http.post(config.vsEndpoint + config.vsdomains, data, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.post(config.vsEndpoint + config.vsdomains, data, { headers:headers }).toPromise();
   }
 
   async deleteDomain(domain) {
-    return this.http.delete(config.vsEndpoint + config.vsdomains+"/"+domain, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.delete(config.vsEndpoint + config.vsdomains+"/"+domain, { headers:headers }).toPromise();
   }
   
   async getNSTemplates() {
-    return this.http.get(config.vsEndpoint + config.vsnstemplates, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.get(config.vsEndpoint + config.vsnstemplates, { headers:headers }).toPromise();
   }
 
   async getNetSlices() {
-    return this.http.get(config.vsEndpoint + config.vsns, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.get(config.vsEndpoint + config.vsns, { headers:headers }).toPromise();
   }
 
   async getVerticalSlices() {
@@ -103,7 +113,7 @@ export class VsService {
     return await this.http.get(config.vsEndpoint + config.vsverticalslices, { headers:headers }).toPromise()
     // .then(async (data) => {
     //   for (let element in data) {
-    //     await this.http.get(config.vsEndpoint + config.vsverticalslicesID + "/" + data[element], { withCredentials: true }).toPromise().then((verticalSlice) => {
+    //     await this.http.get(config.vsEndpoint + config.vsverticalslicesID + "/" + data[element], { headers:headers }).toPromise().then((verticalSlice) => {
     //       allVerticalSlices.push(verticalSlice)
     //     })
     //   }
@@ -112,47 +122,58 @@ export class VsService {
   }
 
   async createNewGroup(name) {
-    return this.http.post(config.vsEndpoint + config.vsgroups + "/" + name, "", { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.post(config.vsEndpoint + config.vsgroups + "/" + name, "", { headers:headers }).toPromise();
   }
 
   async deleteGroup(group) {
-    return this.http.delete(config.vsEndpoint + config.vsgroups + "/" + group, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.delete(config.vsEndpoint + config.vsgroups + "/" + group, { headers:headers }).toPromise();
   }
 
   async createNewGroupTenant(group, data) {
-    return this.http.post(config.vsEndpoint + config.vsgroups + "/" + group + "/tenant", data, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.post(config.vsEndpoint + config.vsgroups + "/" + group + "/tenant", data, { headers:headers }).toPromise();
   }
 
   async deleteGroupTenant(group, tenant) {
-    return this.http.delete(config.vsEndpoint + config.vsgroups + "/" + group + "/tenant/" + tenant, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.delete(config.vsEndpoint + config.vsgroups + "/" + group + "/tenant/" + tenant, { headers:headers }).toPromise();
   }
 
   async onboardVSB(data) {
-    return this.http.post(config.vsEndpoint + config.vsblueprints, data, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.post(config.vsEndpoint + config.vsblueprints, data, { headers:headers }).toPromise();
   }
 
   async onboardNST(data) {
-    return this.http.post(config.vsEndpoint + config.vsnst, data, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.post(config.vsEndpoint + config.vsnst, data, { headers:headers }).toPromise();
   }
 
   async deleteNST(nstId) {
-    return this.http.delete(config.vsEndpoint + config.vsnst + "/" + nstId, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.delete(config.vsEndpoint + config.vsnst + "/" + nstId, { headers:headers }).toPromise();
   }
 
   async createNewNS(data) {
-    return this.http.post(config.vsEndpoint + config.vsns, data, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.post(config.vsEndpoint + config.vsns, data, { headers:headers }).toPromise();
   }
 
   async deleteVSB(blueprintID) {
-    return this.http.delete(config.vsEndpoint + config.vsblueprints + "/" + blueprintID, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.delete(config.vsEndpoint + config.vsblueprints + "/" + blueprintID, { headers:headers }).toPromise();
   }
 
   async createNewDescriptor(data) {
-    return this.http.post(config.vsEndpoint + config.vsdescriptors, data, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.post(config.vsEndpoint + config.vsdescriptors, data, { headers:headers }).toPromise();
   }
 
   async deleteDescriptor(descriptorId) {
-    return this.http.delete(config.vsEndpoint + config.vsdescriptors + "/" + descriptorId, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.delete(config.vsEndpoint + config.vsdescriptors + "/" + descriptorId, { headers:headers }).toPromise();
   }
 
   async instantiateNewVS(data) {
@@ -165,38 +186,47 @@ export class VsService {
   }
 
   async terminateVSI(vsiId) {
-    return this.http.post(config.vsEndpoint + config.vsverticalslicesID + "/" + vsiId + "/terminate", "", { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.post(config.vsEndpoint + config.vsverticalslicesID + "/" + vsiId + "/terminate", "", { headers:headers }).toPromise();
   }
 
   async deleteVSI(vsiId) {
-    return this.http.delete(config.vsEndpoint + config.vsverticalslicesID + "/" + vsiId, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.delete(config.vsEndpoint + config.vsverticalslicesID + "/" + vsiId, { headers:headers }).toPromise();
   }
 
   async scaleVSI(vsiId, data) {
-    return this.http.put(config.vsEndpoint + config.vsverticalslicesID + "/" + vsiId, data, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.put(config.vsEndpoint + config.vsverticalslicesID + "/" + vsiId, data, { headers:headers }).toPromise();
   }
 
   async createSLA(group, tenant, sla) {
-    return this.http.post(config.vsEndpoint + config.vsgroups + "/" + group + "/tenant/" + tenant + "/sla", sla, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.post(config.vsEndpoint + config.vsgroups + "/" + group + "/tenant/" + tenant + "/sla", sla, { headers:headers }).toPromise();
   }
 
   async getSLA(group, tenant) {
-    return this.http.get(config.vsEndpoint + config.vsgroups + "/" + group + "/tenant/" + tenant + "/sla", { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.get(config.vsEndpoint + config.vsgroups + "/" + group + "/tenant/" + tenant + "/sla", { headers:headers }).toPromise();
   }
 
   async deleteSLA(group, tenant, id) {
-    return this.http.delete(config.vsEndpoint + config.vsgroups + "/" + group + "/tenant/" + tenant + "/sla/" + id, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.delete(config.vsEndpoint + config.vsgroups + "/" + group + "/tenant/" + tenant + "/sla/" + id, { headers:headers }).toPromise();
   }
 
   async modifyNS(nsiId, data) {
-    return this.http.put(config.vsEndpoint + config.vsns + "/" + nsiId + "/action/modify", data, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.put(config.vsEndpoint + config.vsns + "/" + nsiId + "/action/modify", data, { headers:headers }).toPromise();
   }
 
   async terminateNS(nsiId) {
-    return this.http.put(config.vsEndpoint + config.vsns + "/" + nsiId + "/action/terminate", { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.put(config.vsEndpoint + config.vsns + "/" + nsiId + "/action/terminate", { headers:headers }).toPromise();
   }
 
   async instantiateNS(nsiId, data) {
-    return this.http.put(config.vsEndpoint + config.vsns + "/" + nsiId + "/action/instantiate", data, { withCredentials: true }).toPromise();
+    const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
+    return this.http.put(config.vsEndpoint + config.vsns + "/" + nsiId + "/action/instantiate", data, { headers:headers }).toPromise();
   }
 }

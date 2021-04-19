@@ -7,3 +7,4 @@ psycopg2-binary
 flask-login
 marshmallow_sqlalchemy
 flask-cors
+redis

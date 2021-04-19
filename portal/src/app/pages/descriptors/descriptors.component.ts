@@ -36,7 +36,8 @@ export class DescriptorsComponent implements OnInit {
   update() {
     this.listData=[]
     this.vs.getDescriptors().then(data => {
-      this.listData = data 
+      this.listData = data["data"]
+      console.log(this.listData)
     })
   }
 

@@ -50,9 +50,21 @@
                                     <td>
                                         <table class="table table-hover">
                                             <tbody>
-                                                <tr *ngFor="let resource of objectKeys(tenant.allocatedResources)">
+                                                <!-- <tr *ngFor="let resource of objectKeys(tenant.allocatedResources)">
                                                     <th scope="row">{{resource}}</th>
                                                     <td>{{tenant.allocatedResources[resource]}}</td>
+                                                </tr> -->
+                                                <tr>
+                                                    <th scope="row">vcpu</th>
+                                                    <td>{{tenant.vcpu}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">memory</th>
+                                                    <td>{{tenant.memory}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">storage</th>
+                                                    <td>{{tenant.storage}}</td>
                                                 </tr>
                                             </tbody>
                                         </table>

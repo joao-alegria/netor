@@ -28,7 +28,6 @@ export class DomainsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.listData = [];
     this.update()
   }
 
@@ -36,7 +35,7 @@ export class DomainsComponent implements OnInit {
     this.listData=[]
     this.vs.getAllDomains().then(data => {
       console.log(data)
-      this.listData = data
+      this.listData = data["data"]
       if (!this.tenant) {
         this.listData.unshift({ control: true, name: "Onboard Domain", domainId: "OnboardDomain" })
       }

@@ -36,10 +36,10 @@
         <div class="row" style="margin-top: 5px;">
             <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let element of listData"
                 style="display: flex;flex-direction: column;">
-                <div [attr.id]="element.vsBlueprintId" class="card mb-3"
+                <div [attr.id]="element.vs_blueprint_id" class="card mb-3"
                     style="border-color: #4489eb; border-width: 2px; cursor: pointer; height: 100%;"
-                    (click)="clickEvent($event, element)" (mouseenter)="onEnter(element.vsBlueprintId)"
-                    (mouseleave)="onLeave(element.vsBlueprintId)">
+                    (click)="clickEvent($event, element)" (mouseenter)="onEnter(element.vs_blueprint_id)"
+                    (mouseleave)="onLeave(element.vs_blueprint_id)">
                     <div *ngIf="element.control" class="card-body"
                         style="text-align: center;display: flex; justify-content: center; align-items: center;"
                         (click)="onboardVSB($event)">
@@ -54,11 +54,11 @@
                         <i class="fa fa-plus fa-4x" style="float: right; color:lightgray;"></i>
                         <h2 class="card-title">{{element.name}}</h2>
                         <p class="card-text">
-                            <b>Description:</b> {{element.vsBlueprint.description}}
+                            <b>Description:</b> {{element.vs_blueprint.description}}
                         </p>
                         <h5>QoS Parameters</h5>
-                        <div *ngFor="let element2 of element.vsBlueprint.parameters">
-                            <p>{{element2.parameterName}} : {{element2.parameterType}}</p>
+                        <div *ngFor="let element2 of element.vs_blueprint.parameters">
+                            <p>{{element2.parameter_name}} : {{element2.parameter_type}}</p>
                         </div>
                     </div>
                 </div>

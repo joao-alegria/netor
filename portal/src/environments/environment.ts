@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  NETOR_ENDPOINT: 'http://10.0.12.117'
+  // NETOR_ENDPOINT: 'http://10.0.12.117'
+  NETOR_ENDPOINT: 'http://localhost'
 };
 
 /*

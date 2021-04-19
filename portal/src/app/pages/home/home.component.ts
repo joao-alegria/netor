@@ -35,14 +35,14 @@ export class HomeComponent implements OnInit {
   }
 
   update() {
-    this.vs.getGroups().then(data => this.groups = JSON.parse(JSON.stringify(data)).length)
-    this.vs.getAllTenants().then(data => this.tenants = JSON.parse(JSON.stringify(data)).length)
-    this.vs.getBlueprints().then(data => this.blueprints = JSON.parse(JSON.stringify(data)).length)
-    this.vs.getDescriptors().then(data => this.descriptors = JSON.parse(JSON.stringify(data)).length)
-    this.vs.getNetSlices().then(data => this.netslices = JSON.parse(JSON.stringify(data)).length)
-    this.vs.getVerticalSlices().then(data => this.vsinstances = JSON.parse(JSON.stringify(data)).length)
-    this.vs.getNSTemplates().then(data => this.nst = JSON.parse(JSON.stringify(data)).length)
-    this.vs.getAllDomains().then(data => this.domains = JSON.parse(JSON.stringify(data)).length)
+    this.vs.getGroups().then(data => this.groups = JSON.parse(JSON.stringify(data["data"])).length)
+    this.vs.getAllTenants().then(data => this.tenants = JSON.parse(JSON.stringify(data["data"])).length)
+    this.vs.getBlueprints().then(data => this.blueprints = JSON.parse(JSON.stringify(data["data"])).length)
+    this.vs.getDescriptors().then(data => this.descriptors = JSON.parse(JSON.stringify(data["data"])).length)
+    // this.vs.getNetSlices().then(data => this.netslices = JSON.parse(JSON.stringify(data["data"])).length)
+    this.vs.getVerticalSlices().then(data => this.vsinstances = JSON.parse(JSON.stringify(data["data"])).length)
+    this.vs.getNSTemplates().then(data => this.nst = JSON.parse(JSON.stringify(data["data"])).length)
+    this.vs.getAllDomains().then(data => this.domains = JSON.parse(JSON.stringify(data["data"])).length)
   }
 
   goToGroups() {

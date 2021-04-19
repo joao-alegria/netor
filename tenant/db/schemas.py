@@ -1,4 +1,4 @@
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, fields
 import db.persistance as persistance
 
 
@@ -13,7 +13,9 @@ class GroupSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = persistance.Group
         include_fk = True
+        include_relationships = True
         load_instance = True
+    tenants=fields.Nested(TenantSchema, many=True)
 
 class SlaSchema(SQLAlchemyAutoSchema):
     class Meta:

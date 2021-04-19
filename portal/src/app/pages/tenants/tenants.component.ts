@@ -22,7 +22,6 @@ export class TenantsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.listData = [];
     this.update()
   }
 
@@ -53,7 +52,7 @@ export class TenantsComponent implements OnInit {
   update() {
     this.listData=[]
     this.listData.unshift({ control: true, title: "Create Group", name:"CreateGroup" })
-    this.vs.getGroups().then(data => { this.listData = data; this.listData.unshift({ control: true, title: "Create Group", name:"CreateGroup" }) })
+    this.vs.getGroups().then(data => { this.listData = data["data"]; this.listData.unshift({ control: true, title: "Create Group", name:"CreateGroup" });console.log(this.listData) })
   }
 
   clickEvent(e, tenant, group) {

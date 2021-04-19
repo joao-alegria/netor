@@ -13,12 +13,15 @@ def createNewVS(tenantName,request):
     vsInstance.tenantId=tenantName
     persist(vsInstance)
     #create vsi queue
-    # messaging.createQueue("vsLCM_"+str(vsInstance.vsiId))
+    messaging.createExchange("vsLCM_"+str(vsInstance.vsiId))
+    messaging.createQueue("managementQueue-vsLCM_"+str(vsInstance.vsiId))
+    messaging.createQueue("placementQueue-vsLCM_"+str(vsInstance.vsiId))
+    messaging.bindQueue2Exchange("vsLCM_"+str(vsInstance.vsiId), "managementQueue-vsLCM_"+str(vsInstance.vsiId))
+    messaging.bindQueue2Exchange("vsLCM_"+str(vsInstance.vsiId), "placementQueue-vsLCM_"+str(vsInstance.vsiId))
+    
     message={"msgType":"createVSI","vsiId": vsInstance.vsiId, "tenantId":tenantName, "data": request}
     #send needed info
     messaging.publish2Exchange('vsLCM_Management',json.dumps(message))
-
-    return {"msg": "Acknowledge"}
 
 def getAllVSIs(tenantName):
     schema = schemas.VerticalServiceInstanceSchema()
@@ -29,25 +32,30 @@ def getAllVSIs(tenantName):
     return vsisDict
 
 def getVSI(tenantName, vsiId):
+    schema = schemas.VerticalServiceInstanceSchema()
     vsi=session.query(VerticalServiceInstance).filter(VerticalServiceInstance.tenantId==tenantName,VerticalServiceInstance.vsiId==vsiId).first()
-    data=vsi.__dict__
-    del data["_sa_instance_state"]
-    return data
+    return schema.dump(vsi)
 
-def modifyVSI(tenantName, vsiId):
+def modifyVSI(tenantName, vsiId, request):
     vsi=session.query(VerticalServiceInstance).filter(VerticalServiceInstance.tenantId==tenantName,VerticalServiceInstance.vsiId==vsiId).first()
     #send message to manager
-    message={"msgType":"modifyVSI", "vsiId":vsiId}
-    messaging.publish2Queue('vsLCM_'+str(vsiId),json.dumps(message))
-    return {"msg":"Acknowledge"}
+    if request["action"]=="primitive":
+        message={"msgType":"primitive", "vsiId":vsiId, "data":{"primitiveName":request["primitiveName"],"primitiveTarget":request["primitiveTarget"],"primitiveInternalTarget":request["primitiveInternalTarget"],"primitiveParams":request["primitiveParams"]}}
+    elif request["action"]=="terminate":
+        message={"msgType":"terminate", "vsiId":vsiId}
+    elif request["action"]=="modify":
+        message={"msgType":"modifyVSI", "vsiId":vsiId}
+    messaging.publish2Exchange('vsLCM_'+str(vsiId),json.dumps(message))
 
 def removeVSI(tenantName, vsiId):
     vsi=session.query(VerticalServiceInstance).filter(VerticalServiceInstance.tenantId==tenantName,VerticalServiceInstance.vsiId==vsiId).first()
     #send message to manager
     message={"msgType":"removeVSI", "vsiId":vsiId}
-    messaging.publish2Queue('vsLCM_'+str(vsiId),json.dumps(message))
-    return {"msg":"Acknowledge"}
+    messaging.publish2Exchange('vsLCM_'+str(vsiId),json.dumps(message))
 
-def changeStatusVSI(vsiId, status):
+def changeStatusVSI(vsiId, status, message):
     vsi=session.query(VerticalServiceInstance).filter(VerticalServiceInstance.vsiId==vsiId).first()
-    vsi.status=status
+    if "fail" not in vsi.status.lower():
+        vsi.status=status
+        vsi.statusMessage=message
+        persist(vsi)

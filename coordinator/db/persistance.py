@@ -18,7 +18,7 @@ class VerticalServiceInstance(Base):
   description=Column(String)
   domainId=Column(String)
   additionalConf=Column(String)
-  errorMessage=Column(String)
+  statusMessage=Column(String)
   altitude=Column(Float)
   latitude=Column(Float)
   longitude=Column(Float)

@@ -32,17 +32,18 @@
                         <b>Status:</b> {{element.domainStatus}}
                     </p>
                     <p class="card-text">
-                        <b>Interface Type:</b> {{element.domainInterface.interfaceType}}
+                        <b>Interface Type:</b> {{element.interfaceType}}
                     </p>
                     <p class="card-text">
-                        <b>Url:</b> {{element.domainInterface.url}}
+                        <b>Url:</b> {{element.url}}
                     </p>
                     <p class="card-text">
-                        <b>Port:</b> {{element.domainInterface.port}}
+                        <b>Port:</b> {{element.port}}
                     </p>
                     <h5>Domain Layers' Types:</h5>
                     <div *ngFor="let layer of element.ownedLayers">
-                        <p> - {{layer.domainLayerType}}</p>
+                        <!-- domainLayerType -->
+                        <p> - {{layer}}</p>
                     </div>
                 </div>
             </div>

@@ -27,8 +27,8 @@ export class LoginComponent implements OnInit {
         this.vs.whoami().then(data => {
           console.log(data)
 
-          localStorage.setItem("username", data["username"])
-          localStorage.setItem("role", data["role"])
+          localStorage.setItem("username", data["data"]["username"])
+          localStorage.setItem("role", data["data"]["role"])
           localStorage.setItem("isLogged", "true")
           if (localStorage.getItem("role") == "ADMIN") {
             $("#adminNav").show()

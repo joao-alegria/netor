@@ -36,7 +36,11 @@ def getAllVSs():
                             $ref: '#/definitions/VS'
     """
 
-    return jsonify(vsService.getAllVSIs(current_user.tenantName))
+    try:
+        vsis=vsService.getAllVSIs(current_user.tenantName)
+        return jsonify({"message":"Success", "data":vsis}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500
 
 @app.route('/vs', methods=["POST"])
 @login_required
@@ -59,10 +63,13 @@ def createNewVS():
                         $ref: '#/definitions/Acknowledge'
     """
 
-    data=request.json
-    validate(data, 'VS', 'definitions.yaml')
-
-    return jsonify(vsService.createNewVS(current_user.tenantName,data))
+    try:
+        data=request.json
+        validate(data, 'VS', 'definitions.yaml')
+        vsService.createNewVS(current_user.tenantName,data)
+        return jsonify({"message":"Success"}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500
 
 @app.route('/vs/<vsiId>', methods=["GET"])
 @login_required
@@ -79,13 +86,17 @@ def getVSById(vsiId):
                         $ref: '#/definitions/VS'
     """
 
-    return jsonify(vsService.getVSI(current_user.tenantName, vsiId))
+    try:
+        vsi=vsService.getVSI(current_user.tenantName, vsiId)
+        return jsonify({"message":"Success", "data":vsi}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500
 
 @app.route('/vs/<vsiId>', methods=["PUT"])
 @login_required
 def modifyVs(vsiId):
     """
-    Modifies or terminates the Vertical Service indicated
+    Modifies/terminates/sendAction the Vertical Service indicated
     ---
     responses:
         200:
@@ -96,7 +107,12 @@ def modifyVs(vsiId):
                         $ref: '#/definitions/Acknowledge'
     """
 
-    return jsonify(vsService.modifyVSI(current_user.tenantName, vsiId))
+    try:
+        data=request.json
+        vsService.modifyVSI(current_user.tenantName, vsiId, data)
+        return jsonify({"message":"Success"}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500
 
 @app.route('/vs/<vsiId>', methods=["DELETE"])
 @login_required
@@ -113,4 +129,8 @@ def removeVs(vsiId):
                         $ref: '#/definitions/Acknowledge'
     """
 
-    return jsonify(vsService.removeVSI(current_user.tenantName, vsiId))
+    try:
+        vsService.removeVSI(current_user.tenantName, vsiId)
+        return jsonify({"message":"Success"}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500

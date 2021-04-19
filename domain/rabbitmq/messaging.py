@@ -29,10 +29,11 @@ class MessageReceiver(Thread):
             try:
                 domainsId=service.getDomainsIds()
                 message={"vsiId":data["vsiId"],"msgType":"domainInfo", "data":domainsId, "error":False}
-                self.messaging.publish2Exchange("vsLCM_Management", json.dumps(message))
+                self.messaging.publish2Exchange("vsLCM_"+str(data["vsiId"]), json.dumps(message))
+                logging.info("sent message:" + str(message))
             except Exception as e:
                 message={"vsiId":data["vsiId"],"msgType":"domainInfo", "error":True, "message":"Error when fetching domains ids: "+str(e)}
-                self.messaging.publish2Exchange("vsLCM_Management", json.dumps(message))
+                self.messaging.publish2Exchange("vsLCM_"+str(data["vsiId"]), json.dumps(message))
 
     def run(self):
         logging.info('Started Consuming RabbitMQ Topics')

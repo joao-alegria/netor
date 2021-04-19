@@ -2,6 +2,7 @@ from rabbitmq.adaptor import Messaging
 import json
 from threading import Thread
 import logging
+import service
 
 class MessageReceiver(Thread):
 
@@ -14,7 +15,9 @@ class MessageReceiver(Thread):
 
     def callback(self, ch, method, properties, body):
         logging.info("Received Message {}".format(body))
-        # data=json.loads(body)
+        data=json.loads(body)
+        if data["msgType"]=="statusUpdate":
+            service.changeStatusVSI(data["data"]["vsiId"], data["data"]["status"],data["data"]["message"])
 
     def run(self):
         logging.info('Started Consuming RabbitMQ Topics')

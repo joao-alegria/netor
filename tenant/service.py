@@ -6,19 +6,16 @@ def getAllGroups():
     groups=persistance.session.query(persistance.Group).all()
     groupsDict=[]
     for group in groups:
-        groupsDict.append(schema.dump(groups))
+        groupsDict.append(schema.dump(group))
     return groupsDict
 
 def createGroup(tenantName, groupData):
     if tenantName != "admin":
-        message={"msg":"Invalid user. No permissions to create a new Group."}
-        return message
+        raise Exception("Invalid user. No permissions to create a new Group.")
     schema=schemas.GroupSchema()
     group=schema.load(groupData, session=persistance.session)
     persistance.persist(group)
-    message={"msg":"Acknowledge"}
     #TODO verifications
-    return message
 
 def getGroupById(groupName):
     schema=schemas.GroupSchema()
@@ -34,8 +31,6 @@ def removeGroup(groupName):
     group=persistance.session.query(persistance.Group).filter(persistance.Group.name==groupName).first()
     #TODO: add deletion verification
     persistance.delete(group)
-    message={"msg":"Acknowledge"}
-    return message
 
 def getAllTenants():
     schema=schemas.TenantSchema()
@@ -47,14 +42,11 @@ def getAllTenants():
 
 def createTenant(tenantName, tenantData):
     if tenantName != "admin":
-        message={"msg":"Invalid user. No permissions to create a new Tenant."}
-        return jsonify(message)
+        raise Exception("Invalid user. No permissions to create a new Tenant.")
     schema=schemas.TenantSchema()
     tenant=schema.load(tenantData, session=persistance.session)
     persistance.persist(tenant)
-    message={"msg":"Acknowledge"}
     #TODO verifications
-    return message
 
 def getTenantById(tenantName):
     schema=schemas.TenantSchema()
@@ -64,7 +56,6 @@ def getTenantById(tenantName):
 def addVsiToTenant(tenantName, vsiId):
     vsi=persistance.VSI(id=vsiId, tenantUsername=tenantName)
     persistance.persist(vsi)
-    return
 
 def modifyTenant(tenantName):
     schema=schemas.TenantSchema()
@@ -75,5 +66,3 @@ def removeTenant(tenantName):
     tenant=persistance.session.query(persistance.Tenant).filter(persistance.Tenant.username==tenantName).first()
     #TODO: add deletion verification
     persistance.delete(tenant)
-    message={"msg":"Acknowledge"}
-    return message

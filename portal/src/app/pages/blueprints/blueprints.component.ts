@@ -28,20 +28,20 @@ export class BlueprintsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.listData = [];
     this.update()
   }
 
   update() {
     this.listData=[]
     if (!this.tenant) {
-      this.listData.unshift({ control: true, name: "Onboard VSB" , vsBlueprintId:"onboardVSB"})
+      this.listData.unshift({ control: true, name: "Onboard VSB" , vs_blueprint_id:"onboardVSB"})
     }
     this.vs.getBlueprints().then(data => {
-      this.listData = data
+      this.listData = data["data"]
       if (!this.tenant) {
-        this.listData.unshift({ control: true, name: "Onboard VSB" , vsBlueprintId:"onboardVSB"})
+        this.listData.unshift({ control: true, name: "Onboard VSB" , vs_blueprint_id:"onboardVSB"})
       }
+      console.log(this.listData)
     })
   }
 

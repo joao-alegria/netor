@@ -194,10 +194,7 @@ def initDB():
     portal = OauthClient(
         name='portal', client_id='portal',
         client_secret='portal', client_type='confidential',
-        _redirect_uris=(
-            'http://127.0.0.1:8000/authorized '
-            'http://127.0.0.1/authorized'
-        ),
+        _redirect_uris=('http://127.0.0.1/authorized'),
     )
 
     

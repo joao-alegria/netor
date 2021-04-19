@@ -16,6 +16,7 @@ services:
       RABBITMQ_DEFAULT_PASS: "admin"
     volumes:
       - thesisRabbitVolume:/var/lib/rabbitmq
+
   postgres:
     image: postgres:12.2-alpine
     restart: always
@@ -27,9 +28,78 @@ services:
     ports:
       - 5432:5432
 
+  redis:
+    image: "redis:alpine"
+    restart: always
+    command: redis-server --requirepass netorRedisPassword
+    ports:
+      - "6379:6379"
+    volumes:
+      - thesisRedisVolume:/var/lib/redis
+      - thesisRedisDataVolume:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf 
+    environment:
+      - REDIS_REPLICATION_MODE=master
+
+  mongo1:
+    build: ./catalogue/slicer-catalogue/db/primary
+    ports:
+      - 27017:27017
+    restart: always
+    volumes:
+      - thesisMongo1ConfigVolume:/data/configdb
+      - thesisMongo1DataVolume:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      CATALOGUES_DATABASE: catalogues
+      CATALOGUES_USERNAME: catalogues
+      CATALOGUES_PASSWORD: catalogues
+
+  mongo2:
+    depends_on:
+      - mongo1
+    build: ./catalogue/slicer-catalogue/db/secondary1
+    ports:
+      - 27012:27017
+    restart: always
+    volumes:
+      - thesisMongo2ConfigVolume:/data/configdb
+      - thesisMongo2DataVolume:/data/db
+    environment:
+      DATABASE_NAME: catalogues
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+
+  mongo3:
+    depends_on:
+      - mongo1
+    build: ./catalogue/slicer-catalogue/db/secondary2
+    ports:
+      - 27013:27017
+    restart: always
+    volumes:
+      - thesisMongo3ConfigVolume:/data/configdb
+      - thesisMongo3DataVolume:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+
+  netor_up_nginx: 
+    image: nginx:latest
+    restart: always
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+      - 443:443
+
   netor_coordinator:
     build: ./coordinator
     restart: always
+    depends_on:
+      - postgres
+      - rabbitmq
     ports:
       - '5000:5000'
     environment:
@@ -46,6 +116,9 @@ services:
   netor_domain:
     build: ./domain
     restart: always
+    depends_on:
+      - postgres
+      - rabbitmq
     ports:
       - '5001:5001'
     environment:
@@ -62,6 +135,9 @@ services:
   netor_manager:
     build: ./manager
     restart: always
+    depends_on:
+      - redis
+      - rabbitmq
     ports:
       - '5555:5555'
     environment:
@@ -69,17 +145,26 @@ services:
       RABBIT_USER: "admin"
       RABBIT_PASS: "admin"
       RABBIT_IP: rabbitmq
+      REDIS_HOST: redis
 
   netor_placement:
     build: ./placement
+    restart: always
+    depends_on:
+      - redis
+      - rabbitmq
     environment:
       RABBIT_USER: "admin"
       RABBIT_PASS: "admin"
       RABBIT_IP: rabbitmq
+      REDIS_HOST: redis
 
   netor_tenant:
     build: ./tenant
     restart: always
+    depends_on:
+      - postgres
+      - rabbitmq
     ports:
       - '5002:5002'
     environment:
@@ -92,6 +177,27 @@ services:
       RABBIT_PASS: "admin"
       RABBIT_IP: rabbitmq
 
+  netor_catalogue:
+    build: ./catalogue/slicer-catalogue
+    restart: always
+    ports:
+      - 5010:5010
+    depends_on:
+      - mongo1
+    environment:
+      APPLICATION_NAME: catalogues
+      MONGO_USERNAME: catalogues
+      MONGO_PASSWORD: catalogues
+      MONGO_URL: mongo1
+      MONGO_DB: catalogues
+      SECRET_KEY: tenantManager
+      RABBIT_HOST: rabbitmq
+      RABBIT_USERNAME: admin
+      RABBIT_PASSWORD: admin
+      IDP_IP: netor_tenant
+      IDP_PORT: 5002
+      IDP_ENDPOINT: /validate
+
   # netor_portal:
   #   build: ./portal
   #   restart: always
@@ -100,15 +206,24 @@ services:
   #   environment:
   #     NETOR_ENDPOINT: netor_up_nginx
 
-  netor_up_nginx: 
-    image: nginx:latest
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-    ports:
-      - 80:80
-      - 443:443
 volumes:
   thesisPostgresVolume:
     external: false
   thesisRabbitVolume:
+    external: false
+  thesisRedisVolume:
+    external: false
+  thesisRedisDataVolume:
+    external: false
+  thesisMongo1ConfigVolume:
+    external: false
+  thesisMongo1DataVolume:
+    external: false
+  thesisMongo2ConfigVolume:
+    external: false
+  thesisMongo2DataVolume:
+    external: false
+  thesisMongo3ConfigVolume:
+    external: false
+  thesisMongo3DataVolume:
     external: false

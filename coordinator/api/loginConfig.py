@@ -23,5 +23,5 @@ def request_loader(request):
         response=requests.get("http://"+str(config.IDP_IP)+":"+str(config.IDP_PORT)+str(config.IDP_ENDPOINT), headers={"Authorization":token})
         if response.status_code==200:
             data=response.json()
-            user=Tenant(data["username"])
+            user=Tenant(data["data"]["username"])
     return user

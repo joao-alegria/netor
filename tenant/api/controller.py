@@ -84,11 +84,18 @@ def revoke_token():
 @app.route('/validate')
 @oauth.require_oauth()
 def validateToken():
-    return jsonify(service.getTenantById(request.oauth.user.username))
+    try:
+        tenant=service.getTenantById(request.oauth.user.username)
+        return jsonify({"message":"Success", "data":tenant}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500
 
 @oauth.invalid_response
 def require_oauth_invalid(req):
-    return jsonify(message=req.error_message), 401
+    try:
+        return jsonify(message=req.error_message), 401
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500
 
 
 #-----------------TENANT API---------------------------
@@ -109,7 +116,11 @@ def getAllGroups():
                         items:
                             $ref: '#/definitions/Group'
     """
-    return jsonify(service.getAllGroups())
+    try:
+        groups=service.getAllGroups()
+        return jsonify({"message":"Success", "data":groups}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500
 
 @app.route('/group', methods=["POST"])
 @oauth.require_oauth()
@@ -131,11 +142,13 @@ def createNewGroup():
                     schema:
                         $ref: '#/definitions/Acknowledge'
     """
-
-    data=request.json
-    validate(data, 'Group', 'definitions.yaml')
-
-    return jsonify(service.createGroup(request.oauth.user.username,data))
+    try:
+        data=request.json
+        validate(data, 'Group', 'definitions.yaml')
+        service.createGroup(request.oauth.user.username,data)
+        return jsonify({"message":"Success"}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500
 
 @app.route('/group/<groupId>', methods=["GET"])
 @oauth.require_oauth()
@@ -151,7 +164,11 @@ def getGroupById(groupId):
                     schema:
                         $ref: '#/definitions/Group'
     """
-    return jsonify(service.getGroupById(groupId))
+    try:
+        group=service.getGroupById(groupId)
+        return jsonify({"message":"Success", "data":group}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500
 
 @app.route('/group/<groupId>', methods=["PUT"])
 @oauth.require_oauth()
@@ -167,7 +184,11 @@ def modifyGroup(groupId):
                     schema:
                         $ref: '#/definitions/Acknowledge'
     """
-    return jsonify(service.modifyGroup(groupId))
+    try:
+        service.modifyGroup(groupId)
+        return jsonify({"message":"Success"}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500
 
 @app.route('/group/<groupId>', methods=["DELETE"])
 @oauth.require_oauth()
@@ -183,7 +204,11 @@ def removeGroup(groupId):
                     schema:
                         $ref: '#/definitions/Acknowledge'
     """
-    return jsonify(service.removeGroup(groupId))
+    try:
+        service.removeGroup(groupId)
+        return jsonify({"message":"Success"}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500
 
 @app.route('/tenant', methods=["GET"])
 @oauth.require_oauth()
@@ -201,7 +226,11 @@ def getAllTenants():
                         items:
                             $ref: '#/definitions/Tenant'
     """
-    return jsonify(service.getAllTenants())
+    try:
+        tenants=service.getAllTenants()
+        return jsonify({"message":"Success", "data":tenants}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500
 
 @app.route('/tenant', methods=["POST"])
 @oauth.require_oauth()
@@ -223,11 +252,13 @@ def createNewTenant():
                     schema:
                         $ref: '#/definitions/Acknowledge'
     """
-
-    data=request.json
-    validate(data, 'Tenant', 'definitions.yaml')
-
-    return jsonify(service.createTenant(request.oauth.user.username,data))
+    try:
+        data=request.json
+        validate(data, 'Tenant', 'definitions.yaml')
+        service.createTenant(request.oauth.user.username,data)
+        return jsonify({"message":"Success"}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500
 
 @app.route('/tenant/<tenantId>', methods=["GET"])
 @oauth.require_oauth()
@@ -243,7 +274,11 @@ def getTenantById(tenantId):
                     schema:
                         $ref: '#/definitions/Tenant'
     """
-    return jsonify(service.getTenantById(tenantId))
+    try:
+        service.getTenantById(tenantId)
+        return jsonify({"message":"Success"}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500
 
 @app.route('/tenant/<tenantId>', methods=["PUT"])
 @oauth.require_oauth()
@@ -259,7 +294,11 @@ def modifyTenant(tenantId):
                     schema:
                         $ref: '#/definitions/Acknowledge'
     """
-    return jsonify(service.modifyTenant(tenantId))
+    try:
+        service.modifyTenant(tenantId)
+        return jsonify({"message":"Success"}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500
 
 @app.route('/tenant/<tenantId>', methods=["DELETE"])
 @oauth.require_oauth()
@@ -275,4 +314,8 @@ def removeTenant(tenantId):
                     schema:
                         $ref: '#/definitions/Acknowledge'
     """
-    return jsonify(service.removeTenant(tenantId))
+    try:
+        service.removeTenant(tenantId)
+        return jsonify({"message":"Success"}),200
+    except Exception as e:
+        return jsonify({"message":"Error: "+str(e)}),500
