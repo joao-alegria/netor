@@ -13,8 +13,7 @@ Base = declarative_base()
 
 class VerticalServiceInstance(Base):
   __tablename__ = 'verticalServiceInstance'
-  vsiId = Column(Integer, primary_key=True)
-
+  vsiId = Column(String, primary_key=True)
   description=Column(String)
   domainId=Column(String)
   additionalConf=Column(String)
@@ -27,10 +26,10 @@ class VerticalServiceInstance(Base):
   name=Column(String)
   networkSliceId=Column(String)
   ranEndPointId=Column(String)
-  status=Column(Integer)
+  status=Column(String)
   tenantId=Column(String)
   vsdId=Column(String)
-  nestedParentId = Column(Integer, ForeignKey('verticalServiceInstance.vsiId'))
+  nestedParentId = Column(String, ForeignKey('verticalServiceInstance.vsiId'))
   nestedVsi=relationship("VerticalServiceInstance", remote_side=[vsiId])
     # parentVsi = relationship(
     #       "VerticalService",
@@ -38,43 +37,15 @@ class VerticalServiceInstance(Base):
     #       back_populates="nestedVsi")
   nssis=relationship("NetworkSliceSubnetInstance", back_populates="vertical_service_instance")
   vssis=relationship("VerticalSubserviceInstance", back_populates="vertical_service_instance")
+  domainPlacements=relationship("DomainPlacements", back_populates="vertical_service_instance")
 
-  # def loadJson(self,data):
-  #   if "description" in data:
-  #     self.description=data["description"]
-  #   if "domainId" in data:
-  #     self.domainIddomainId=data["domainId"]
-  #   if "errorMessage" in data:
-  #     self.errorMessage=data["errorMessage"]
-  #   if "locationConstrains" in data:
-  #     if "alt" in data["locationConstrains"]:
-  #       self.altitude=data["locationConstrains"]["alt"]
-  #     if "lat" in data["locationConstrains"]:
-  #       self.latitude=data["locationConstrains"]["lat"]
-  #     if "long" in data["locationConstrains"]:
-  #       self.longitude=data["locationConstrains"]["long"]
-  #     if "range" in data["locationConstrains"]:
-  #       self.radioRange=data["locationConstrains"]["range"]
-  #   if "mappedInstanceId" in data:
-  #     self.mappedInstanceId=data["mappedInstanceId"]
-  #   if "name" in data:
-  #     self.name=data["name"]
-  #   if "networkSliceId" in data:
-  #     self.networkSliceId=data["networkSliceId"]
-  #   if "ranEndPointId" in data:
-  #     self.ranEndPointId=data["ranEndPointId"]
-  #   if "status" in data:
-  #     self.status=data["status"]
-  #   if "tenantId" in data:
-  #     self.tenantId=data["tenantId"]
-  #   if "vsdId" in data:
-  #     self.vsdId=data["vsdId"]
-
-  # def dumpJson(self):
-  #   return {"vsiId":self.vsiId,"description":self.description,"domainId":self.domainId,"errorMessage":self.errorMessage,"altitude":self.altitude,"latitude":self.latitude,"longitude":self.longitude,"radioRange":self.radioRange,"mappedInstanceId":self.mappedInstanceId,"name":self.name,"networkSliceId":self.networkSliceId,"ranEndPointId":self.ranEndPointId,"status":self.status,"tenantId":self.tenantId,"vsdId":self.vsdId,"nestedParentId":self.nestedParentId}
-
-  # def __str__(self):
-  #   return json.dumps({"vsiId":self.vsiId,"description":self.description,"domainId":self.domainId,"errorMessage":self.errorMessage,"altitude":self.altitude,"latitude":self.latitude,"longitude":self.longitude,"radioRange":self.radioRange,"mappedInstanceId":self.mappedInstanceId,"name":self.name,"networkSliceId":self.networkSliceId,"ranEndPointId":self.ranEndPointId,"status":self.status,"tenantId":self.tenantId,"vsdId":self.vsdId,"nestedParentId":self.nestedParentId})
+class DomainPlacements(Base):
+  __tablename__ = 'domainPlacement'
+  domainPlacementId = Column(Integer, primary_key=True)
+  vertical_service_instance_id = Column(String, ForeignKey('verticalServiceInstance.vsiId'))
+  vertical_service_instance = relationship("VerticalServiceInstance", back_populates="domainPlacements")
+  componentName=Column(String)
+  domainId=Column(String)
 
 class NetworkSliceSubnetInstance(Base):
   __tablename__ = 'networkSliceSubnetInstance'
@@ -84,29 +55,11 @@ class NetworkSliceSubnetInstance(Base):
   ns_instantiation_level_id=Column(String)
   nsst_id=Column(String)
   status=Column(Integer)
-  vertical_service_instance_id = Column(Integer, ForeignKey('verticalServiceInstance.vsiId'))
+  vertical_service_instance_id = Column(String, ForeignKey('verticalServiceInstance.vsiId'))
   vertical_service_instance = relationship("VerticalServiceInstance", back_populates="nssis") 
   vnfs = relationship("NetworkSliceSubnetInstanceVnfPlacement", back_populates="network_slice_subnet_instance")
   network_slice_instance_id = Column(Integer, ForeignKey('networkSliceInstance.nsiId'))
   network_slice_instance = relationship("NetworkSliceInstance", back_populates="subnets")
-
-  # def loadJson(self,data):
-  #   if "domain_id" in data:
-  #     self.domain_id = data["domain_id"]
-  #   if "ns_deployment_flavor_id" in data:
-  #     self.ns_deployment_flavor_id = data["ns_deployment_flavor_id"]
-  #   if "ns_instantiation_level_id" in data:
-  #     self.ns_instantiation_level_id = data["ns_instantiation_level_id"]
-  #   if "nsst_id" in data:
-  #     self.nsst_id = data["nsst_id"]
-  #   if "status" in data:
-  #     self.status = data["status"]
-
-  # def dumpJson(self):
-  #   return {"nssiId":self.nssiId,"domain_id":self.domain_id,"ns_deployment_flavor_id":self.ns_deployment_flavor_id,"ns_instantiation_level_id":self.ns_instantiation_level_id,"nsst_id":self.nsst_id,"status":self.status,"vertical_service_instance_id":self.vertical_service_instance_id,"network_slice_instance_id":self.network_slice_instance_id}
-
-  # def __str__(self):
-  #   return json.dumps({"domain_id":self.domain_id,"ns_deployment_flavor_id":self.ns_deployment_flavor_id,"ns_instantiation_level_id":self.ns_instantiation_level_id,"nsst_id":self.nsst_id,"status":self.status,"vertical_service_instance_id":self.vertical_service_instance_id,"network_slice_instance_id":self.network_slice_instance_id})
 
 class NetworkSliceSubnetInstanceVnfPlacement(Base):
   __tablename__ = 'networkSliceSubnetInstanceVnfPlacement'
@@ -114,15 +67,6 @@ class NetworkSliceSubnetInstanceVnfPlacement(Base):
   network_slice_subnet_instance = relationship("NetworkSliceSubnetInstance", back_populates="vnfs")
   vnf_placement_key=Column(Integer, primary_key=True)
   vnf_placement=Column(Integer)
-
-  # def loadJson(self,data):
-  #   return
-
-  # def dumpJson(self):
-  #   return {"network_slice_subnet_instance_id":self.network_slice_subnet_instance_id,"vnf_placement_key":self.vnf_placement_key,"vnf_placement":self.vnf_placement}
-
-  # def __str__(self):
-  #   return json.dumps({"network_slice_subnet_instance_id":self.network_slice_subnet_instance_id,"vnf_placement_key":self.vnf_placement_key,"vnf_placement":self.vnf_placement})
 
 class VerticalSubserviceInstance(Base):
   __tablename__ = 'verticalSubserviceInstance'
@@ -132,18 +76,9 @@ class VerticalSubserviceInstance(Base):
   domain_id=Column(String)
   instance_id=Column(String)
   vertical_service_status=Column(Integer)
-  vertical_service_instance_id = Column(Integer, ForeignKey('verticalServiceInstance.vsiId'))
+  vertical_service_instance_id = Column(String, ForeignKey('verticalServiceInstance.vsiId'))
   vertical_service_instance = relationship("VerticalServiceInstance", back_populates="vssis")
   parameters=relationship("VerticalSubserviceInstanceParameters", back_populates="vertical_subservice_instance")
-
-  # def loadJson(self,data):
-  #   return
-
-  # def dumpJson(self):
-  #   return {"vssiId":self.vssiId,"blueprint_id":self.blueprint_id,"descriptor_id":self.descriptor_id,"domain_id":self.domain_id,"instance_id":self.instance_id,"vertical_service_status":self.vertical_service_status,"vertical_service_instance_id":self.vertical_service_instance_id}
-
-  # def __str__(self):
-  #   return json.dumps({"vssiId":self.vssiId,"blueprint_id":self.blueprint_id,"descriptor_id":self.descriptor_id,"domain_id":self.domain_id,"instance_id":self.instance_id,"vertical_service_status":self.vertical_service_status,"vertical_service_instance_id":self.vertical_service_instance_id})
 
 class VerticalSubserviceInstanceParameters(Base):
   __tablename__ = 'verticalSubserviceInstanceParameters'
@@ -151,15 +86,6 @@ class VerticalSubserviceInstanceParameters(Base):
   vertical_subservice_instance = relationship("VerticalSubserviceInstance", back_populates="parameters")
   parameters_key=Column(Integer, primary_key=True)
   parameters=Column(String)
-
-  # def loadJson(self,data):
-  #   return
-
-  # def dumpJson(self):
-  #   return {"vertical_subservice_instance_id":self.vertical_subservice_instance_id,"parameters_key":self.parameters_key,"parameters":self.parameters}
-
-  # def __str__(self):
-  #   return json.dumps({"vertical_subservice_instance_id":self.vertical_subservice_instance_id,"parameters_key":self.parameters_key,"parameters":self.parameters})
 
 class NetworkSliceInstance(Base):
   __tablename__ = 'networkSliceInstance'
@@ -175,20 +101,11 @@ class NetworkSliceInstance(Base):
   nfvNsId = Column(String)
   soManaged = Column(Boolean)
   tenantId = Column(String)
-  status = Column(Integer)
+  status = Column(String)
   errorMessage = Column(String)
   nfvNsUrl = Column(String)
   subnets=relationship("NetworkSliceSubnetInstance", back_populates="network_slice_instance")
   vnfs = relationship("NetworkSliceInstanceVnfPlacement", back_populates="network_slice_instance")
-
-  # def loadJson(self,data):
-  #   pass
-
-  # def dumpJson(self):
-  #   return {"nsiId":self.nsiId,"name":self.name,"description":self.description,"nstId":self.nstId,"nsdId":self.nsdId,"nsdVersion":self.nsdVersion,"dfId":self.dfId,"instantiationLevelId":self.instantiationLevelId,"oldInstantiationLevelId":self.oldInstantiationLevelId,"nfvNsId":self.nfvNsId,"soManaged":self.soManaged,"tenantId":self.tenantId,"status":self.status,"errorMessage":self.errorMessage,"nfvNsUrl":self.nfvNsUrl}
-
-  # def __str__(self):
-  #   return json.dumps({"nsiId":self.nsiId,"name":self.name,"description":self.description,"nstId":self.nstId,"nsdId":self.nsdId,"nsdVersion":self.nsdVersion,"dfId":self.dfId,"instantiationLevelId":self.instantiationLevelId,"oldInstantiationLevelId":self.oldInstantiationLevelId,"nfvNsId":self.nfvNsId,"soManaged":self.soManaged,"tenantId":self.tenantId,"status":self.status,"errorMessage":self.errorMessage,"nfvNsUrl":self.nfvNsUrl})
 
 class NetworkSliceInstanceVnfPlacement(Base):
   __tablename__ = 'netwokSliceInstanceVnfPlacement'
@@ -196,16 +113,6 @@ class NetworkSliceInstanceVnfPlacement(Base):
   network_slice_instance = relationship("NetworkSliceInstance", back_populates="vnfs")
   vnf_placement_key=Column(Integer, primary_key=True)
   vnf_placement=Column(Integer)
-
-  # def loadJson(self,data):
-  #   pass
-
-  # def dumpJson(self):
-  #   return {"network_slice_instance_id":self.network_slice_instance_id,"vnf_placement_key":self.vnf_placement_key,"vnf_placement":self.vnf_placement}
-
-  # def __str__(self):
-  #   return json.dumps({"network_slice_instance_id":self.network_slice_instance_id,"vnf_placement_key":self.vnf_placement_key,"vnf_placement":self.vnf_placement})
-
 
 
 engine = create_engine('postgresql://'+str(config.POSTGRES_USER)+':'+str(config.POSTGRES_PASS)+'@'+str(config.POSTGRES_IP)+':'+str(config.POSTGRES_PORT)+'/'+str(config.POSTGRES_DB))

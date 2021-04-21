@@ -4,7 +4,6 @@ import config
 class Messaging:
 
     def __init__(self):
-        super().__init__()
         credentials = pika.PlainCredentials(config.RABBIT_USER, config.RABBIT_PASS)
         self.parameters = pika.ConnectionParameters(host=config.RABBIT_IP,port=config.RABBIT_PORT,credentials=credentials,connection_attempts=10,retry_delay=5,socket_timeout=None)
         self.connection = pika.BlockingConnection(self.parameters)

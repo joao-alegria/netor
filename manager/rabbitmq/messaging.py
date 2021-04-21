@@ -1,7 +1,7 @@
 from rabbitmq.adaptor import Messaging
 import json
 from threading import Thread
-from manager import newCSMF,tearDownService
+from manager import newCSMF, tearDownCSMF
 import logging
 
 class MessageReceiver(Thread):
@@ -19,10 +19,20 @@ class MessageReceiver(Thread):
         if data["msgType"]=="createVSI":
             newCSMF(data)
         elif data["msgType"]=="removeVSI":
-            tearDownService(data)
+            tearDownCSMF(data)
         # else:
         #     newCsmfMessage(data)
 
+    def stop(self):
+        try:
+            self.messaging.stopConsuming()
+        except Exception as e:
+            logging.error("Pika exception: "+str(e))
+
     def run(self):
-        logging.info('Started Consuming RabbitMQ Topics')
-        self.messaging.startConsuming()
+        try:
+            logging.info('Started Consuming RabbitMQ Topics')
+            self.messaging.startConsuming()
+        except Exception as e:
+            logging.info("Stop consuming now!")
+            logging.error("Pika exception: "+str(e))    

@@ -8,7 +8,20 @@ from rabbitmq.adaptor import Messaging
 import logging
 
 
-def createDomain():
+def createDomain(data):
+    schema=schemas.DomainSchema()
+    if "domainAgreement" in data:
+        agreements=data["domainAgreement"]
+    if "ownedLayers" in data:
+        layers=data["ownedLayers"]
+        for layer in layers:
+            if layer["domainLayerType"]=="OsmDomainLayer":
+                osmSchema=schemas.OsmDomainLayerSchema()
+                domainLayer=osmSchema.load(layer, session=persistance.session)
+                persistance.persist(domainLayer)
+
+    domain=schema.load(data, session=persistance.session)
+    persistance.persist(domain)
     return
 
 def getAllDomains():
@@ -44,13 +57,14 @@ class DomainActionHandler(Thread):
     def __init__(self, data):
         Thread.__init__(self)
         self.data=data
+        self.messaging=Messaging()
 
     def getDomainInfo(self, domainId):
         domain=persistance.session.query(persistance.Domain).filter(persistance.Domain.domainId==self.data["data"]["domainId"]).first()
         domainLayer=domain.ownedLayers[0]
 
         driver=None
-        if domainLayer.domainLayerType=="osmDomainLayer":
+        if domainLayer.domainLayerType=="OsmDomainLayer":
             driver=osm
         return domain, domainLayer, driver
 
@@ -61,7 +75,7 @@ class DomainActionHandler(Thread):
             if self.data["msgType"] == "instantiateNs":
                 domain, domainLayer, driver=self.getDomainInfo(self.data["data"]["domainId"])
                 nsId=driver.instantiateNS(domain.url, self.data["data"]["name"], self.data["data"]["nsdId"], domainLayer.vimAccount,self.data["data"]["additionalConf"] if "additionalConf" in self.data["data"] else None)
-                messaging.publish2Exchange("vsLCM_"+str(data["vsiId"]), json.dumps({"msgType":"updateResourcesNfvoIds","vsiId":self.data["vsiId"],"error":False, "message":"Sending Resource's Components Ids", "data":{"componentName":self.data["data"]["name"],"componentId":nsId}}))
+                messaging.publish2Exchange("vsLCM_"+str(self.data["vsiId"]), json.dumps({"msgType":"updateResourcesNfvoIds","vsiId":self.data["vsiId"],"error":False, "message":"Sending Resource's Components Ids", "data":{"componentName":self.data["data"]["name"],"componentId":nsId}}))
                 return
             elif self.data["msgType"] == "instantiateNsi":
                 domain, domainLayer, driver=self.getDomainInfo(self.data["data"]["domainId"])
@@ -75,30 +89,34 @@ class DomainActionHandler(Thread):
                         tunnelServiceId=nss["nsrId"]
                     nssNsrId[nss["nss-id"]]=nss["nsrId"]
 
-                messaging.publish2Exchange("vsLCM_"+str(data["vsiId"]), json.dumps({"msgType":"updateResourcesNfvoIds","vsiId":self.data["vsiId"],"error":False, "message":"Sending Resource's Components Ids", "data":{"componentName":self.data["data"]["name"],"componentId":tunnelServiceId, "additionalData":nssNsrId}}))
+                messaging.publish2Exchange("vsLCM_"+str(self.data["vsiId"]), json.dumps({"msgType":"updateResourcesNfvoIds","vsiId":self.data["vsiId"],"error":False, "message":"Sending Resource's Components Ids", "data":{"componentName":self.data["data"]["name"],"componentId":tunnelServiceId, "additionalData":nssNsrId}}))
                 return
             elif self.data["msgType"] == "deleteNs":
                 domain, domainLayer, driver=self.getDomainInfo(self.data["data"]["domainId"])
-                driver.terminateNS(domain.url, self.data["data"]["name"])
+                driver.terminateNS(domain.url, self.data["data"]["nsId"])
                 return
             elif self.data["msgType"] == "deleteNsi":
                 domain, domainLayer, driver=self.getDomainInfo(self.data["data"]["domainId"])
-                driver.terminateNSI(domain.url, self.data["data"]["name"])
+                driver.terminateNSI(domain.url, self.data["data"]["nsiId"])
                 return
             elif self.data["msgType"] == "actionNs":
                 domain, domainLayer, driver=self.getDomainInfo(self.data["data"]["domainId"])
-                driver.sendActionNS(domain.url, self.data["data"]["nsId"], additionalConf=self.data["data"]["additionalConf"])
+                result=driver.sendActionNS(domain.url, self.data["data"]["nsId"], additionalConf=self.data["data"]["additionalConf"])
+                actionResult={"msgType": "actionResponse", "message":"Returning NS action result", "data":{"primitiveName":self.data["data"]["primitiveName"],"status":result["operationState"], "output":result["detailed-status"]["output"]}}
+                messaging.publish2Exchange("vsLCM_"+str(self.data["vsiId"]), json.dumps(actionResult))
                 return
             elif self.data["msgType"] == "actionNsi":
                 domain, domainLayer, driver=self.getDomainInfo(self.data["data"]["domainId"])
-                driver.sendActionNSI(domain.url, self.data["data"]["nsId"], additionalConf=self.data["data"]["additionalConf"])
+                result=driver.sendActionNSI(domain.url, self.data["data"]["nsId"], additionalConf=self.data["data"]["additionalConf"])
+                actionResult={"msgType": "actionResponse", "message":"Returning NSI action result", "data":{"primitiveName":self.data["data"]["primitiveName"],"status":result["operationState"], "output":result["detailed-status"]["output"]}}
+                messaging.publish2Exchange("vsLCM_"+str(self.data["vsiId"]), json.dumps(actionResult))
                 return
-            elif self.data["msgType"] == "getNs":
+            elif self.data["msgType"] == "getNsInfo":
                 domain, domainLayer, driver=self.getDomainInfo(self.data["data"]["domainId"])
                 nsInfo=driver.getNS(domain.url, self.data["data"]["nsId"])
                 messaging.publish2Exchange("vsLCM_"+str(self.data["vsiId"]), json.dumps({"msgType":"nsInfo","vsiId":self.data["vsiId"],"error":False, "message":"Sending NS "+self.data["data"]["nsId"]+" Info", "data":{"nsId":self.data["data"]["nsId"],"nsInfo":nsInfo}}))
                 return
-            elif self.data["msgType"] == "getNsi":
+            elif self.data["msgType"] == "getNsiInfo":
                 domain, domainLayer, driver=self.getDomainInfo(self.data["data"]["domainId"])
                 nsiInfo=driver.getNSI(domain.url, self.data["data"]["nsiId"])
                 messaging.publish2Exchange("vsLCM_"+str(self.data["vsiId"]), json.dumps({"msgType":"nsInfo","vsiId":self.data["vsiId"],"error":False, "message":"Sending NSI "+self.data["data"]["nsiId"]+" Info", "data":{"nsiId":self.data["data"]["nsiId"],"nsiInfo":nsInfo}}))

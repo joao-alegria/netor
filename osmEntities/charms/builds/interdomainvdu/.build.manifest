@@ -26,7 +26,7 @@
     },
     {
       "branch": "refs/heads/main",
-      "rev": "cc867286040be638375abf8072374c257e23656c",
+      "rev": "246c070f598fc5309f08018493cb56a43d8c983a",
       "url": "interdomainvdu"
     }
   ],
@@ -69,7 +69,7 @@
     "actions.yaml": [
       "interdomainvdu",
       "dynamic",
-      "797dba1cd487e7dc1c6839b39f2951b7d10dfd117cb8c55ddcc9e0a6992cb8e4"
+      "4459c78fe564df38b42f6cee3ea12fdbd0724de0828a444f0b6ed4b321458e07"
     ],
     "actions/addpeer": [
       "interdomainvdu",
@@ -82,6 +82,11 @@
       "214f7a2f52c914a4cbcd6c2cf26c40ab5cc0723db4d85d4fccba6f4cb28e711c"
     ],
     "actions/get-ssh-public-key": [
+      "interdomainvdu",
+      "static",
+      "214f7a2f52c914a4cbcd6c2cf26c40ab5cc0723db4d85d4fccba6f4cb28e711c"
+    ],
+    "actions/getvnfinfo": [
       "interdomainvdu",
       "static",
       "214f7a2f52c914a4cbcd6c2cf26c40ab5cc0723db4d85d4fccba6f4cb28e711c"
@@ -269,7 +274,7 @@
     "reactive/interdomainvdu.py": [
       "interdomainvdu",
       "static",
-      "d482d98977d95169bbda03ab3fb721c99357d6e48a5fa4940b4eaeb9107df347"
+      "784378e0aaca2a47560c67e5f21ad8a5c9b90d036125dd57a801fb720488bf35"
     ],
     "reactive/sshproxy.py": [
       "interdomainvdu",
@@ -299,7 +304,7 @@
     "version": [
       "interdomainvdu",
       "dynamic",
-      "5edd137c2d96a5e763049d4a7a33e8e0889e42394358ab78ed268f0dea1f0a4b"
+      "c5b1f0dbb4999587249cb025a54a885226cd903ca4d5f2f9b6e373f0036a5f34"
     ],
     "wheelhouse.txt": [
       "layer:sshproxy",

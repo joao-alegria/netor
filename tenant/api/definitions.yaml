@@ -17,7 +17,8 @@ definitions:
         example: password
       role:
         type: string
-        example: role
+        example: ADMIN
+        enum: ['TENANT', 'ADMIN']
       storage:
         type: integer
         example: 1

@@ -9,13 +9,14 @@ definitions:
   Domain:
     type: object
     required:
-      - name
-      - vsdId
-      - tenantId
+      - domainId
+      - url
+      - interfaceType
+      - ownedLayers
     properties:
       domainId:
-        type: number
-        example: 1
+        type: string
+        example: ITAV
       name:
         type: string
         example: test
@@ -31,21 +32,18 @@ definitions:
       domainStatus:
         type: string
         example: active
-      domainInterface:
-        type: object
-        properties:
-          url:
-            type: string
-            example: 10.0.12.118
-          port:
-            type: number
-            example: 80
-          auth:
-            type: bool
-            example: true
-          interfaceType:
-            type: string
-            example: HTTP
+      url:
+        type: string
+        example: 10.0.12.118
+      port:
+        type: number
+        example: 80
+      auth:
+        type: boolean
+        example: true
+      interfaceType:
+        type: string
+        example: HTTP
       ownedLayers:
         type: array
         items:
@@ -56,10 +54,10 @@ definitions:
               example: 1
             domainLayerType:
               type: string
-              example: NETWORK_SLICE_PROVIDER
+              example: OsmDomainLayer
             type:
               type: string
-              example: OSM
+              example: NETWORK_SLICE_PROVIDER
             username:
               type: string
               example: admin

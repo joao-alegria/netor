@@ -142,9 +142,9 @@ def createNewGroup():
                     schema:
                         $ref: '#/definitions/Acknowledge'
     """
+    data=request.json
+    validate(data, 'Group', 'definitions.yaml')
     try:
-        data=request.json
-        validate(data, 'Group', 'definitions.yaml')
         service.createGroup(request.oauth.user.username,data)
         return jsonify({"message":"Success"}),200
     except Exception as e:
@@ -252,9 +252,9 @@ def createNewTenant():
                     schema:
                         $ref: '#/definitions/Acknowledge'
     """
+    data=request.json
+    validate(data, 'Tenant', 'definitions.yaml')
     try:
-        data=request.json
-        validate(data, 'Tenant', 'definitions.yaml')
         service.createTenant(request.oauth.user.username,data)
         return jsonify({"message":"Success"}),200
     except Exception as e:

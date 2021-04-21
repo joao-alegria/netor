@@ -77,11 +77,12 @@ vnfd:
         name: peer_key
       - data-type: STRING
         name: peer_network
-    - name: sendvnfinfo
-      parameter:
-      - data-type: STRING
-        default-value: "10.0.12.118:5555/vnf"
-        name: vsEndpoint
+    # - name: sendvnfinfo
+    #   parameter:
+    #   - data-type: STRING
+    #     default-value: "10.0.12.118:5555/vnf"
+    #     name: vsEndpoint
+    - name: getvnfinfo
     - name: modifytunnel
       parameter:
       - data-type: STRING
@@ -109,12 +110,12 @@ vnfd:
     #   - data-type: STRING
     #     name: filename  
     #     value: /home/ubuntu/first-touch
-    - seq: 2
-      name: sendvnfinfo
-      parameter:
-      - data-type: STRING
-        name: vsEndpoint  
-        value: "10.0.12.117:5555/interdomain"
+    # - seq: 2
+    #   name: sendvnfinfo
+    #   parameter:
+    #   - data-type: STRING
+    #     name: vsEndpoint  
+    #     value: "10.0.12.117:5555/interdomain"
     id: default-vnf-configuration
     juju:
       charm: interdomainvdu

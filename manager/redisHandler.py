@@ -15,3 +15,9 @@ def setKeyValue(mainkey,key,value):
 
 def getHashValue(mainkey, key):
     return redisClient.hget(mainkey,key)
+
+def deleteHash(mainKey, key):
+    return redisClient.hdel(mainKey, key)
+
+def deleteKey(mainKey):
+    return redisClient.delete(mainKey)

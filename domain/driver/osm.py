@@ -12,7 +12,9 @@ def instantiateNS(domainIp, nsName, nsdName, account, additionalConf=None):
 
 def sendActionNS(domainIp, nsId, additionalConf=None):
     tmpClient = client.Client(host=domainIp)
-    return tmpClient.ns.exec_op(nsId, "action", op_data=additionalConf)
+    actionId=tmpClient.ns.exec_op(nsId, "action", op_data=additionalConf, wait=True)
+    actionInfo=tmpClient.ns.get_op(actionId)
+    return actionInfo
 
 def modifyNS(domainIp):
     return
@@ -34,7 +36,9 @@ def instantiateNSI(domainIp,nsiName,nstName,account, additionalConf=None):
 
 def sendActionNSI(domainIp, nsiId, additionalConf):
     tmpClient = client.Client(host=domainIp)
-    return tmpClient.nsi.exec_op(nsiId, "action", op_data=additionalConf)
+    actionId=tmpClient.nsi.exec_op(nsiId, "action", op_data=additionalConf)
+    actionInfo=tmpClient.nsi.get_op(actionId)
+    return actionInfo
 
 def modifyNSI(domainIp):
     return 

@@ -1,0 +1,17 @@
+{
+    "slice_service_type": "EMBB",
+    "embb_service_category":"URBAN_MACRO",
+    "parameters": [
+    {
+        "parameter_id": "peers",
+        "parameter_type": "number",
+        "applicability_field": "interdomain",
+        "parameter_name": "Peers",
+        "parameter_description": "#Peers"
+    }
+    ],
+    "version": "version_1",
+    "name": "vsb-test",
+    "inter_site": true,
+    "blueprint_id": "1"
+}

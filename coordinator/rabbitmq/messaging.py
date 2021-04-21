@@ -14,11 +14,24 @@ class MessageReceiver(Thread):
         self.messaging.consumeQueue("vsCoordinator",self.callback)
 
     def callback(self, ch, method, properties, body):
-        logging.info("Received Message {}".format(body))
-        data=json.loads(body)
-        if data["msgType"]=="statusUpdate":
-            service.changeStatusVSI(data["data"]["vsiId"], data["data"]["status"],data["data"]["message"])
+        try:
+            logging.info("Received Message {}".format(body))
+            data=json.loads(body)
+            if data["msgType"]=="statusUpdate":
+                service.changeStatusVSI(data)
+        except Exception as e:
+            logging.error("Error while processing message: {}".format(body))
+
+    def stop(self):
+        try:
+            self.messaging.stopConsuming()
+        except Exception as e:
+            logging.error("Pika exception: "+str(e))
 
     def run(self):
-        logging.info('Started Consuming RabbitMQ Topics')
-        self.messaging.startConsuming()
+        try:
+            logging.info('Started Consuming RabbitMQ Topics')
+            self.messaging.startConsuming()
+        except Exception as e:
+            logging.info("Stop consuming now!")
+            logging.error("Pika exception: "+str(e))    

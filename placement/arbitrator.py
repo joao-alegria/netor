@@ -72,13 +72,14 @@ class Arbitrator(Thread):
                     for nst in catalogueInfo["nsts"]:
                         if nst["nst_id"]==nstId:
                             externalNST=False
-                            if len(nst["nsst_ids"])>0:
+                            if len(nst["nsst"])>0:
                                 for nsstId in nst["nsst_ids"]:
                                     externalNSST=True
-                                    for nsst in catalogueInfo["nsts"]:
+                                    for nsst in nst["nsst"]:
                                         if nsst["nst_id"]==nsstId:
                                             externalNSST=False
                                             translation.append({"domainId":domainId,"sliceEnabled":False,"nsdId":nsst["nsd_id"]})
+                                            break
                                     if externalNSST:
                                         translation.append({"domainId":domainId,"sliceEnabled":True,"nstId":nstId})
                             else:
@@ -113,7 +114,7 @@ class Arbitrator(Thread):
                 self.messaging.publish2Exchange("vsLCM_"+str(self.vsiId), json.dumps(message))
                 return
 
-        #arbitrate the domains (see if user defined domains in instantiation)
+        #user defined domains in instantiation
 
         message={"vsiId":self.vsiId,"msgType":"placementInfo", "error":False, "message":"Success", "data":translation}
         self.messaging.publish2Exchange("vsLCM_"+str(self.vsiId), json.dumps(message))
@@ -125,6 +126,37 @@ class Arbitrator(Thread):
     #         self.processEntitiesPlacement()
     #     return
 
+    def tearDown(self):
+        logging.info("Tearing down Arbitrator of VSI "+str(self.vsiId))
+        redis.deleteKey(self.vsiId)
+        redis.deleteHash("createVSI",self.vsiId)
+        self.stop()
+
+    def stop(self):
+        try:
+            self.messaging.stopConsuming()
+        except Exception as e:
+            logging.error("Pika exception: "+str(e))
+
     def run(self):
-        logging.info('Started Consuming RabbitMQ Topics')
-        self.messaging.startConsuming()
+        try:
+            logging.info('Started Consuming RabbitMQ Topics')
+            self.messaging.startConsuming()
+        except Exception as e:
+            logging.info("VSI "+str(self.vsiId)+" Arbitrator Ended")
+            logging.error("Pika exception: "+str(e))
+
+arbitrators={}
+
+def newArbitrator(data):
+    arbitrator=Arbitrator(data["vsiId"], data)
+    arbitrators[data["vsiId"]]=arbitrator
+    arbitrator.start()
+
+def tearDownArbitrator(data):
+    vsiId=str(data["vsiId"])
+    if vsiId in arbitrators:
+        arbitrators[vsiId].tearDown()
+        del arbitrators[vsiId]
+    else:
+        logging.info("VSI Id not found during tearDown: "+str(vsiId))

@@ -11,6 +11,7 @@ definitions:
     required:
       - name
       - vsdId
+      - vsiId
     properties:
       vsiId:
         type: string
@@ -42,6 +43,17 @@ definitions:
           dynamicKey:
             type: string
             example: dynamicValue
+      domainPlacements:
+        type: array
+        items:
+          type: object
+          properties:
+            domainId:
+              type: string
+              example: ITAV
+            componentName:
+              type: string
+              example: test_VSI-3_1
       locationConstraints:
         type: object
         properties:

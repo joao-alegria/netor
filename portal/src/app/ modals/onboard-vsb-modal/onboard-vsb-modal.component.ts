@@ -19,6 +19,7 @@ export class OnboardVsbModalComponent implements OnInit {
   vnfNumbers = [0]
   appNumbers = [0]
   rulesNumbers = [[0]]
+  actionsNumbers = [[0]]
   vsbFiles = []
   nsdFiles = []
   nstFiles = []
@@ -90,7 +91,7 @@ export class OnboardVsbModalComponent implements OnInit {
     let fileContent
     if (this.vsbFiles.length > 0) {
       fileContent = await this.getFileContent(this.vsbFiles[0])
-      blueprint["vsBlueprint"] = fileContent
+      blueprint["vs_blueprint"] = fileContent
     }
 
     if (this.nsdFiles.length > 0) {
@@ -121,10 +122,10 @@ export class OnboardVsbModalComponent implements OnInit {
       if (name == "") {
         break
       } else {
-        if (blueprint["vnfPackages"] == null) {
-          blueprint["vnfPackages"] = [{ name: name, version: version, provider: provider, checksum: checksum, vnfPackagePath: path }]
+        if (blueprint["vnf_packages"] == null) {
+          blueprint["vnf_packages"] = [{ name: name, version: version, provider: provider, checksum: checksum, vnf_package_path: path }]
         } else {
-          blueprint["vnfPackages"].push({ name: name, version: version, provider: provider, checksum: checksum, vnfPackagePath: path })
+          blueprint["vnf_packages"].push({ name: name, version: version, provider: provider, checksum: checksum, vnf_package_path: path })
         }
       }
     }
@@ -138,10 +139,10 @@ export class OnboardVsbModalComponent implements OnInit {
       if (name == "") {
         break
       } else {
-        if (blueprint["mecAppPackages"] == null) {
-          blueprint["mecAppPackages"] = [{ name: name, version: version, provider: provider, checksum: checksum, vnfPackagePath: path }]
+        if (blueprint["mec_app_packages"] == null) {
+          blueprint["mec_app_packages"] = [{ name: name, version: version, provider: provider, checksum: checksum, mec_package_path: path }]
         } else {
-          blueprint["mecAppPackages"].push({ name: name, version: version, provider: provider, checksum: checksum, vnfPackagePath: path })
+          blueprint["mec_app_packages"].push({ name: name, version: version, provider: provider, checksum: checksum, mec_package_path: path })
         }
       }
     }
@@ -157,15 +158,15 @@ export class OnboardVsbModalComponent implements OnInit {
         let paramid = $("#ruleparamid" + ruleNumber + "_" + inputNumber).val()
         let parammin = $("#ruleparammin" + ruleNumber + "_" + inputNumber).val()
         let parammax = $("#ruleparammax" + ruleNumber + "_" + inputNumber).val()
-        userInput.push({ parameterId: paramid, minValue: parseInt(parammin), maxValue: parseInt(parammax) })
+        userInput.push({ parameter_id: paramid, min_value: parseInt(parammin), max_value: parseInt(parammax) })
       }
       if (nsdid == "") {
         break
       } else {
-        if (blueprint["translationRules"] == null) {
-          blueprint["translationRules"] = [{ nsdId: nsdid, nsdVersion: nsdversion, nstId: nstid, nsFlavourId: nsflavourid, nsInstantiationLevelId: instlevelid, input: userInput }]
+        if (blueprint["translation_rules"] == null) {
+          blueprint["translation_rules"] = [{ nsd_id: nsdid, nsd_version: nsdversion, nst_id: nstid, ns_flavour_id: nsflavourid, ns_instantiation_level_id: instlevelid, input: userInput }]
         } else {
-          blueprint["translationRules"].push({ nsdId: nsdid, nsdVersion: nsdversion, nsFlavourId: nsflavourid, nsInstantiationLevelId: instlevelid, input: userInput })
+          blueprint["translation_rules"].push({ nsd_id: nsdid, nsd_version: nsdversion, ns_flavour_id: nsflavourid, ns_instantiation_level_id: instlevelid, input: userInput })
         }
       }
     }
@@ -225,8 +226,16 @@ export class OnboardVsbModalComponent implements OnInit {
     this.rulesNumbers.push([0])
   }
 
+  addActionForm() {
+    this.actionsNumbers.push([0])
+  }
+
   addInputParameterForm(index) {
     this.rulesNumbers[index].push(this.rulesNumbers[index][this.rulesNumbers[index].length - 1] + 1)
+  }
+
+  addActionParameterForm(index) {
+    this.actionsNumbers[index].push(this.actionsNumbers[index][this.actionsNumbers[index].length - 1] + 1)
   }
 
   myStyle(i) {
@@ -248,6 +257,14 @@ export class OnboardVsbModalComponent implements OnInit {
 
   removeRule(i) {
     this.rulesNumbers.splice(i, 1);
+  }
+
+  removeAction(i) {
+    this.actionsNumbers.splice(i, 1);
+  }
+
+  removeActionParameter(i, j) {
+    this.actionsNumbers[i].splice(j, 1);
   }
 
   removeParameter(i, j) {

@@ -6,6 +6,7 @@ from datetime import timedelta, datetime
 from hashlib import blake2b
 import config
 from flask_login import UserMixin
+import logging
 
 Base = declarative_base()
 
@@ -196,19 +197,25 @@ def initDB():
         client_secret='portal', client_type='confidential',
         _redirect_uris=('http://127.0.0.1/authorized'),
     )
-
     
-    password=blake2b('admin'.encode("utf-8")).hexdigest()
-    group=Group(name="admin")
-    admin = Tenant(username='admin', role='ADMIN', storage=100, memory=100, vcpu=100, group=group, password=password)
+    adminPassword=blake2b('admin'.encode("utf-8")).hexdigest()
+    userPassword=blake2b('user'.encode("utf-8")).hexdigest()
+    adminGroup=Group(name="admin")
+    userGroup=Group(name="user")
+    admin = Tenant(username='admin', role='ADMIN', storage=100, memory=100, vcpu=100, group=adminGroup, password=adminPassword)
+    user = Tenant(username='user', role='TENANT', storage=100, memory=100, vcpu=100, group=userGroup, password=userPassword)
 
     try:
-        session.add(group)
+        session.add(adminGroup)
+        session.add(userGroup)
         session.add(portal)
         session.add(admin)
+        session.add(user)
         session.commit()
-    except:
+        logging.info("Successfully initiated database")
+    except Exception as e:
         session.rollback()
+        logging.info("Error while initializing database: "+str(e))
 
 engine = create_engine('postgresql://'+str(config.POSTGRES_USER)+':'+str(config.POSTGRES_PASS)+'@'+str(config.POSTGRES_IP)+':'+str(config.POSTGRES_PORT)+'/'+str(config.POSTGRES_DB))
 try:

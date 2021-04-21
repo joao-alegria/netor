@@ -78,7 +78,7 @@ addpeer:
   - peer_network
 
 sendvnfinfo:
-  description: "Configures the remote server"
+  description: "Automatically sends tunnel info to an external entity"
   params:
     vsEndpoint:
       description: "Address of the remote VS server"
@@ -86,6 +86,9 @@ sendvnfinfo:
       default: "10.0.12.118:5555/vnf"
   required:
     - vsEndpoint
+
+getvnfinfo:
+  description: "Returns the VNF's tunnel info"
 
 modifytunnel:
   description: "Updates the bandwidth of the tunnel"

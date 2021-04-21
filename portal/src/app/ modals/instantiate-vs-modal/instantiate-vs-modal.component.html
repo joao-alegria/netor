@@ -33,12 +33,54 @@
                         required>
                 </div>
                 <div class="row form-group">
+                    <label for="domainId" class="col-sm-3 text-right col-form-label">Single Domain Id: </label>
+                    <input class="form-control col-sm-9" type="text" id="domainId" placeholder="Enter DomainId"
+                        required>
+                </div>
+                <div class="row form-group">
                     <label for="notificationUrl" class="col-sm-3 text-right col-form-label">Notification URL: </label>
                     <input class="form-control col-sm-9" type="text" id="notificationUrl" placeholder="Enter URL"
                         required>
                 </div>
+
+                <div class="form-group row">
+                    <label for="placements" class="col-sm-3 text-right col-form-label">Multi Domain Placements:</label>
+                    <div class="col-sm-12 container" id="placements">
+                        <div *ngFor="let placementNum of domainPlacements; let i=index">
+                            <div class="row">
+                                <div class="col-md-1" style="margin:auto;">
+                                    <i *ngIf="i!=0" style="float:right; cursor: pointer;" class=" fa fa-trash fa-2x"
+                                        (click)="removePlacement(i)"></i>
+                                </div>
+                                <div class="col-md-11">
+                                    <div class="container-fluid" [ngStyle]="myStyle(i)">
+                                        <div class="row from-group">
+                                            <label [attr.for]="'placement'+placementNum"
+                                                class="col-sm-3 text-right col-form-label">Name:</label>
+                                            <input class="form-control col-sm-9" type="text"
+                                                [attr.id]="'placement'+placementNum" placeholder="Enter Value">
+                                        </div>
+                                        <div class="row form-group">
+                                            <label [attr.for]="'placementValue'+placementNum"
+                                                class="col-sm-3 text-right col-form-label">Value:
+                                            </label>
+                                            <input class="form-control col-sm-9" type="text"
+                                                [attr.id]="'placementValue'+placementNum" placeholder="Enter Value">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="text-align: center;">
+                            <button style="margin-bottom: 10px; background-color: #4489eb;" type="button"
+                                class="btn btn-primary" (click)="addPlacement()">Add Placement</button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </form>
+        
         <!-- <h5>Instance Parameters</h5>
         <form>
             <div class="container">

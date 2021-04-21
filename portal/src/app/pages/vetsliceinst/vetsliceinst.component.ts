@@ -28,13 +28,12 @@ export class VetsliceinstComponent implements OnInit {
 
 
   ngOnInit() {
-    this.listData = [];
     this.update()
   }
 
   update() {
     this.listData=[]
-    this.vs.getVerticalSlices().then(data => { this.listData = data })
+    this.vs.getVerticalSlices().then(data => { this.listData = data["data"] })
   }
 
   onEnter(element) {

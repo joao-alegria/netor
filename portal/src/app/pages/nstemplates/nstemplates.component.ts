@@ -28,16 +28,16 @@ export class NstemplatesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.listData = [];
     this.update()
   }
 
   update() {
     this.listData=[]
     this.vs.getNSTemplates().then(data => {
-      this.listData = data
+      this.listData = data["data"]
+      console.log(this.listData)
       if (!this.tenant) {
-        this.listData.unshift({ control: true, name: "Onboard NST", nst: { nstId: "OnboardNST" } })
+        this.listData.unshift({ control: true, name: "Onboard NST", nst_id: "OnboardNST" })
       }
     })
   }

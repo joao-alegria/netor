@@ -5,10 +5,10 @@
     <div class="row" style="margin-top: 5px;">
         <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let element of listData"
             style="display: flex;flex-direction: column;">
-            <div [attr.id]="element.nst.nstId" class="card mb-3"
+            <div [attr.id]="element.nst_id" class="card mb-3"
                 style="border-width: 2px; cursor: pointer; height:100%; border-color: #4489EB;"
-                (click)="clickEvent($event, element)" (mouseenter)="onEnter(element.nst.nstId)"
-                (mouseleave)="onLeave(element.nst.nstId)">
+                (click)="clickEvent($event, element)" (mouseenter)="onEnter(element.nst_id)"
+                (mouseleave)="onLeave(element.nst_id)">
                 <div *ngIf="element.control" class="card-body"
                     style="text-align: center;display: flex; justify-content: center; align-items: center;"
                     (click)="onboardNST($event)">
@@ -21,29 +21,38 @@
 
                 <div *ngIf="!element.control" class="card-body" style="clear: none;">
                     <i class="fa fa-plus fa-4x" style="float: right; color:lightgray;"></i>
-                    <h3 class="card-title">{{element.nst.nstName}}</h3>
+                    <h3 class="card-title">{{element.nst_name}}</h3>
                     <p class="card-text">
-                        <b>NST Provider:</b> {{element.nst.nstProvider}}
+                        <b>NST ID:</b> {{element.nst_id}}
                     </p>
-                    <p *ngIf="element.nst.nstServiceProfile" class="card-text">
-                        <b>Service Type:</b> {{element.nst.nstServiceProfile.sST}}
+                    <p class="card-text">
+                        <b>NST Provider:</b> {{element.nst_provider}}
                     </p>
-                    <p *ngIf="element.nst.nstServiceProfile" class="card-text">
-                        <b>Availability:</b> {{element.nst.nstServiceProfile.availability}}
+                    <p *ngIf="element.nst_service_profile" class="card-text">
+                        <b>Service Type:</b> {{element.nst_service_profile.sST}}
                     </p>
-                    <p class="card-text" *ngIf="element.nst.nstServiceProfile">
-                        <b>Latency:</b> {{element.nst.nstServiceProfile.latency}}
+                    <p *ngIf="element.nst_service_profile" class="card-text">
+                        <b>Availability:</b> {{element.nst_service_profile.availability}}
                     </p>
-                    <p class="card-text" *ngIf="element.nst.nstServiceProfile">
-                        <b>Max # UE:</b> {{element.nst.nstServiceProfile.maxNumberofUEs}}
+                    <p class="card-text" *ngIf="element.nst_service_profile">
+                        <b>Latency:</b> {{element.nst_service_profile.latency}}
                     </p>
-                    <p class="card-text" *ngIf="element.nst.nstServiceProfile">
-                        <b>UE Mobility:</b> {{element.nst.nstServiceProfile.uEMobilityLevel}}
+                    <p class="card-text" *ngIf="element.nstServiceProfile">
+                        <b>Max # UE:</b> {{element.nst_service_profile.max_number_of_UEs}}
                     </p>
-                    <div *ngIf="element.nst.nstServiceProfile">
+                    <p class="card-text" *ngIf="element.nstServiceProfile">
+                        <b>UE Mobility:</b> {{element.nst_service_profile.uE_mobility_level}}
+                    </p>
+                    <!-- <div *ngIf="element.nst_service_profile">
                         <h5>Coverage Area</h5>
-                        <div *ngFor="let area of element.nst.nstServiceProfile.coverageAreaTAList">
+                        <div *ngFor="let area of element.nst_service_profile.coverage_area_TA_list">
                             <p>{{area}}</p>
+                        </div>
+                    </div> -->
+                    <div *ngIf="element.nsst_ids">
+                        <h5>Subnets</h5>
+                        <div *ngFor="let subnet of element.nsst_ids">
+                            <p>- {{subnet}}</p>
                         </div>
                     </div>
                 </div>

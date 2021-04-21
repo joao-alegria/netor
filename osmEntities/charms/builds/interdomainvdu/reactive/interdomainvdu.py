@@ -556,6 +556,65 @@ def sendVnfIp():
     clear_flag('actions.sendvnfinfo')
 
 
+@when('actions.getvnfinfo')
+@when('interdomainvdu.installed')
+def sendVnfIp():
+    result=err = ''
+
+    try:
+        vnfMgmtIp = config['ssh-hostname']
+        tunnelAddress = config['tunnel_address']
+        tunnelId = config['tunnel_id']
+        vsiId = config['vsi_id']
+
+        log(config)
+
+        try:
+            cmd = ['ifconfig | echo $(awk "/^[a-z]/ { sub(\\":\\",\\"\\"); iface = \$1; getline; sub(\\"addr:\\", \\"\\"); print \\"\\\\\\"\\"iface\\"\\\\\\":\\",\\"\\\\\\"\\"\$2\\"\\\\\\",\\" }"| grep -v 127.0.0.1) | awk "{print \\"{\\"substr(\$0, 1, length(\$0)-1)\\"}\\"}"']
+            result, err = charms.sshproxy._run(cmd)
+        except:
+            log('command failed:' + err)
+        else:
+            set_flag('interdomainvdu.getinterfaces.failed')
+        finally:
+            log("interfaces: "+result)
+            interfacesAndIps=json.loads(result)
+
+        try:
+            filename="/etc/wireguard/publickey"
+            cmd = ['sudo cat {}'.format(filename)]
+            result, err = charms.sshproxy._run(cmd)
+        except:
+            log('command failed:' + err)
+        else:
+            set_flag('interdomainvdu.load.keys.failed')
+        finally:
+            publicKey=result
+
+        if len(interfacesAndIps)==3:
+
+            vnfMgmtIp=vnfMgmtIp.split("/")[0]
+            tunnelAddress=tunnelAddress.split("/")[0]
+
+            for key, value in interfacesAndIps.items():
+                if value != vnfMgmtIp and value != tunnelAddress:
+                    vnfIp=value
+                    config["data_address"]=vnfIp
+                    config["data_interface"]=key
+
+            result=json.dumps({"vsiId":vsiId,"publicKey": publicKey,"vnfIp":vnfIp, "tunnelId":tunnelId})
+        else:
+            log('Expecting 3 network interfaces')
+            function_fail('Expecting 3 network interfaces')
+    except:
+        function_fail('command failed:' + err)
+    else:
+        function_set({'output': result, "errors": err})
+    finally:
+        log(result)
+
+    clear_flag('actions.getvnfinfo')
+
 @when('actions.modifytunnel')
 @when('interdomainvdu.installed')
 def modifyTunnel():

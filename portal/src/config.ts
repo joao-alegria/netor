@@ -9,7 +9,7 @@ export default {
     vsnst: '/catalogue/nstemplate',
     vsgroups: '/tenant/group',
     vstenants: '/tenant/tenant',
-    vsnstemplates: '/catalogue/nstemplate',
+    vsnstemplates: '/catalogue/nst',
     vsverticalslices: '/lcm/vs',
     vsverticalslicesID: '/lcm/vs',
     vsns: '/vs/basic/nslcm/ns',

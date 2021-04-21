@@ -15,13 +15,13 @@
                         <label for="blueprintId" class="col-sm-3 text-right col-form-label">Blueprint
                             ID:</label>
                         <input class="col-sm-9 form-control" type="text" id="blueprintId"
-                            [attr.value]="modalData.blueprint.vsBlueprintId" readonly />
+                            [attr.value]="modalData.blueprint.vs_blueprint_id" readonly />
                     </div>
                     <div class="row form-group">
                         <label for="blueprintName" class="col-sm-3 text-right col-form-label">Blueprint
                             Name:</label>
                         <input class="col-sm-9 form-control" type="text" id="blueprintName"
-                            [attr.value]="modalData.blueprint.vsBlueprint.name" readonly />
+                            [attr.value]="modalData.blueprint.vs_blueprint.name" readonly />
                     </div>
                     <div class="row form-group">
                         <label for="name" class="col-sm-3 text-right col-form-label">Name: </label>
@@ -63,13 +63,13 @@
 
         <h3>QoS Parameters</h3>
         <div id="qosParameters">
-            <form *ngFor="let parameter of modalData.blueprint.vsBlueprint.parameters">
+            <form *ngFor="let parameter of modalData.blueprint.vs_blueprint.parameters">
                 <div class="container">
                     <div class="form-group row">
-                        <label [attr.for]="parameter.parameterName"
-                            class="col-sm-3 text-right col-form-label">{{parameter.parameterName}}:
+                        <label [attr.for]="parameter.parameter_name"
+                            class="col-sm-3 text-right col-form-label">{{parameter.parameter_name}}:
                         </label>
-                        <input class="col-sm-9 form-control" type="text" [attr.id]="parameter.parameterName"
+                        <input class="col-sm-9 form-control" type="text" [attr.id]="parameter.parameter_name"
                             placeholder="Insert Value" required>
                     </div>
                 </div>

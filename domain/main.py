@@ -6,6 +6,7 @@ import logging
 
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
+    logging.getLogger('pika').propagate=False
 
     persistance.initDB()
 

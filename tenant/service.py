@@ -1,5 +1,6 @@
 import db.schemas as schemas
 import db.persistance as persistance
+from hashlib import blake2b
 
 def getAllGroups():
     schema=schemas.GroupSchema()
@@ -44,6 +45,14 @@ def createTenant(tenantName, tenantData):
     if tenantName != "admin":
         raise Exception("Invalid user. No permissions to create a new Tenant.")
     schema=schemas.TenantSchema()
+
+    groups=getAllGroups()
+    groupNames=[group["name"] for group in groups]
+    if tenantData["group"] not in groupNames:
+        raise Exception("Group "+tenantData["group"]+" does not exist.")
+
+    tenantData["password"]=blake2b(tenantData["password"].encode("utf-8")).hexdigest()
+
     tenant=schema.load(tenantData, session=persistance.session)
     persistance.persist(tenant)
     #TODO verifications
@@ -66,3 +75,7 @@ def removeTenant(tenantName):
     tenant=persistance.session.query(persistance.Tenant).filter(persistance.Tenant.username==tenantName).first()
     #TODO: add deletion verification
     persistance.delete(tenant)
+
+def deleteVsiFromTenant(tenantName, vsiId):
+    vsi=persistance.session.query(persistance.VSI).filter(persistance.VSI.tenantUsername==tenantName, persistance.VSI.id==vsiId).first()
+    persistance.delete(vsi)

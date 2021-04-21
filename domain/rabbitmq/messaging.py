@@ -35,6 +35,16 @@ class MessageReceiver(Thread):
                 message={"vsiId":data["vsiId"],"msgType":"domainInfo", "error":True, "message":"Error when fetching domains ids: "+str(e)}
                 self.messaging.publish2Exchange("vsLCM_"+str(data["vsiId"]), json.dumps(message))
 
+    def stop(self):
+        try:
+            self.messaging.stopConsuming()
+        except Exception as e:
+            logging.error("Pika exception: "+str(e))
+
     def run(self):
-        logging.info('Started Consuming RabbitMQ Topics')
-        self.messaging.startConsuming()
+        try:
+            logging.info('Started Consuming RabbitMQ Topics')
+            self.messaging.startConsuming()
+        except Exception as e:
+            logging.info("Stop consuming now!")
+            logging.error("Pika exception: "+str(e))    

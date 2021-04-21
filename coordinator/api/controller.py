@@ -37,7 +37,7 @@ def getAllVSs():
     """
 
     try:
-        vsis=vsService.getAllVSIs(current_user.tenantName)
+        vsis=vsService.getAllVSIs(current_user.name)
         return jsonify({"message":"Success", "data":vsis}),200
     except Exception as e:
         return jsonify({"message":"Error: "+str(e)}),500
@@ -63,11 +63,11 @@ def createNewVS():
                         $ref: '#/definitions/Acknowledge'
     """
 
+    data=request.json
+    validate(data, 'VS', 'definitions.yaml')
     try:
-        data=request.json
-        validate(data, 'VS', 'definitions.yaml')
-        vsService.createNewVS(current_user.tenantName,data)
-        return jsonify({"message":"Success"}),200
+        vsiId=vsService.createNewVS(current_user.name,data)
+        return jsonify({"message":"Success", "data":{"vsiId":vsiId}}),200
     except Exception as e:
         return jsonify({"message":"Error: "+str(e)}),500
 
@@ -87,7 +87,7 @@ def getVSById(vsiId):
     """
 
     try:
-        vsi=vsService.getVSI(current_user.tenantName, vsiId)
+        vsi=vsService.getVSI(current_user.name, vsiId)
         return jsonify({"message":"Success", "data":vsi}),200
     except Exception as e:
         return jsonify({"message":"Error: "+str(e)}),500
@@ -109,7 +109,7 @@ def modifyVs(vsiId):
 
     try:
         data=request.json
-        vsService.modifyVSI(current_user.tenantName, vsiId, data)
+        vsService.modifyVSI(current_user.name, vsiId, data)
         return jsonify({"message":"Success"}),200
     except Exception as e:
         return jsonify({"message":"Error: "+str(e)}),500
@@ -130,7 +130,7 @@ def removeVs(vsiId):
     """
 
     try:
-        vsService.removeVSI(current_user.tenantName, vsiId)
+        vsService.removeVSI(current_user.name, vsiId)
         return jsonify({"message":"Success"}),200
     except Exception as e:
         return jsonify({"message":"Error: "+str(e)}),500

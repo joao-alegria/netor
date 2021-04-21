@@ -1,4 +1,4 @@
-from db.persistance import VerticalServiceInstance, persist, session
+from db.persistance import VerticalServiceInstance, persist, session, delete
 from flask import jsonify
 import db.schemas as schemas
 from rabbitmq.adaptor import Messaging
@@ -7,9 +7,17 @@ import json
 messaging=Messaging()
 
 def createNewVS(tenantName,request):
-    #TODO validate tenant and vsd
+    vsis=getAllVSIs(tenantName)
+    vsiIds=[vsi["vsiId"] for vsi in vsis]
+    if request["vsiId"] in vsiIds:
+        raise Exception("VSI Id "+request["vsiId"]+" already exists")
+
     schema = schemas.VerticalServiceInstanceSchema()
     vsInstance = schema.load(request,session=session)
+
+    vsInstance.status="creating"
+    vsInstance.statusMessage="Creating Vertical Service Instance"
+
     vsInstance.tenantId=tenantName
     persist(vsInstance)
     #create vsi queue
@@ -22,6 +30,7 @@ def createNewVS(tenantName,request):
     message={"msgType":"createVSI","vsiId": vsInstance.vsiId, "tenantId":tenantName, "data": request}
     #send needed info
     messaging.publish2Exchange('vsLCM_Management',json.dumps(message))
+    return vsInstance.vsiId
 
 def getAllVSIs(tenantName):
     schema = schemas.VerticalServiceInstanceSchema()
@@ -50,12 +59,15 @@ def modifyVSI(tenantName, vsiId, request):
 def removeVSI(tenantName, vsiId):
     vsi=session.query(VerticalServiceInstance).filter(VerticalServiceInstance.tenantId==tenantName,VerticalServiceInstance.vsiId==vsiId).first()
     #send message to manager
-    message={"msgType":"removeVSI", "vsiId":vsiId}
-    messaging.publish2Exchange('vsLCM_'+str(vsiId),json.dumps(message))
+    message={"msgType":"removeVSI", "vsiId":vsiId, "tenantId":tenantName}
+    messaging.publish2Exchange('vsLCM_Management',json.dumps(message))
+    delete(vsi)
 
-def changeStatusVSI(vsiId, status, message):
+def changeStatusVSI(data):
+    vsiId=data["data"]["vsiId"]
     vsi=session.query(VerticalServiceInstance).filter(VerticalServiceInstance.vsiId==vsiId).first()
     if "fail" not in vsi.status.lower():
-        vsi.status=status
-        vsi.statusMessage=message
+        if "status" in data["data"]:
+            vsi.status=data["data"]["status"]
+        vsi.statusMessage=data["data"]["message"]
         persist(vsi)

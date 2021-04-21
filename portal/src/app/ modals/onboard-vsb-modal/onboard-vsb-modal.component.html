@@ -203,10 +203,10 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <form>
+                                <form style="width: 100%;">
                                     <div style="width:90%" class="container"
                                         *ngFor="let parameterNumber of rulesNumbers[k]; let l=index">
-                                        <div class="row">
+                                        <div class="row" style="width: 100%;">
                                             <div class="col-md-1" style="margin:auto;; cursor: pointer;">
                                                 <i *ngIf="l!=0" style="float:right" class=" fa fa-trash fa-2x"
                                                     (click)="removeParameter(k,l)"></i>
@@ -260,6 +260,96 @@
                     (click)="addRuleForm()">Add +1 Rule</button>
             </div>
         </form>
+
+        <h3>Supported Actions</h3>
+        <form>
+            <div class="container" *ngFor="let actionNumber of actionsNumbers; let a = index;">
+                <div class="row">
+                    <div class="col-md-1" style="margin:auto;">
+                        <i *ngIf="a!=0" style="float:right; cursor: pointer;" class=" fa fa-trash fa-2x"
+                            (click)="removeAction(a)"></i>
+                    </div>
+                    <div class="col-md-11">
+                        <div class="container-fluid" [ngStyle]="myStyle(a)">
+                            <div class="row form-group">
+                                <div class="col">
+                                    <label class="col-form-label" [attr.for]="'actionId'+a">Action ID</label>
+                                    <input type="text" class="form-control" placeholder="Enter ID"
+                                        [attr.id]="'actionId'+a">
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col">
+                                    <label class="col-form-label" [attr.for]="'actionName'+a">Action Name</label>
+                                    <input type="text" class="form-control" placeholder="Enter Name"
+                                        [attr.id]="'actionName'+a">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <form style="width: 100%;">
+                                    <div style="width:90%" class="container"
+                                        *ngFor="let actionParameterNumber of actionsNumbers[a]; let b=index">
+                                        <div class="row" style="width: 100%;">
+                                            <div class="col-md-1" style="margin:auto;; cursor: pointer;">
+                                                <i *ngIf="b!=0" style="float:right" class=" fa fa-trash fa-2x"
+                                                    (click)="removeActionParameter(a,b)"></i>
+                                            </div>
+                                            <div class="col-md-11">
+                                                <div class="container-fluid" [ngStyle]="myStyle(b)">
+                                                    <div class="row form-group">
+                                                        <div class="col">
+                                                            <label class="col-form-label"
+                                                                [attr.for]="'actionparamid'+a+'_'+actionParameterNumber">Parameter ID</label>
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Enter ID"
+                                                                [attr.id]="'actionparamid'+a+'_'+actionParameterNumber">
+                                                        </div>
+                                                        <div class="col">
+                                                            <label class="col-form-label"
+                                                                [attr.for]="'actionparamname'+a+'_'+actionParameterNumber">Parameter Name</label>
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Enter Name"
+                                                                [attr.id]="'actionparamname'+a+'_'+actionParameterNumber">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row form-group">
+                                                        <div class="col">
+                                                            <label class="col-form-label"
+                                                                [attr.for]="'actionparamtype'+a+'_'+actionParameterNumber">Parameter Type</label>
+                                                            <select class="form-control" [attr.id]="'actionparamtype'+a+'_'+actionParameterNumber">
+                                                                <option>STRING</option>
+                                                                <option>INTEGER</option>
+                                                                <option>BOOLEAN</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col">
+                                                            <label class="col-form-label"
+                                                                [attr.for]="'actionparamdefault'+a+'_'+actionParameterNumber">Parameter Default</label>
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Enter Default Value"
+                                                                [attr.id]="'actionparamdefault'+a+'_'+actionParameterNumber">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <button style="margin-bottom: 10px; background-color: #4489eb;" type="button"
+                        class="btn btn-primary" (click)="addActionParameterForm(a)">Add +1 Parameter</button>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <button style="background-color: #4489eb;" type="button" class="btn btn-primary"
+                    (click)="addActionForm()">Add +1 Action</button>
+            </div>
+        </form>
+
     </div>
 
     <div class="row" style="margin-top: 5px;">

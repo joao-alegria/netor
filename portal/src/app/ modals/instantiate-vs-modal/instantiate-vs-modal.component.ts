@@ -17,7 +17,7 @@ declare var $: any;
 export class InstantiateVsModalComponent implements OnInit {
 
   objectKeys = Object.keys;
-  nsParams = [0]
+  domainPlacements = [0]
   parameterOptions = { "NONE": "none", "UE Speed": "uUSpeed", "Coverage": "coverage", "UserDensity": "userDensity", "ActivityFactor": "activityFactor", "Reliability": "reliability", "Survival Time": "survivalTime", "Payload Size": "payloadSize", "Connection Density": "connDensity" }
   tenant
   coords
@@ -100,12 +100,12 @@ export class InstantiateVsModalComponent implements OnInit {
     return styles;
   }
 
-  addParameter() {
-    this.nsParams.push(this.nsParams[this.nsParams.length - 1] + 1)
+  addPlacement() {
+    this.domainPlacements.push(this.domainPlacements[this.domainPlacements.length - 1] + 1)
   }
 
-  removeParameter(j) {
-    this.nsParams.splice(j, 1);
+  removePlacement(j) {
+    this.domainPlacements.splice(j, 1);
   }
 
   onConfirm(coords) {

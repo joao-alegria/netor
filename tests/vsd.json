@@ -1,0 +1,11 @@
+{ 
+    "is_public": true,
+    "nested_vsd_ids": {},
+    "vs_blueprint_id": "607d6ed73c5e72190297ae5a",
+    "domain_id": "ITAV",
+    "version": "1.0",
+    "management_type": "TENANT_MANAGED",
+    "name": "vsdTest",
+    "qos_parameters": {"peers":"2"},
+    "tenant_id": "admin"
+}

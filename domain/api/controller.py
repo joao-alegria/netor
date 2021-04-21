@@ -61,10 +61,9 @@ def createNewDomain():
                         $ref: '#/definitions/Acknowledge'
     """
 
+    data=request.json
+    validate(data, 'Domain', 'definitions.yaml')
     try:
-        data=request.json
-        validate(data, 'Domain', 'definitions.yaml')
-
         domainService.createDomain(data)
         return jsonify({"message":"Success"}),200
     except Exception as e:
