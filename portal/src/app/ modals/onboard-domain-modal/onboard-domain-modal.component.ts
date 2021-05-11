@@ -86,13 +86,14 @@ export class OnboardDomainModalComponent implements OnInit {
     let domainAgreeId= $("#domainAgreeId").val()
 
 
-    let request={domainId:domainId, name:domainName, description:domainDescription, owner: localStorage.username, admin:domainAdmin, domainStatus:domainStatus, domainInterface:{url:domainInterUrl, port:domainInterPort, auth:domainInterAuth, interfaceType:domainInterType}, ownedLayers:[]}
+    let request={domainId:domainId, name:domainName, description:domainDescription, owner: localStorage.username, admin:domainAdmin, status:domainStatus, url:domainInterUrl, port:domainInterPort, auth:domainInterAuth, interfaceType:domainInterType, ownedLayers:[]}
 
     for (let layer of this.ownedLayers){
       let domainLayerId=$("#domainLayerId"+layer).val()
       let domainLayerType=$("#domainLayerType"+layer).val()
       let domainLayerDriverType=$("#domainLayerDriverType"+layer).val()
-      let data={domainLayerId:domainLayerId, domainLayerType:domainLayerType,type:domainLayerDriverType}
+      let data={domainLayerId:domainLayerId, domainLayerType:domainLayerDriverType}
+      //  type:domainLayerType
 
       switch(domainLayerDriverType){
         case "NFVO":
@@ -115,10 +116,10 @@ export class OnboardDomainModalComponent implements OnInit {
           data["tenantId"]=$("#domainLayerNeutralNspTenant"+layer).val()
           break
         case "OSM_NSP":
-          data["project"]=$("#domainLayerOsmNspUsername"+layer).val()
-          data["project"]=$("#domainLayerOsmNspPassword"+layer).val()
+          data["username"]=$("#domainLayerOsmNspUsername"+layer).val()
+          data["password"]=$("#domainLayerOsmNspPassword"+layer).val()
           data["project"]=$("#domainLayerOsmNspProject"+layer).val()
-          data["project"]=$("#domainLayerOsmNspVim"+layer).val()
+          data["vimAccount"]=$("#domainLayerOsmNspVim"+layer).val()
           break
         case "SONATA_NSP":
           data["username"]=$("#domainLayerSonataNspUsername"+layer).val()
@@ -145,7 +146,7 @@ export class OnboardDomainModalComponent implements OnInit {
 
   myStyle(i) {
     let styles = {
-      'border-left': i != 0 ? 'solid 2px #007bff' : '',
+      'border-left': i != 0 ? 'solid 2px #ffa500' : '',
       'border-radius': i != 0 ? '10px' : ''
     };
 

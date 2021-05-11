@@ -1,6 +1,6 @@
 <div class="container-fluid" id="modal-content-wrapper" style="height: 100%; display: flex; flex-flow: column;">
     <div class="row">
-        <h2 id="modal-title" style="color: #4489eb;">Instantiate New VS</h2>
+        <h2 id="modal-title" style="color: #ffa500;">Instantiate New VS</h2>
         <i style="margin-left: auto; cursor: pointer;" class="fa fa-times fa-lg" aria-hidden="true" type=" button"
             (click)="closeModal()"></i>
     </div>
@@ -22,6 +22,10 @@
                 <div class="row form-group">
                     <label for="tenant" class="col-sm-3 text-right col-form-label">Tenant: </label>
                     <input class="form-control col-sm-9" type="text" id="tenant" [attr.value]="tenant" readonly>
+                </div>
+                <div class="row form-group">
+                    <label for="vsiId" class="col-sm-3 text-right col-form-label">VSI ID: </label>
+                    <input class="form-control col-sm-9" type="text" id="vsiId" placeholder="Enter ID" required>
                 </div>
                 <div class="row form-group">
                     <label for="name" class="col-sm-3 text-right col-form-label">Name: </label>
@@ -72,7 +76,7 @@
                             </div>
                         </div>
                         <div style="text-align: center;">
-                            <button style="margin-bottom: 10px; background-color: #4489eb;" type="button"
+                            <button style="margin-bottom: 10px; background-color: #ffa500; border-color: #ffa500;" type="button"
                                 class="btn btn-primary" (click)="addPlacement()">Add Placement</button>
                         </div>
                     </div>
@@ -192,7 +196,7 @@
     </div>
 
     <div class="row" style="margin-top: 5px;">
-        <button style="margin-left: auto; background-color: #4489eb;" id="submitNewVS" type="button"
+        <button style="margin-left: auto; background-color: #ffa500; border-color: #ffa500;" id="submitNewVS" type="button"
             class="btn btn-primary" (click)="submitVS()">Submit</button>
     </div>
 </div>

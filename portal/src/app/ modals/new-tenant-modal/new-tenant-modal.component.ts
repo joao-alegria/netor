@@ -59,7 +59,13 @@ export class NewTenantModalComponent implements OnInit {
         tmp.push({ host: remoteHost, remoteTenantName: remoteUsername, remoteTenantPwd: remotePassword })
       }
 
-      await this.vs.createNewGroupTenant(this.modalData.group, { username: username, password: password, remoteTenantInfos: tmp }).then(()=>{
+      // await this.vs.createNewGroupTenant({ group:this.modalData.group, username: username, password: password, remoteTenantInfos: tmp }).then(()=>{
+      //   this.closeModal()
+      // }).catch((message)=>{
+      //   this.toastr.error(message.error,"Tenant Creation Error", {positionClass: 'toast-bottom-center', closeButton: true})
+      // })
+
+      await this.vs.createNewGroupTenant({ group:this.modalData.group, username: username, password: password}).then(()=>{
         this.closeModal()
       }).catch((message)=>{
         this.toastr.error(message.error,"Tenant Creation Error", {positionClass: 'toast-bottom-center', closeButton: true})

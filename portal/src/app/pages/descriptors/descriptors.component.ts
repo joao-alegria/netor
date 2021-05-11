@@ -98,7 +98,7 @@ export class DescriptorsComponent implements OnInit {
     this.modal.openConfirmModal(this).afterClosed().subscribe(
       async (data) => {
         if (data == true) {
-          await this.vs.deleteDescriptor(this.selectedElement.vsDescriptorId).catch((message)=>{
+          await this.vs.deleteDescriptor(this.selectedElement.vs_descriptor_id).catch((message)=>{
             this.toastr.error(message.error,"Descriptor Deletion Error", {positionClass: 'toast-bottom-center', closeButton: true})
           })
           this.mouseLeftTooltip()

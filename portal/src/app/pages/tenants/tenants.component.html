@@ -1,5 +1,5 @@
 <h2 style="float: left">Groups & Tenants</h2>
-<button style="float: right; margin: 2px; background-color: #4489eb; margin-left: auto" id="yes" type="button" class="btn btn-primary" (click)="update()"><i class="fa fa-refresh"></i> Refresh</button>
+<button style="float: right; margin: 2px; background-color: #ffa500; border-color: #ffa500; margin-left: auto" id="yes" type="button" class="btn btn-primary" (click)="update()"><i class="fa fa-refresh"></i> Refresh</button>
 <div style="clear: both;">
     <hr />
     <div class="container-fluid" (click)="containerClick($event)">
@@ -7,13 +7,13 @@
             <div class="col-sm-12 col-md-6 col-lg-4" *ngFor="let element of listData"
                 style="display: flex;flex-direction: column;">
                 <div [attr.id]="element.name" class="card mb-3"
-                    style="border-color: #4489EB ;border-width: 2px; cursor: pointer; height: 100%;"
+                    style="border-color: #ffa500 ;border-width: 2px; cursor: pointer; height: 100%;"
                     (click)="clickEvent($event, null, element.name)" (mouseenter)="onEnter(element.name)"
                     (mouseleave)="onLeave(element.name)">
                     <div *ngIf="element.control" class="card-body"
                         style="text-align: center;display: flex; justify-content: center; align-items: center;"
-                        (click)="newGroupBtnPressed($event)">
-                        <div style="color: #4489EB; opacity: 0.7;">
+                        (click)="newGroupBtnPressed($event)" [attr.id]="element.name">
+                        <div style="color: #ffa500; opacity: 0.7;">
                             <i class="fa fa-plus fa-4x"></i>
                             <h4>{{element.title}}</h4>
                             <div class="container" id="newGroupForm" style="display:none;">
@@ -24,11 +24,11 @@
                                 <div class="row" style="margin-top: 5px;">
                                     <div class="col-sm-6">
                                         <button class="btn btn-danger" type="button"
-                                            (click)="newGroupBtnPressed($event)">Cancel</button>
+                                            (click)="newGroupBtnPressed($event)" id="cancelCreateNewGroup">Cancel</button>
                                     </div>
                                     <div class="col-sm-6">
                                         <button style="background-color: #4489eb;" class="btn btn-primary" type="button"
-                                            (click)="newGroup($event)">Create</button>
+                                            (click)="newGroup($event)" id="confirmCreateNewGroup">Create</button>
                                     </div>
                                 </div>
                             </div>
@@ -36,7 +36,7 @@
                     </div>
 
 
-                    <div *ngIf="!element.control" class="card-body" style="clear: none;">
+                    <div *ngIf="!element.control" class="card-body" style="clear: none;" [attr.id]="element.name">
                         <h3 style="display: inline;">Group: {{element.name}}</h3>
                         <table class="table table-hover">
                             <tr>
@@ -46,7 +46,7 @@
                             <tbody>
                                 <tr *ngFor="let tenant of element.tenants"
                                     (click)="clickEvent($event, tenant, element.name)">
-                                    <th scope="row">{{tenant.username}}</th>
+                                    <th class="groupName" scope="row">{{tenant.username}}</th>
                                     <td>
                                         <table class="table table-hover">
                                             <tbody>
@@ -81,11 +81,11 @@
 
 <span id="tooltip-span" style="display: none;cursor: pointer;" (mouseleave)="mouseLeftTooltip()">
     <div class="list-group">
-        <a *ngIf="selectedTenant!=null" class="list-group-item list-group-item-action" (click)="viewSLA()">View SLAs</a>
-        <a *ngIf="selectedTenant!=null" class="list-group-item list-group-item-action" (click)="deleteTenant()">Delete
+        <a *ngIf="selectedTenant!=null" class="list-group-item list-group-item-action" (click)="viewSLA()" id="viewSLA">View SLAs</a>
+        <a *ngIf="selectedTenant!=null" class="list-group-item list-group-item-action" (click)="deleteTenant()" id="deleteTenant">Delete
             Tenant</a>
-        <a class="list-group-item list-group-item-action" (click)="addTenant($event)">Add Tenant</a>
-        <a class="list-group-item list-group-item-action" (click)="deleteGroup($event)">Delete Group</a>
-        <a class="list-group-item list-group-item-action" (click)="viewMoreInfo()">View More</a>
+        <a class="list-group-item list-group-item-action" (click)="addTenant($event)" id="addTenant">Add Tenant</a>
+        <a class="list-group-item list-group-item-action" (click)="deleteGroup($event)" id="deleteGroup">Delete Group</a>
+        <a class="list-group-item list-group-item-action" (click)="viewMoreInfo()" id="viewMore">View More</a>
     </div>
 </span>

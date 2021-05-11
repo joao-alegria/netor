@@ -98,7 +98,7 @@ export class NstemplatesComponent implements OnInit {
     this.modal.openConfirmModal(this).afterClosed().subscribe(
       async (data) => {
         if (data == true) {
-          await this.vs.deleteNST(this.selectedElement.nst.nstId).catch((message)=>{
+          await this.vs.deleteNST(this.selectedElement.nst_id).catch((message)=>{
             this.toastr.error(message.error,"Template Deletion Error", {positionClass: 'toast-bottom-center', closeButton: true})
           })
           this.mouseLeftTooltip()

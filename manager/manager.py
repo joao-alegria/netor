@@ -35,11 +35,7 @@ class CSMF(Thread):
         super().__init__()
         self.vsiId=vsiId
         self.interdomain=False
-        # self.action=action
         redis.setKeyValue(vsiId,"vsiRequest",json.dumps(vsiRequest))
-        # self.vsiRequest=vsiRequest
-        # self.createVSI=True
-        # self.received={}
         self.pollingThread=None
 
         redis.setKeyValue("createVSI", vsiId, "create")
@@ -49,10 +45,6 @@ class CSMF(Thread):
 
         statusUpdate={"msgType":"statusUpdate","data":{"vsiId":self.vsiId, "status":"creating", "message":"Created Management Function, waiting to receive all necessary information"}}
         self.messaging.publish2Queue("vsCoordinator", json.dumps(statusUpdate))
-        # self.interdomainInfo={}
-
-        #{uniqueComponentName:{sliceEnabled:true, domainId:ITAV, nfvoId:"ib234b2bib21"}}
-        # self.serviceComposition={}
 
     def vsCallback(self, channel, method_frame, header_frame, body):
         logging.info("Received Message {}".format(body))
@@ -149,14 +141,14 @@ class CSMF(Thread):
         composingComponentId=1
         for creationData in placementData:
             #compute unique component id
-            componentName=vsiRequest["data"]["name"]+"_VSI-"+str(self.vsiId)+"_"+str(composingComponentId)
+            componentName=str(self.vsiId)+"_"+str(composingComponentId)+"-"+vsiRequest["data"]["name"]
 
             #in case the component is a slice
             if creationData["sliceEnabled"] and creationData["nstId"]!=None:
                 domainId=creationData["domainId"]
                 if componentName in domainPlacements:
                     domainId=domainPlacements[componentName]
-                message={"msgType":"instantiateNsi", "data":{"name":componentName,"domainId":domainId,"nstId":creationData["nstId"]}}
+                message={"msgType":"instantiateNsi", "data":{"name":componentName, "description":vsiRequest["data"]["description"],"domainId":domainId,"nstId":creationData["nstId"]}}
                 if "additionalConf" in vsiRequest["data"] and vsiRequest["data"]["additionalConf"]!="":
                     confStr=vsiRequest["data"]["additionalConf"]
                     if catalogueInfo["data"]["vs_blueprint_info"]["vs_blueprint"]["inter_site"]:
@@ -259,7 +251,10 @@ class CSMF(Thread):
                         for param in data["data"]["primitiveParams"]:
                             conf["primitive_params"][param]=data["data"]["primitiveParams"][param]
                     
-                    message={"msgType":"actionNsi","vsiId":self.vsiId, "data":{"domainId":serviceComposition[data["data"]["primitiveTarget"]]["domainId"],"nsiId":data["data"]["primitiveTarget"], "additionalConf":conf}}
+                    # message={"msgType":"actionNsi","vsiId":self.vsiId, "data":{"domainId":serviceComposition[data["data"]["primitiveTarget"]]["domainId"],"nsiId":data["data"]["primitiveTarget"], "additionalConf":conf}}
+
+                    #TODO: processing with the Subnet NS Id because OSM currently doesn't support NSI actions
+                    message={"msgType":"actionNs","vsiId":self.vsiId, "data":{"domainId":serviceComposition[data["data"]["primitiveTarget"]]["domainId"],"nsId":serviceComposition[data["data"]["primitiveTarget"]]["nfvoId"], "additionalConf":conf}}
                 else:
                     conf={"member_vnf_index":data["data"]["primitiveInternalTarget"],"primitive":data["data"]["primitiveName"],"primitive_params":{}}
 
@@ -318,8 +313,8 @@ class CSMF(Thread):
                 for componentReceive, infoReceive in interdomainInfo.items():
                     if componentSend!=componentReceive:
                         if serviceComposition[componentReceive]["sliceEnabled"]:
+                            #processed like a NS because OSM currently doesn't support NSI actions
                             conf={"member_vnf_index":"1","primitive":"addpeer","primitive_params":{'peer_endpoint': infoSend["vnfIp"],'peer_key' : infoSend["publicKey"]}}
-                            # ,'peer_network': "0.0.0.0/0"
                             for param in actions["addpeer"]:
                                 if "parameter_default_value" in param:
                                     if param["parameter_default_value"]!=None and param["parameter_default_value"]!="":
@@ -328,7 +323,6 @@ class CSMF(Thread):
                             message={"msgType":"actionNs", "data":{"primitiveName":"addpeer","domainId":serviceComposition[componentReceive]["domainId"], "nsId":serviceComposition[componentReceive]["nfvoId"], "additionalConf":conf}}
                         else:
                             conf={"member_vnf_index":"1","primitive":"addpeer","primitive_params":{'peer_endpoint': infoSend["vnfIp"],'peer_key' : infoSend["publicKey"]}}
-                            # ,'peer_network': "0.0.0.0/0"
                             for param in actions["addpeer"]:
                                 if "parameter_default_value" in param:
                                     if param["parameter_default_value"]!=None and param["parameter_default_value"]!="":
@@ -352,9 +346,9 @@ class CSMF(Thread):
         
         for component, componentData in serviceComposition.items():
             if componentData["sliceEnabled"]:
-                message={"vsiId":self.vsiId,"msgType":"deleteNsi", "data":{"domainId":componentData["domainId"], "nsiId":componentData["nfvoId"]}}
+                message={"vsiId":self.vsiId,"msgType":"deleteNsi", "data":{"domainId":componentData["domainId"], "nsiId":component}}
             else:
-                message={"vsiId":self.vsiId,"msgType":"deleteNs", "data":{"domainId":componentData["domainId"], "nsId":componentData["nfvoId"]}}
+                message={"vsiId":self.vsiId,"msgType":"deleteNs", "data":{"domainId":componentData["domainId"], "nsId":component}}
             self.messaging.publish2Queue("vsDomain", json.dumps(message))
 
 
@@ -383,36 +377,3 @@ class CSMF(Thread):
         except Exception as e:
             logging.info("VSI "+str(self.vsiId)+" CSMF Ended")
             logging.error("Pika exception: "+str(e))    
-
-
-
-csmfs={}
-
-def newCSMF(data):
-    csmf=CSMF(data["vsiId"], data)
-    csmfs[data["vsiId"]]=csmf
-    csmf.start()
-
-def tearDownCSMF(data):
-    vsiId=str(data["vsiId"])
-    if vsiId in csmfs:
-        csmfs[vsiId].tearDown()
-        del csmfs[vsiId]
-    else:
-        logging.info("VSI Id not found during tearDown: "+str(vsiId))
-
-# def newCsmfMessage(data):
-#     vsiId=int(data["vsiId"])
-#     if vsiId in csmfs:
-#         csmfs[vsiId].newMessage(data)
-#     else:
-#         logging.warning("VSI Id not found: "+str(vsiId))
-
-def newVnfInfo(data):
-    vsiId=data["vsiId"]
-    if vsiId in csmfs:
-        csmfs[vsiId].interdomainHandler(data)
-    else:
-        logging.warning("VSI Id not found during newVnfInfo: "+str(vsiId))
-        return {"error":True,"message": "Error: VSI Id not found during newVnfInfo: "+str(vsiId)}
-    return {"error":False,"message": "Acknowledge"}

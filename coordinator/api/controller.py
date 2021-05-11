@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, request
 from flasgger import Swagger, validate
-import db.persistance
 import service as vsService
 from api.loginConfig import loginManager, current_user, login_required
 from flask_cors import CORS, cross_origin
@@ -130,7 +129,7 @@ def removeVs(vsiId):
     """
 
     try:
-        vsService.removeVSI(current_user.name, vsiId)
-        return jsonify({"message":"Success"}),200
+        message=vsService.removeVSI(current_user.name, vsiId)
+        return jsonify({"message":message}),200
     except Exception as e:
         return jsonify({"message":"Error: "+str(e)}),500

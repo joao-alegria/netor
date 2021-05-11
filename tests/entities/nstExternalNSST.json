@@ -1,0 +1,25 @@
+{
+    "nst_version": "1.0",
+    "nsst_ids": [
+      "interdomain_nsst_nst",
+      "interdomain_nsst_nst"
+    ],
+    "nsst_type": "NONE",
+    "nst_service_profile": {
+      "service_profile_id": "interdomain_profile",
+      "eMBB_perf_req": [
+        {
+          "user_density": 100,
+          "uE_speed": 10
+        }
+      ],
+      "latency": 100,
+      "sST": "EMBB",
+      "max_number_of_UEs": 1000,
+      "availability": 100
+    },
+    "nsd_version": "1.0",
+    "nst_id": "interdomain_e2e_nstNST",
+    "nst_provider": "ITAV",
+    "nst_name": "Interdomain Slice NST"
+}

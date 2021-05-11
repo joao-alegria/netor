@@ -29,7 +29,7 @@ definitions:
       admin:
         type: string
         example: joao
-      domainStatus:
+      status:
         type: string
         example: active
       url:

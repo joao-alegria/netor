@@ -1,0 +1,47 @@
+# Copyright [2018] [Felipe Vicens, Pol Alemany, Ricard Vilalta]
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+#NST to test VLD connection between Network Services within the same VIM
+nst:
+-   id: interdomain_nsst_nst
+    name: interdomain_nsst_nst
+    SNSSAI-identifier:
+        slice-service-type: eMBB
+    quality-of-service:
+        id: 1
+
+    netslice-subnet:
+    -   id: interdomain-tunnel-peer
+        is-shared-nss: false
+        description: NetSlice Subnet (service) composed by 1 vnf with 2 cp
+        nsd-ref: interdomain_slice_nsd
+
+    # netslice-vld:
+    # -   id: slice_vld_mgmt
+    #     name: slice_vld_mgmt
+    #     type: ELAN
+    #     mgmt-network: true
+    #     nss-connection-point-ref:
+    #     -   nss-ref: slice_hackfest_nsd_2
+    #         nsd-connection-point-ref: nsd_cp_mgmt
+    #     -   nss-ref: slice_hackfest_nsd_3
+    #         nsd-connection-point-ref: nsd_cp_mgmt
+    # -   id: slice_vld_data2
+    #     name: slice_vld_data2
+    #     type: ELAN
+    #     nss-connection-point-ref:
+    #     -   nss-ref: slice_hackfest_nsd_2
+    #         nsd-connection-point-ref: nsd_cp_data2
+    #     -   nss-ref: slice_hackfest_nsd_3
+    #         nsd-connection-point-ref: nsd_cp_data

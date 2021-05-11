@@ -15,40 +15,40 @@ def createDomain(data):
     if "ownedLayers" in data:
         layers=data["ownedLayers"]
         for layer in layers:
-            if layer["domainLayerType"]=="OsmDomainLayer":
+            if layer["domainLayerType"]=="OSM_NSP":
                 osmSchema=schemas.OsmDomainLayerSchema()
-                domainLayer=osmSchema.load(layer, session=persistance.session)
-                persistance.persist(domainLayer)
+                domainLayer=osmSchema.load(layer, session=persistance.DB.session)
+                persistance.DB.persist(domainLayer)
 
-    domain=schema.load(data, session=persistance.session)
-    persistance.persist(domain)
+    domain=schema.load(data, session=persistance.DB.session)
+    persistance.DB.persist(domain)
     return
 
 def getAllDomains():
     schema=schemas.DomainSchema()
-    domains=persistance.session.query(persistance.Domain).all()
+    domains=persistance.DB.session.query(persistance.Domain).all()
     domainsDict=[]
     for domain in domains:
         domainsDict.append(schema.dump(domain))
     return domainsDict
 
 def getDomainsIds():
-    domains=[domainId for domainId, in persistance.session.query(persistance.Domain.domainId).all()]
+    domains=[domainId for domainId, in persistance.DB.session.query(persistance.Domain.domainId).all()]
     return domains
 
 def getDomain(domainId):
     schema=schemas.DomainSchema()
-    domain=persistance.session.query(persistance.Domain).filter(persistance.Domain.domainId==domainId).first()
+    domain=persistance.DB.session.query(persistance.Domain).filter(persistance.Domain.domainId==domainId).first()
     return schema.dump(domain)
 
 def updateDomain(domainId):
-    domain=persistance.session.query(persistance.Domain).filter(persistance.Domain.domainId==domainId).first()
+    domain=persistance.DB.session.query(persistance.Domain).filter(persistance.Domain.domainId==domainId).first()
     #update Domain
     return
 
 def removeDomain(domainId):
-    domain=persistance.session.query(persistance.Domain).filter(persistance.Domain.domainId==domainId).first()
-    persistance.delete(domain)
+    domain=persistance.DB.session.query(persistance.Domain).filter(persistance.Domain.domainId==domainId).first()
+    persistance.DB.delete(domain)
     return
 
 
@@ -60,7 +60,7 @@ class DomainActionHandler(Thread):
         self.messaging=Messaging()
 
     def getDomainInfo(self, domainId):
-        domain=persistance.session.query(persistance.Domain).filter(persistance.Domain.domainId==self.data["data"]["domainId"]).first()
+        domain=persistance.DB.session.query(persistance.Domain).filter(persistance.Domain.domainId==self.data["data"]["domainId"]).first()
         domainLayer=domain.ownedLayers[0]
 
         driver=None
@@ -107,7 +107,7 @@ class DomainActionHandler(Thread):
                 return
             elif self.data["msgType"] == "actionNsi":
                 domain, domainLayer, driver=self.getDomainInfo(self.data["data"]["domainId"])
-                result=driver.sendActionNSI(domain.url, self.data["data"]["nsId"], additionalConf=self.data["data"]["additionalConf"])
+                result=driver.sendActionNSI(domain.url, self.data["data"]["nsiId"], additionalConf=self.data["data"]["additionalConf"])
                 actionResult={"msgType": "actionResponse", "message":"Returning NSI action result", "data":{"primitiveName":self.data["data"]["primitiveName"],"status":result["operationState"], "output":result["detailed-status"]["output"]}}
                 messaging.publish2Exchange("vsLCM_"+str(self.data["vsiId"]), json.dumps(actionResult))
                 return
@@ -119,7 +119,7 @@ class DomainActionHandler(Thread):
             elif self.data["msgType"] == "getNsiInfo":
                 domain, domainLayer, driver=self.getDomainInfo(self.data["data"]["domainId"])
                 nsiInfo=driver.getNSI(domain.url, self.data["data"]["nsiId"])
-                messaging.publish2Exchange("vsLCM_"+str(self.data["vsiId"]), json.dumps({"msgType":"nsInfo","vsiId":self.data["vsiId"],"error":False, "message":"Sending NSI "+self.data["data"]["nsiId"]+" Info", "data":{"nsiId":self.data["data"]["nsiId"],"nsiInfo":nsInfo}}))
+                messaging.publish2Exchange("vsLCM_"+str(self.data["vsiId"]), json.dumps({"msgType":"nsiInfo","vsiId":self.data["vsiId"],"error":False, "message":"Sending NSI "+self.data["data"]["nsiId"]+" Info", "data":{"nsiId":self.data["data"]["nsiId"],"nsiInfo":nsiInfo}}))
                 return
         except Exception as e:
             logging.info("Error while performing action '"+self.data["msgType"]+"' in domain '"+str(self.data["data"]["domainId"])+"': "+str(e))

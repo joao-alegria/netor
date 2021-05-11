@@ -19,14 +19,14 @@
     </tbody>
 </table> -->
 <h2 style="float: left;">Vertical Slices Instances</h2>
-<button style="float: right; margin: 2px; background-color: #4489eb; margin-left: auto" id="yes" type="button" class="btn btn-primary" (click)="update()"><i class="fa fa-refresh"></i> Refresh</button>
+<button style="float: right; margin: 2px; background-color: #ffa500; border-color: #ffa500; margin-left: auto" id="yes" type="button" class="btn btn-primary" (click)="update()"><i class="fa fa-refresh"></i> Refresh</button>
 <div style="clear: both;" class="container-fluid" (click)="containerClick($event)">
     <hr />
     <div class="row" style="margin-top: 5px;">
         <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let element of listData"
             style="display: flex;flex-direction: column;">
-            <div [attr.id]="element.vsiId" class="card mb-3"
-                style="border-color: #4489eb; border-width: 2px; cursor: pointer; height:100%"
+            <div [attr.id]="element.vsiId" class="card mb-3 VSI"
+                style="border-color: #ffa500; border-width: 2px; cursor: pointer; height:100%"
                 (click)="clickEvent($event, element)" (mouseenter)="onEnter(element.vsiId)"
                 (mouseleave)="onLeave(element.vsiId)">
                 <div class="card-body" style="clear: none;">
@@ -41,6 +41,9 @@
                     <p class="card-text">
                         <b>Status:</b> {{element.status}}
                     </p>
+                    <p class="card-text">
+                        <b>Status Message:</b> {{element.statusMessage}}
+                    </p>
                 </div>
             </div>
         </div>
@@ -49,12 +52,12 @@
 <span id="tooltip-span" style="display: none; cursor: pointer;" (mouseleave)="mouseLeftTooltip()">
     <div class="list-group">
         <div *ngIf="tenant">
-            <a class="list-group-item list-group-item-action" (click)="scaleVs()">Modify</a>
-            <a class="list-group-item list-group-item-action" (click)="terminateVs()">Terminate</a>
-            <a class="list-group-item list-group-item-action" (click)="removeVs()">Remove</a>
+            <a class="list-group-item list-group-item-action" (click)="scaleVs()" id="modifyVSI">Modify</a>
+            <a class="list-group-item list-group-item-action" (click)="terminateVs()" id="terminateVSI">Terminate</a>
+            <a class="list-group-item list-group-item-action" (click)="removeVs()" id="removeVSI">Remove</a>
         </div>
         <div *ngIf="!tenant">
-            <a class="list-group-item list-group-item-action" (click)="viewMoreInfo()">View More</a>
+            <a class="list-group-item list-group-item-action" (click)="viewMoreInfo()" id="viewMore">View More</a>
         </div>
     </div>
 </span>

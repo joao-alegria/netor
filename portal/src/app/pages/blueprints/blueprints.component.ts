@@ -107,7 +107,7 @@ export class BlueprintsComponent implements OnInit {
     this.modal.openConfirmModal(this).afterClosed().subscribe(
       async (data) => {
         if (data == true) {
-          await this.vs.deleteVSB(this.selectedElement.vsBlueprintId).catch((message)=>{
+          await this.vs.deleteVSB(this.selectedElement.vs_blueprint_id).catch((message)=>{
             this.toastr.error(message.error,"Blueprint Deletion Error", {positionClass: 'toast-bottom-center', closeButton: true})
           })
           this.mouseLeftTooltip()

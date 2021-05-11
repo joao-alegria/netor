@@ -10,3 +10,13 @@ RABBIT_USER=os.getenv("RABBIT_USER","admin")
 RABBIT_PASS=os.getenv("RABBIT_PASS","admin")
 RABBIT_IP=os.getenv("RABBIT_IP","localhost")
 RABBIT_PORT=os.getenv("RABBIT_PORT",5672)
+ENVIRONMENT=os.getenv("ENVIRONMENT","testing")
+# if ENVIRONMENT=="testing":
+#     DB_DRIVER=os.getenv("DB_DRIVER","sqlite")
+#     POSTGRES_DB=os.getenv("POSTGRES_DB",":memory:")
+#     POSTGRES_USER=os.getenv("POSTGRES_USER","")
+#     POSTGRES_PASS=os.getenv("POSTGRES_PASS","")
+#     POSTGRES_IP=os.getenv("POSTGRES_IP","")
+#     POSTGRES_PORT=os.getenv("POSTGRES_PORT","")
+# else:
+#     DB_DRIVER=os.getenv("DB_DRIVER","postgresql")

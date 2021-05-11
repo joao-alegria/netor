@@ -4,7 +4,48 @@ from sqlalchemy.ext.declarative import declarative_base
 import json
 import config
 
+class DB:
+
+    def __init__(self, Base):
+        super().__init__()
+        self.Base=Base
+
+    def persist(self,entity):
+        self.session.add(entity)
+        self.session.commit()
+
+    def delete(self,entity):
+        self.session.delete(entity)
+        self.session.commit()
+
+    def createDB(self):
+        if config.ENVIRONMENT=="testing":
+            self.engine = create_engine('sqlite:///:memory:')
+        else:
+            self.engine = create_engine('postgresql://'+str(config.POSTGRES_USER)+':'+str(config.POSTGRES_PASS)+'@'+str(config.POSTGRES_IP)+':'+str(config.POSTGRES_PORT)+'/'+str(config.POSTGRES_DB))
+        try:
+          self.Base.metadata.create_all(self.engine)
+        except Exception as e:
+          if "does not exist" in str(e):
+            tmpengine=create_engine('postgresql://'+str(config.POSTGRES_USER)+':'+str(config.POSTGRES_PASS)+'@'+str(config.POSTGRES_IP)+':'+str(config.POSTGRES_PORT)+'/postgres')
+            conn = tmpengine.connect()
+            conn.execute("commit")
+            conn.execute("create database \""+str(config.POSTGRES_DB)+"\"")
+            conn.close()
+            Base.metadata.create_all(self.engine)
+
+        Session = sessionmaker(bind=self.engine)
+        self.session=Session()
+
+
+    def removeDB(self):
+        self.Base.metadata.drop_all(self.engine)
+        self.session.close()
+
+
+
 Base = declarative_base()
+DB=DB(Base)
 
 # nestedVsiTable = Table('nestedVsi', Base.metadata,
 #     Column('nestedVsi', Integer, ForeignKey('verticalServiceInstance.vsiId'), primary_key=True),
@@ -113,26 +154,3 @@ class NetworkSliceInstanceVnfPlacement(Base):
   network_slice_instance = relationship("NetworkSliceInstance", back_populates="vnfs")
   vnf_placement_key=Column(Integer, primary_key=True)
   vnf_placement=Column(Integer)
-
-
-engine = create_engine('postgresql://'+str(config.POSTGRES_USER)+':'+str(config.POSTGRES_PASS)+'@'+str(config.POSTGRES_IP)+':'+str(config.POSTGRES_PORT)+'/'+str(config.POSTGRES_DB))
-try:
-  Base.metadata.create_all(engine)
-except Exception as e:
-  if "does not exist" in str(e):
-    tmpengine=create_engine('postgresql://'+str(config.POSTGRES_USER)+':'+str(config.POSTGRES_PASS)+'@'+str(config.POSTGRES_IP)+':'+str(config.POSTGRES_PORT)+'/postgres')
-    conn = tmpengine.connect()
-    conn.execute("commit")
-    conn.execute("create database \""+str(config.POSTGRES_DB)+"\"")
-    conn.close()
-    Base.metadata.create_all(engine)
-
-Session = sessionmaker(bind=engine)
-session=Session()
-def persist(entity):
-  session.add(entity)
-  session.commit()
-
-def delete(entity):
-  session.delete(entity)
-  session.commit()

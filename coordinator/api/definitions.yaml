@@ -12,6 +12,7 @@ definitions:
       - name
       - vsdId
       - vsiId
+      - description
     properties:
       vsiId:
         type: string

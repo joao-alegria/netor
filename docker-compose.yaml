@@ -112,6 +112,7 @@ services:
       RABBIT_PASS: "admin"
       RABBIT_IP: rabbitmq
       IDP_IP: netor_tenant
+      ENVIRONMENT: prod
 
   netor_domain:
     build: ./domain
@@ -131,6 +132,7 @@ services:
       RABBIT_PASS: "admin"
       RABBIT_IP: rabbitmq
       IDP_IP: netor_tenant
+      ENVIRONMENT: prod
 
   netor_manager:
     build: ./manager
@@ -146,6 +148,7 @@ services:
       RABBIT_PASS: "admin"
       RABBIT_IP: rabbitmq
       REDIS_HOST: redis
+      ENVIRONMENT: prod
 
   netor_placement:
     build: ./placement
@@ -158,6 +161,7 @@ services:
       RABBIT_PASS: "admin"
       RABBIT_IP: rabbitmq
       REDIS_HOST: redis
+      ENVIRONMENT: prod
 
   netor_tenant:
     build: ./tenant
@@ -176,6 +180,7 @@ services:
       RABBIT_USER: "admin"
       RABBIT_PASS: "admin"
       RABBIT_IP: rabbitmq
+      ENVIRONMENT: prod
 
   netor_catalogue:
     build: ./catalogue/slicer-catalogue
@@ -197,6 +202,7 @@ services:
       IDP_IP: netor_tenant
       IDP_PORT: 5002
       IDP_ENDPOINT: /validate
+      ENVIRONMENT: prod
 
   # netor_portal:
   #   build: ./portal

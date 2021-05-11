@@ -5,7 +5,6 @@ import logging
 import redisHandler as redis
 
 class Arbitrator(Thread):
-
     def __init__(self, vsiId, info):
         super().__init__()
         self.vsiId=vsiId
@@ -72,16 +71,17 @@ class Arbitrator(Thread):
                     for nst in catalogueInfo["nsts"]:
                         if nst["nst_id"]==nstId:
                             externalNST=False
-                            if len(nst["nsst"])>0:
+                            if len(nst["nsst_ids"])>0:
                                 for nsstId in nst["nsst_ids"]:
                                     externalNSST=True
-                                    for nsst in nst["nsst"]:
-                                        if nsst["nst_id"]==nsstId:
-                                            externalNSST=False
-                                            translation.append({"domainId":domainId,"sliceEnabled":False,"nsdId":nsst["nsd_id"]})
-                                            break
+                                    if "nsst" in nst:
+                                        for nsst in nst["nsst"]:
+                                            if nsst["nst_id"]==nsstId:
+                                                externalNSST=False
+                                                translation.append({"domainId":domainId,"sliceEnabled":False,"nsdId":nsst["nsd_id"]})
+                                                break
                                     if externalNSST:
-                                        translation.append({"domainId":domainId,"sliceEnabled":True,"nstId":nstId})
+                                        translation.append({"domainId":domainId,"sliceEnabled":True,"nstId":nsstId})
                             else:
                                 translation.append({"domainId":domainId,"sliceEnabled":True,"nsdId":nst["nsd_id"]})
                     if externalNST:
@@ -145,18 +145,3 @@ class Arbitrator(Thread):
         except Exception as e:
             logging.info("VSI "+str(self.vsiId)+" Arbitrator Ended")
             logging.error("Pika exception: "+str(e))
-
-arbitrators={}
-
-def newArbitrator(data):
-    arbitrator=Arbitrator(data["vsiId"], data)
-    arbitrators[data["vsiId"]]=arbitrator
-    arbitrator.start()
-
-def tearDownArbitrator(data):
-    vsiId=str(data["vsiId"])
-    if vsiId in arbitrators:
-        arbitrators[vsiId].tearDown()
-        del arbitrators[vsiId]
-    else:
-        logging.info("VSI Id not found during tearDown: "+str(vsiId))

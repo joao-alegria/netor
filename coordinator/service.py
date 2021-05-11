@@ -1,25 +1,25 @@
-from db.persistance import VerticalServiceInstance, persist, session, delete
+from db.persistance import VerticalServiceInstance, DB
 from flask import jsonify
 import db.schemas as schemas
 from rabbitmq.adaptor import Messaging
 import json
-
-messaging=Messaging()
+import logging
 
 def createNewVS(tenantName,request):
+    messaging=Messaging()
     vsis=getAllVSIs(tenantName)
     vsiIds=[vsi["vsiId"] for vsi in vsis]
     if request["vsiId"] in vsiIds:
         raise Exception("VSI Id "+request["vsiId"]+" already exists")
 
     schema = schemas.VerticalServiceInstanceSchema()
-    vsInstance = schema.load(request,session=session)
+    vsInstance = schema.load(request,session=DB.session)
 
     vsInstance.status="creating"
     vsInstance.statusMessage="Creating Vertical Service Instance"
 
     vsInstance.tenantId=tenantName
-    persist(vsInstance)
+    DB.persist(vsInstance)
     #create vsi queue
     messaging.createExchange("vsLCM_"+str(vsInstance.vsiId))
     messaging.createQueue("managementQueue-vsLCM_"+str(vsInstance.vsiId))
@@ -34,7 +34,7 @@ def createNewVS(tenantName,request):
 
 def getAllVSIs(tenantName):
     schema = schemas.VerticalServiceInstanceSchema()
-    vsis=session.query(VerticalServiceInstance).filter(VerticalServiceInstance.tenantId==tenantName).all()
+    vsis=DB.session.query(VerticalServiceInstance).filter(VerticalServiceInstance.tenantId==tenantName).all()
     vsisDict=[]
     for vsi in vsis:
         vsisDict.append(schema.dump(vsi))
@@ -42,11 +42,12 @@ def getAllVSIs(tenantName):
 
 def getVSI(tenantName, vsiId):
     schema = schemas.VerticalServiceInstanceSchema()
-    vsi=session.query(VerticalServiceInstance).filter(VerticalServiceInstance.tenantId==tenantName,VerticalServiceInstance.vsiId==vsiId).first()
+    vsi=DB.session.query(VerticalServiceInstance).filter(VerticalServiceInstance.tenantId==tenantName,VerticalServiceInstance.vsiId==vsiId).first()
     return schema.dump(vsi)
 
 def modifyVSI(tenantName, vsiId, request):
-    vsi=session.query(VerticalServiceInstance).filter(VerticalServiceInstance.tenantId==tenantName,VerticalServiceInstance.vsiId==vsiId).first()
+    messaging=Messaging()
+    vsi=DB.session.query(VerticalServiceInstance).filter(VerticalServiceInstance.tenantId==tenantName,VerticalServiceInstance.vsiId==vsiId).first()
     #send message to manager
     if request["action"]=="primitive":
         message={"msgType":"primitive", "vsiId":vsiId, "data":{"primitiveName":request["primitiveName"],"primitiveTarget":request["primitiveTarget"],"primitiveInternalTarget":request["primitiveInternalTarget"],"primitiveParams":request["primitiveParams"]}}
@@ -57,17 +58,21 @@ def modifyVSI(tenantName, vsiId, request):
     messaging.publish2Exchange('vsLCM_'+str(vsiId),json.dumps(message))
 
 def removeVSI(tenantName, vsiId):
-    vsi=session.query(VerticalServiceInstance).filter(VerticalServiceInstance.tenantId==tenantName,VerticalServiceInstance.vsiId==vsiId).first()
-    #send message to manager
-    message={"msgType":"removeVSI", "vsiId":vsiId, "tenantId":tenantName}
-    messaging.publish2Exchange('vsLCM_Management',json.dumps(message))
-    delete(vsi)
+    messaging=Messaging()
+    vsi=DB.session.query(VerticalServiceInstance).filter(VerticalServiceInstance.tenantId==tenantName,VerticalServiceInstance.vsiId==vsiId).first()
+    if vsi!=None:
+        #send message to manager
+        message={"msgType":"removeVSI", "vsiId":vsiId, "tenantId":tenantName}
+        messaging.publish2Exchange('vsLCM_Management',json.dumps(message))
+        DB.delete(vsi)
+        return "Success"
+    return "VSI "+ str(vsiId)+ " not found"
 
 def changeStatusVSI(data):
     vsiId=data["data"]["vsiId"]
-    vsi=session.query(VerticalServiceInstance).filter(VerticalServiceInstance.vsiId==vsiId).first()
+    vsi=DB.session.query(VerticalServiceInstance).filter(VerticalServiceInstance.vsiId==vsiId).first()
     if "fail" not in vsi.status.lower():
         if "status" in data["data"]:
             vsi.status=data["data"]["status"]
         vsi.statusMessage=data["data"]["message"]
-        persist(vsi)
+        DB.persist(vsi)

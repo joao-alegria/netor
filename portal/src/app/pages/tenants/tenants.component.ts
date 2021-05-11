@@ -38,7 +38,8 @@ export class TenantsComponent implements OnInit {
 
   async newGroup(e) {
     e.stopPropagation()
-    await this.vs.createNewGroup($("#groupName").val()).then(()=>{
+    var data={name:$("#groupName").val()}
+    await this.vs.createNewGroup(data).then(()=>{
       $("#newGroupForm").css("display", "none")
       $("#groupName").val("")
   

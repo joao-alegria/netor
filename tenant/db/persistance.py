@@ -42,7 +42,7 @@ class VSD(Base):
 
 class VSI(Base):
     __tablename__ = 'VSI'
-    id = Column(Integer, primary_key=True)
+    id = Column(String, primary_key=True)
     tenantUsername=Column(String, ForeignKey('Tenant.username'), primary_key=True)
     tenant=relationship("Tenant", back_populates="vsis")
 
@@ -88,7 +88,7 @@ class OauthClient(Base):
 
     @property
     def user(self):
-        return session.query(Tenant).first()
+        return DB.session.query(Tenant).first()
 
     @property
     def redirect_uris(self):
@@ -132,8 +132,8 @@ class OauthGrant(Base):
     expires = Column(DateTime)
 
     def delete(self):
-        session.delete(self)
-        session.commit()
+        DB.session.delete(self)
+        DB.session.commit()
         return self
 
     @property
@@ -170,8 +170,8 @@ class OauthToken(Base):
             setattr(self, k, v)
 
     def delete(self):
-        session.delete(self)
-        session.commit()
+        DB.session.delete(self)
+        DB.session.commit()
         return self
 
     @property
@@ -180,54 +180,69 @@ class OauthToken(Base):
             return self.scope.split()
         return []
 
+class DB:
+
+    def __init__(self, Base):
+        super().__init__()
+        self.Base=Base
+
+    def persist(self,entity):
+        self.session.add(entity)
+        self.session.commit()
+
+    def delete(self,entity):
+        self.session.delete(entity)
+        self.session.commit()
 
 
-def persist(entity):
-  session.add(entity)
-  session.commit()
+    def initDB(self):
+        portal = OauthClient(
+            name='portal', client_id='portal',
+            client_secret='portal', client_type='confidential',
+            _redirect_uris=('http://127.0.0.1/authorized'),
+        )
+        
+        adminPassword=blake2b('admin'.encode("utf-8")).hexdigest()
+        userPassword=blake2b('user'.encode("utf-8")).hexdigest()
+        adminGroup=Group(name="admin")
+        userGroup=Group(name="user")
+        admin = Tenant(username='admin', role='ADMIN', storage=100, memory=100, vcpu=100, group=adminGroup, password=adminPassword)
+        user = Tenant(username='user', role='TENANT', storage=100, memory=100, vcpu=100, group=userGroup, password=userPassword)
 
-def delete(entity):
-  session.delete(entity)
-  session.commit()
+        try:
+            self.session.add(portal)
+            self.session.add(adminGroup)
+            self.session.add(userGroup)
+            self.session.add(admin)
+            self.session.add(user)
+            self.session.commit()
+            logging.info("Successfully initiated database")
+        except Exception as e:
+            self.session.rollback()
+            logging.info("Error while initializing database: "+str(e))
+
+    def createDB(self):
+        if config.ENVIRONMENT=="testing":
+            self.engine = create_engine('sqlite:///:memory:')
+        else:
+            self.engine = create_engine('postgresql://'+str(config.POSTGRES_USER)+':'+str(config.POSTGRES_PASS)+'@'+str(config.POSTGRES_IP)+':'+str(config.POSTGRES_PORT)+'/'+str(config.POSTGRES_DB))
+        try:
+            self.Base.metadata.create_all(self.engine)
+        except Exception as e:
+            if "does not exist" in str(e):
+                tmpengine=create_engine('postgresql://'+str(config.POSTGRES_USER)+':'+str(config.POSTGRES_PASS)+'@'+str(config.POSTGRES_IP)+':'+str(config.POSTGRES_PORT)+'/postgres')
+                conn = tmpengine.connect()
+                conn.execute("commit")
+                conn.execute("create database \""+str(config.POSTGRES_DB)+"\"")
+                conn.close()
+                self.Base.metadata.create_all(self.engine)
+        Session = sessionmaker(bind=self.engine)
+        self.session=Session()
 
 
-def initDB():
-    portal = OauthClient(
-        name='portal', client_id='portal',
-        client_secret='portal', client_type='confidential',
-        _redirect_uris=('http://127.0.0.1/authorized'),
-    )
-    
-    adminPassword=blake2b('admin'.encode("utf-8")).hexdigest()
-    userPassword=blake2b('user'.encode("utf-8")).hexdigest()
-    adminGroup=Group(name="admin")
-    userGroup=Group(name="user")
-    admin = Tenant(username='admin', role='ADMIN', storage=100, memory=100, vcpu=100, group=adminGroup, password=adminPassword)
-    user = Tenant(username='user', role='TENANT', storage=100, memory=100, vcpu=100, group=userGroup, password=userPassword)
+    def removeDB(self):
+        self.Base.metadata.drop_all(self.engine)
+        self.session.close()
 
-    try:
-        session.add(adminGroup)
-        session.add(userGroup)
-        session.add(portal)
-        session.add(admin)
-        session.add(user)
-        session.commit()
-        logging.info("Successfully initiated database")
-    except Exception as e:
-        session.rollback()
-        logging.info("Error while initializing database: "+str(e))
 
-engine = create_engine('postgresql://'+str(config.POSTGRES_USER)+':'+str(config.POSTGRES_PASS)+'@'+str(config.POSTGRES_IP)+':'+str(config.POSTGRES_PORT)+'/'+str(config.POSTGRES_DB))
-try:
-  Base.metadata.create_all(engine)
-except Exception as e:
-  if "does not exist" in str(e):
-    tmpengine=create_engine('postgresql://'+str(config.POSTGRES_USER)+':'+str(config.POSTGRES_PASS)+'@'+str(config.POSTGRES_IP)+':'+str(config.POSTGRES_PORT)+'/postgres')
-    conn = tmpengine.connect()
-    conn.execute("commit")
-    conn.execute("create database \""+str(config.POSTGRES_DB)+"\"")
-    conn.close()
-    Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
-session=Session()
-initDB()
+DB=DB(Base)

@@ -121,9 +121,9 @@ export class VsService {
     // return allVerticalSlices
   }
 
-  async createNewGroup(name) {
+  async createNewGroup(data) {
     const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
-    return this.http.post(config.vsEndpoint + config.vsgroups + "/" + name, "", { headers:headers }).toPromise();
+    return this.http.post(config.vsEndpoint + config.vsgroups, data, { headers:headers }).toPromise();
   }
 
   async deleteGroup(group) {
@@ -131,14 +131,14 @@ export class VsService {
     return this.http.delete(config.vsEndpoint + config.vsgroups + "/" + group, { headers:headers }).toPromise();
   }
 
-  async createNewGroupTenant(group, data) {
+  async createNewGroupTenant(data) {
     const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
-    return this.http.post(config.vsEndpoint + config.vsgroups + "/" + group + "/tenant", data, { headers:headers }).toPromise();
+    return this.http.post(config.vsEndpoint + config.vstenants, data, { headers:headers }).toPromise();
   }
 
   async deleteGroupTenant(group, tenant) {
     const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
-    return this.http.delete(config.vsEndpoint + config.vsgroups + "/" + group + "/tenant/" + tenant, { headers:headers }).toPromise();
+    return this.http.delete(config.vsEndpoint + config.vstenants + "/" + tenant, { headers:headers }).toPromise();
   }
 
   async onboardVSB(data) {
@@ -153,7 +153,8 @@ export class VsService {
 
   async deleteNST(nstId) {
     const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
-    return this.http.delete(config.vsEndpoint + config.vsnst + "/" + nstId, { headers:headers }).toPromise();
+    const parameters=new HttpParams().set('nst_id', nstId);
+    return this.http.delete(config.vsEndpoint + config.vsnst, { params:parameters,headers:headers }).toPromise();
   }
 
   async createNewNS(data) {
@@ -163,7 +164,8 @@ export class VsService {
 
   async deleteVSB(blueprintID) {
     const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
-    return this.http.delete(config.vsEndpoint + config.vsblueprints + "/" + blueprintID, { headers:headers }).toPromise();
+    const parameters=new HttpParams().set('vsb_id', blueprintID);
+    return this.http.delete(config.vsEndpoint + config.vsblueprints, { params:parameters, headers:headers }).toPromise();
   }
 
   async createNewDescriptor(data) {
@@ -173,7 +175,8 @@ export class VsService {
 
   async deleteDescriptor(descriptorId) {
     const headers=new HttpHeaders().set('Authorization', 'Bearer '+localStorage.getItem("accessToken"));
-    return this.http.delete(config.vsEndpoint + config.vsdescriptors + "/" + descriptorId, { headers:headers }).toPromise();
+    const parameters=new HttpParams().set('vsd_id', descriptorId);
+    return this.http.delete(config.vsEndpoint + config.vsdescriptors,{params:parameters ,headers:headers}).toPromise();
   }
 
   async instantiateNewVS(data) {

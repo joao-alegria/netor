@@ -6,7 +6,7 @@ export default {
     whoami: '/tenant/validate',
     vsdescriptors: '/catalogue/vsdescriptor',
     vsblueprints: '/catalogue/vsblueprint',
-    vsnst: '/catalogue/nstemplate',
+    vsnst: '/catalogue/nst',
     vsgroups: '/tenant/group',
     vstenants: '/tenant/tenant',
     vsnstemplates: '/catalogue/nst',

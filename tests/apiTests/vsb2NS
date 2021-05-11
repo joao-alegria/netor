@@ -1,0 +1,100 @@
+{
+    "vs_blueprint": {
+        "slice_service_type": "EMBB",
+        "embb_service_category":"URBAN_MACRO",
+        "parameters": [
+        {
+            "parameter_id": "peers",
+            "parameter_type": "number",
+            "applicability_field": "interdomain",
+            "parameter_name": "Peers",
+            "parameter_description": "#Peers"
+        }
+        ],
+        "version": "version_1",
+        "name": "vsb-test",
+        "inter_site": true
+    },
+    "translation_rules": [
+        {
+            "nst_id": "interdomain_e2e_nst",
+            "input": [
+            {
+                "max_value": 5,
+                "parameter_id": "peers",
+                "min_value": 1
+            }
+            ],
+            "nsd_version": "1.0",
+            "nsd_id": "interdomain-ns",
+            "blueprint_id": "1"
+        }
+    ],
+    "available_actions": [
+        {
+            "action_name": "Add Tunnel Peer",
+            "action_id": "addpeer",
+            "parameters": [
+                {
+                    "parameter_name": "Peer Network",
+                    "parameter_id": "peer_network",
+                    "parameter_default_value":"10.0.0.0/24",
+                    "parameter_type": "STRING"
+                }
+            ]
+        },
+        {
+            "action_name": "Fetch Tunnel Peer Info",
+            "action_id": "getvnfinfo"
+        }
+    ],
+    "nsts":[
+      {
+        "nst_version": "1.0",
+        "nsst_ids": [
+          "interdomain_nsst",
+          "interdomain_nsst"
+        ],
+        "nsst_type": "NONE",
+        "nst_service_profile": {
+          "service_profile_id": "interdomain_profile",
+          "eMBB_perf_req": [
+            {
+              "user_density": 100,
+              "uE_speed": 10
+            }
+          ],
+          "latency": 100,
+          "sST": "EMBB",
+          "max_number_of_UEs": 1000,
+          "availability": 100
+        },
+        "nsd_version": "1.0",
+        "nst_id": "interdomain_e2e_nst",
+        "nst_provider": "ITAV",
+        "nst_name": "Interdomain Slice"
+      },
+      {
+        "nst_version": "1.0",
+        "nsst_type": "NONE",
+        "nst_service_profile": {
+          "service_profile_id": "interdomain_profile",
+          "eMBB_perf_req": [
+            {
+              "user_density": 100,
+              "uE_speed": 10
+            }
+          ],
+          "latency": 100,
+          "sST": "EMBB",
+          "max_number_of_UEs": 1000,
+          "availability": 100
+        },
+        "nsd_version": "1.0",
+        "nst_id": "interdomain_nsst",
+        "nst_provider": "ITAV",
+        "nst_name": "Interdomain Slice Subnet",
+        "nsd_id": "interdomain_slice_nsd"
+      }
+    ]
+}

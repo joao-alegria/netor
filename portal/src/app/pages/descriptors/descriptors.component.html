@@ -29,15 +29,15 @@
 </table> -->
 
 <h2 style="float: left">Vertical Service Descriptors</h2>
-<button style="float: right; margin: 2px; background-color: #4489eb; margin-left: auto" id="yes" type="button" class="btn btn-primary" (click)="update()"><i class="fa fa-refresh"></i> Refresh</button>
-<button style="float: right; margin: 2px; background-color: #4489eb; margin-left: auto" id="yes" type="button" class="btn btn-primary" (click)="instantiateVs()">New</button>
+<button style="float: right; margin: 2px; background-color: #ffa500; border-color: #ffa500; margin-left: auto" id="yes" type="button" class="btn btn-primary" (click)="update()"><i class="fa fa-refresh"></i> Refresh</button>
+<!-- <button style="float: right; margin: 2px; background-color: #ffa500; margin-left: auto" id="yes" type="button" class="btn btn-primary" (click)="instantiateVs()">New</button> -->
 <div style="clear: both;" class="container-fluid" (click)="containerClick($event)">
     <hr />
     <div class="row" style="margin-top: 5px;">
         <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let element of listData"
             style="display: flex;flex-direction: column;">
-            <div [attr.id]="element.vs_descriptor_id" class="card mb-3"
-                style="border-color: #4489eb; border-width: 2px; cursor: pointer; height:100%"
+            <div [attr.id]="element.vs_descriptor_id" class="card mb-3 VSD"
+                style="border-color: #ffa500; border-width: 2px; cursor: pointer; height:100%"
                 (click)="clickEvent($event, element)" (mouseenter)="onEnter(element.vs_descriptor_id)"
                 (mouseleave)="onLeave(element.vs_descriptor_id)">
                 <div class="card-body" style="clear: none;">
@@ -61,11 +61,11 @@
 <span id="tooltip-span" style="display: none;" (mouseleave)="mouseLeftTooltip()">
     <div class="list-group">
         <div *ngIf="tenant">
-            <a class="list-group-item list-group-item-action" type="button" (click)="instantiateVs()">Instantiate VS</a>
-            <a class="list-group-item list-group-item-action" type="button" (click)="deleteDescriptor()">Delete</a>
+            <a class="list-group-item list-group-item-action" type="button" (click)="instantiateVs()" id="instantiateVSI">Instantiate VS</a>
+            <a class="list-group-item list-group-item-action" type="button" (click)="deleteDescriptor()" id="deleteVSD">Delete</a>
         </div>
         <div *ngIf="!tenant">
-            <a class="list-group-item list-group-item-action" type="button" (click)="viewMoreInfo()">View More</a>
+            <a class="list-group-item list-group-item-action" type="button" (click)="viewMoreInfo()" id="viewMore">View More</a>
         </div>
     </div>
 </span>

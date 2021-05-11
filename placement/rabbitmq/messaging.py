@@ -1,7 +1,7 @@
 from rabbitmq.adaptor import Messaging
 import json
 from threading import Thread
-from arbitrator import newArbitrator, tearDownArbitrator
+import arbitrator
 import logging
 
 class MessageReceiver(Thread):
@@ -11,16 +11,16 @@ class MessageReceiver(Thread):
         self.messaging=Messaging()
         self.messaging.createExchange("vsLCM_Management")
         self.messaging.consumeExchange("vsLCM_Management",self.callback)
-        # self.arbitrators={}
+        self.arbitrators={}
         
     def callback(self, channel, method_frame, header_frame, body):
         logging.info("Received Message {}".format(body))
         data=json.loads(body)
 
         if data["msgType"]=="createVSI":
-            newArbitrator(data)
+            self.newArbitrator(data)
         elif data["msgType"]=="removeVSI":
-            tearDownArbitrator(data)
+            self.tearDownArbitrator(data)
         # else:
         #     if data["vsiId"] in self.arbitrators:
         #         self.arbitrators[data["vsiId"]].newMessage(data)
@@ -39,5 +39,20 @@ class MessageReceiver(Thread):
             self.messaging.startConsuming()
         except Exception as e:
             logging.info("Stop consuming now!")
-            logging.error("Pika exception: "+str(e))    
+            logging.error("Pika exception: "+str(e))
+
+    def newArbitrator(self,data):
+        arb=arbitrator.Arbitrator(data["vsiId"], data)
+        self.arbitrators[data["vsiId"]]=arb
+        arb.start()
+
+    def tearDownArbitrator(self,data):
+        vsiId=str(data["vsiId"])
+        if vsiId in self.arbitrators:
+            self.arbitrators[vsiId].tearDown()
+            del self.arbitrators[vsiId]
+        else:
+            logging.info("VSI Id not found during tearDown: "+str(vsiId))
+
+
         

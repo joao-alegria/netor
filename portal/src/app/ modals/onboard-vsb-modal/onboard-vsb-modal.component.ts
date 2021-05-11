@@ -170,6 +170,29 @@ export class OnboardVsbModalComponent implements OnInit {
         }
       }
     }
+
+    for (let actionNumber in this.actionsNumbers) {
+      let actionId = $("#actionId" + actionNumber).val()
+      let actionName = $("#actionName" + actionNumber).val()
+      let actionParameters = []
+      for (let parameterNumber in this.actionsNumbers[actionNumber]) {
+        let paramid = $("#actionparamid" + actionNumber + "_" + parameterNumber).val()
+        let paramname = $("#actionparamname" + actionNumber + "_" + parameterNumber).val()
+        let paramtype = $("#actionparamtype" + actionNumber + "_" + parameterNumber).val()
+        let paramdefault = $("#actionparamdefault" + actionNumber + "_" + parameterNumber).val()
+        actionParameters.push({ parameter_id: paramid, parameter_name: paramname, parameter_type: paramtype, parameter_default_value: paramdefault })
+      }
+      if (actionId == "") {
+        break
+      } else {
+        if (blueprint["available_actions"] == null) {
+          blueprint["available_actions"] = [{ action_id: actionId, action_name: actionName, parameters: actionParameters }]
+        } else {
+          blueprint["available_actions"].push({ action_id: actionId, action_name: actionName, parameters: actionParameters })
+        }
+      }
+    }
+
     console.log(blueprint)
     await this.vs.onboardVSB(blueprint).then(()=>{
       this.closeModal()
@@ -240,7 +263,7 @@ export class OnboardVsbModalComponent implements OnInit {
 
   myStyle(i) {
     let styles = {
-      'border-left': i != 0 ? 'solid 2px #007bff' : '',
+      'border-left': i != 0 ? 'solid 2px #ffa500' : '',
       'border-radius': i != 0 ? '10px' : ''
     };
 

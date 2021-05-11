@@ -2,10 +2,13 @@ from api.controller import app
 from rabbitmq.messaging import MessageReceiver
 import config
 import logging
+import db.persistance
 
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
     logging.getLogger('pika').propagate=False
+
+    db.persistance.DB.createDB()
 
     messageReceiver=MessageReceiver()
     messageReceiver.start()

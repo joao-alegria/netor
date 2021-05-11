@@ -1,7 +1,7 @@
 from flask import g, Flask, jsonify, render_template, request, make_response, redirect
 from flasgger import Swagger, validate
 from flasgger.utils import swag_from
-from db.persistance import Tenant, OauthClient, session
+from db.persistance import Tenant, OauthClient, DB
 from api.oauth import OauthProvider
 import service
 from api.loginConfig import loginManager, loginUser
@@ -33,7 +33,7 @@ def login():
         return render_template('index.html')
     
     username = request.form.get('username')
-    user = session.query(Tenant).filter(Tenant.username==username).first()
+    user = DB.session.query(Tenant).filter(Tenant.username==username).first()
     if user.check_password(request.form['password']):
         loginUser(user)
         return redirect("/protected")
@@ -44,11 +44,11 @@ def login():
 def load_current_user():
     if "client_id" in request.args:
         clientId=request.args.get("client_id")
-        client = session.query(OauthClient).filter(OauthClient.client_id==clientId).first()
+        client = DB.session.query(OauthClient).filter(OauthClient.client_id==clientId).first()
         g.client = client
     # if "username" in request.args:
     #     username=request.args.get("username")
-    user = session.query(Tenant).first()
+    user = DB.session.query(Tenant).first()
     g.user = user
 
 @app.route('/oauth/authorize', methods=['GET', 'POST'])
@@ -275,8 +275,8 @@ def getTenantById(tenantId):
                         $ref: '#/definitions/Tenant'
     """
     try:
-        service.getTenantById(tenantId)
-        return jsonify({"message":"Success"}),200
+        tenant=service.getTenantById(tenantId)
+        return jsonify({"message":"Success", "data":tenant}),200
     except Exception as e:
         return jsonify({"message":"Error: "+str(e)}),500
 

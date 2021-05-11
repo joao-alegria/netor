@@ -1,19 +1,19 @@
-<div class="container-fluid" id="modal-content-wrapper" style="height: 100%; display: flex; flex-flow: column;">
+<div class="container-fluid" id="modal-content-wrapper" style="height: 100%;">
     <div class="row">
-        <h2 id="modal-title" style="color: #4489eb;">Onboard New VSB</h2>
+        <h2 id="modal-title" style="color: #ffa500;">Onboard New VSB</h2>
         <i style="margin-left: auto;cursor: pointer;" class="fa fa-times fa-lg" aria-hidden="true" type=" button"
             (click)="closeModal()"></i>
     </div>
     <div style="width: 80%; height: 1px; margin: 0px auto; border-bottom: 1px solid #969696;">&nbsp;</div>
 
-    <div id="modal-body-extra container" style="overflow-y: auto; padding-top: 10px;">
+    <div id="modal-body-extra container" style="padding-top: 10px;">
         <div class="container">
             <div class="row" style="margin-bottom: 10px;">
                 <div class="col-sm-12 col-md-4">
                     <h3>VSB Description File</h3>
                     <div style="padding: 15px" class="dropArea" (fileDropped)="vsbDropped($event)">
                         <input type="file" id="vsbDrop" (change)="vsbDropped($event.target.files)" />
-                        <label for="vsbDrop" class="btn-primary" style="background-color: #4489eb;">Choose file</label>
+                        <label for="vsbDrop" class="btn-primary" style="background-color: #ffa500; border-color: #ffa500; ">Choose file</label>
                         <h5>or drop it here</h5>
                     </div>
                     <div class="files-list" style="margin-top: 5px;">
@@ -30,7 +30,7 @@
                     <h3>NSD Description File</h3>
                     <div style="padding: 15px" class="dropArea" (fileDropped)="nsdDropped($event)">
                         <input type="file" id="nsdDrop" multiple (change)="nsdDropped($event.target.files)" />
-                        <label for="nsdDrop" class="btn-primary" style="background-color: #4489eb;">Choose files</label>
+                        <label for="nsdDrop" class="btn-primary" style="background-color: #ffa500; border-color: #ffa500;">Choose files</label>
                         <h5>or drop them here</h5>
                     </div>
                     <div class="files-list" style="margin-top: 5px;">
@@ -47,7 +47,7 @@
                     <h3>NST Description File</h3>
                     <div style="padding: 15px" class="dropArea" (fileDropped)="nstDropped($event)">
                         <input type="file" id="nstDrop" multiple (change)="nstDropped($event.target.files)" />
-                        <label for="nstDrop" class="btn-primary" style="background-color: #4489eb;">Choose files</label>
+                        <label for="nstDrop" class="btn-primary" style="background-color: #ffa500; border-color: #ffa500;">Choose files</label>
                         <h5>or drop them here</h5>
                     </div>
                     <div class="files-list" style="margin-top: 5px;">
@@ -106,7 +106,7 @@
                 </div>
             </div>
             <div style="text-align: center;">
-                <button style="background-color: #4489eb;" type="button" class="btn btn-primary"
+                <button style="background-color: #ffa500; border-color: #ffa500;" type="button" class="btn btn-primary"
                     (click)="addVNFForm()">Add +1 VNF Package</button>
             </div>
         </form>
@@ -155,7 +155,7 @@
                 </div>
             </div>
             <div style="text-align: center;">
-                <button style="background-color: #4489eb;" type="button" class="btn btn-primary"
+                <button style="background-color: #ffa500; border-color: #ffa500;" type="button" class="btn btn-primary"
                     (click)="addAPPForm()">Add +1 App Package</button>
             </div>
         </form>
@@ -251,12 +251,12 @@
                     </div>
                 </div>
                 <div style="text-align: center;">
-                    <button style="margin-bottom: 10px; background-color: #4489eb;" type="button"
+                    <button style="margin-bottom: 10px; background-color: #ffa500; border-color: #ffa500;" type="button"
                         class="btn btn-primary" (click)="addInputParameterForm(k)">Add +1 Parameter</button>
                 </div>
             </div>
             <div style="text-align: center;">
-                <button style="background-color: #4489eb;" type="button" class="btn btn-primary"
+                <button style="background-color: #ffa500; border-color: #ffa500;" type="button" class="btn btn-primary"
                     (click)="addRuleForm()">Add +1 Rule</button>
             </div>
         </form>
@@ -340,21 +340,19 @@
                     </div>
                 </div>
                 <div style="text-align: center;">
-                    <button style="margin-bottom: 10px; background-color: #4489eb;" type="button"
+                    <button style="margin-bottom: 10px; background-color: #ffa500; border-color: #ffa500;" type="button"
                         class="btn btn-primary" (click)="addActionParameterForm(a)">Add +1 Parameter</button>
                 </div>
             </div>
             <div style="text-align: center;">
-                <button style="background-color: #4489eb;" type="button" class="btn btn-primary"
+                <button style="background-color: #ffa500; border-color: #ffa500;" type="button" class="btn btn-primary"
                     (click)="addActionForm()">Add +1 Action</button>
             </div>
         </form>
 
     </div>
 
-    <div class="row" style="margin-top: 5px;">
-        <button style="margin-left: auto; background-color: #4489eb;" id="onboardVsb" type="button"
-            class="btn btn-primary" (click)="onboardVsb()">Submit</button>
-
+    <div class="row">
+        <button style=" margin-top: 5px; margin-bottom: 15px; margin-left: auto; background-color: #ffa500; border-color: #ffa500;" id="onboardVsb" type="button" class="btn btn-primary" (click)="onboardVsb()">Submit</button>
     </div>
 </div>

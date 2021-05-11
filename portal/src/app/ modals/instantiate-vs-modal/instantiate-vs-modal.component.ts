@@ -48,6 +48,7 @@ export class InstantiateVsModalComponent implements OnInit {
   submitVS() {
     let vsi = { }
 
+    let vsiId = $("#vsiId").val()
     let name = $("#name").val()
     let tenant = $("#tenant").val()
     let description = $("#description").val()
@@ -72,7 +73,22 @@ export class InstantiateVsModalComponent implements OnInit {
     //   vsi.userData["slice_parameters"] = sliceParameters
     // }
 
+    let placements = []
 
+    for (let placementNum of this.domainPlacements) {
+      let param = $("#placement" + placementNum).val()
+      let value = $("#placementValue" + placementNum).val()
+      if (param != "") {
+        placements.push({componentName:param, domainId: value})
+      }
+    }
+
+    if (this.objectKeys(placements).length > 0) {
+      vsi["domainPlacements"] = placements
+    }
+
+
+    vsi["vsiId"] = vsiId
     vsi["name"] = name
     vsi["tenantId"] = tenant
     vsi["description"] = description

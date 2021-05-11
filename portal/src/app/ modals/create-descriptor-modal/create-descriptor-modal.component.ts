@@ -128,13 +128,14 @@ export class CreateDescriptorModalComponent implements OnInit {
   }
 
   submitDescriptor() {
-    let vsd = { vsd: { qos_parameters: {}, service_constraints: [], sla: {}, slice_service_parameters: {} }, tenant_id: localStorage.getItem("username") }
+    let vsd = {qos_parameters: {}, service_constraints: [], sla: {}, tenant_id: localStorage.getItem("username") }
+    // slice_service_parameters: {},
 
     let name = $("#name").val()
     let version = $("#version").val()
     if(this.modalData.blueprint.vs_blueprint.parameters){
       for (let param of this.modalData.blueprint.vs_blueprint.parameters) {
-        vsd.vsd.qos_parameters[param.parameter_id] = $("#" + param.parameter_name).val()
+        vsd.qos_parameters[param.parameter_id] = $("#" + param.parameter_name).val()
       }
     }
     let sliceServiceType = $("#sliceServiceType").val()
@@ -148,33 +149,33 @@ export class CreateDescriptorModalComponent implements OnInit {
     let isLowCost = $("#isLowCost").prop("checked")
     let sliceType = $("#sliceType").val().toLowerCase()
 
-    vsd.vsd.slice_service_parameters["type"] = sliceType
-    let sliceParameters = {}
+    // vsd.slice_service_parameters["type"] = sliceType
+    // let sliceParameters = {}
 
-    for (let paramNum of this.nsParams) {
-      let param = $("#parameter" + paramNum).val()
-      let value = $("#value" + paramNum).val()
-      if (param != "NONE") {
-        sliceParameters[param] = value
-      }
-    }
+    // for (let paramNum of this.nsParams) {
+    //   let param = $("#parameter" + paramNum).val()
+    //   let value = $("#value" + paramNum).val()
+    //   if (param != "NONE") {
+    //     sliceParameters[param] = value
+    //   }
+    // }
 
-    if (this.objectKeys(sliceParameters).length > 0) {
-      for (let key in sliceParameters) {
-        vsd.vsd.slice_service_parameters[key] = sliceParameters[key]
-      }
-    }
+    // if (this.objectKeys(sliceParameters).length > 0) {
+    //   for (let key in sliceParameters) {
+    //     vsd.slice_service_parameters[key] = sliceParameters[key]
+    //   }
+    // }
 
     vsd["is_public"] = isPublic
-    vsd.vsd["vs_blueprint_id"] = this.modalData.blueprint.vs_blueprintId.toString()
-    vsd.vsd["name"] = name
-    vsd.vsd["version"] = version
-    vsd.vsd["sst"] = sliceServiceType
-    vsd.vsd["management_type"] = manType
-    vsd.vsd.service_constraints.push({ priority: priority, sharable: isSharable, can_include_shared_elements: includesSharedElems, preferred_providers: this.preferredProviders, non_preferred_providers: this.notPreferredProviders, prohibited_providers: this.prohibitedProviders })
-    vsd.vsd.sla["service_creation_time"] = serviceCreationTime == "NO REQUIREMENTS" ? "UNDEFINED" : serviceCreationTime
-    vsd.vsd.sla["availability_coverage"] = coverageArea == "NO REQUIREMENTS" ? "UNDEFINED" : coverageArea
-    vsd.vsd.sla["low_cost_required"] = isLowCost
+    vsd["vs_blueprint_id"] = this.modalData.blueprint.vs_blueprint_id.toString()
+    vsd["name"] = name
+    vsd["version"] = version
+    // vsd["sst"] = sliceServiceType
+    vsd["management_type"] = manType
+    vsd.service_constraints.push({ priority: priority, sharable: isSharable, can_include_shared_elements: includesSharedElems, preferred_providers: this.preferredProviders, non_preferred_providers: this.notPreferredProviders, prohibited_providers: this.prohibitedProviders })
+    vsd.sla["service_creation_time"] = serviceCreationTime == "NO REQUIREMENTS" ? "UNDEFINED" : serviceCreationTime
+    vsd.sla["availability_coverage"] = coverageArea == "NO REQUIREMENTS" ? "UNDEFINED" : coverageArea
+    vsd.sla["low_cost_required"] = isLowCost
 
     this.vs.createNewDescriptor(vsd).then(()=>{this.dialogRef.close("Descriptor Created.");}).catch((message)=>{
       this.toastr.error(message.error,"Blueprint Deletion Error", {positionClass: 'toast-bottom-center', closeButton: true})

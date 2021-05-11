@@ -1,13 +1,13 @@
 from flask_login import login_required, LoginManager, login_user, logout_user, current_user,AnonymousUserMixin
 import base64
 from flask import jsonify
-from db.persistance import Tenant, OauthClient, session
+from db.persistance import Tenant, OauthClient, DB
 
 loginManager=LoginManager()
 
 @loginManager.user_loader
 def user_loader(username):
-    user = session.query(Tenant).filter(Tenant.username==username).first()
+    user = DB.session.query(Tenant).filter(Tenant.username==username).first()
     g.user=user
     return user
 
@@ -17,14 +17,14 @@ def request_loader(request):
     if "username" in request.form:
         username = request.form.get('username')
         if username != None:
-            user = session.query(Tenant).filter(Tenant.username==username).first()
+            user = DB.session.query(Tenant).filter(Tenant.username==username).first()
     
     if "Basic" in request.headers:
         header_val = request.headers.get('Authorization').replace('Basic ', '', 1)
         try:
             header_val = base64.b64decode(header_val)
             data=header_val.decode("utf-8").split(":")
-            user=session.query(Tenant).filter(Tenant.username==data[0]).first()
+            user=DB.session.query(Tenant).filter(Tenant.username==data[0]).first()
         except TypeError:
             pass
     g.user=user
