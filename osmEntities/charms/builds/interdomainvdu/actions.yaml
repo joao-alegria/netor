@@ -51,29 +51,6 @@
       "default": ""
   "required":
   - "filename"
-# confclient:
-#   description: "Action that enables a peer to configure the Wireguard Server information"
-#   params:
-#     server_public_address:
-#       description: "The public ip of the wireguard client peer"
-#       type: string
-#       default: "10.0.13.221/24"
-#     server_public_key:
-#       description: "The public key of the Wireguard server"
-#       type: string
-#       default: ""
-#   required:
-#   - server_public_address
-#   - server_public_key
-# connserver:
-#   description: "Action that enables a peer to connect to a Wireguard Server"
-#   params:
-#     confirmation:
-#       description: "Confirmation step before connection to the Server"
-#       type: boolean
-#       default: !!bool false
-#   required:
-#   - confirmation
 "addpeer":
   "description": "Action that adds an allowed peer to the wireguard server"
   "params":

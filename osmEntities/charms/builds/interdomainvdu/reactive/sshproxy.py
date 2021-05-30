@@ -45,16 +45,19 @@ register_trigger(when='config.changed',
                  set_flag='sshproxy.reconfigure')
 
 
-# @when_any('config.changed', 'sshproxy.reconfigure')
-@when_any('config.set.ssh-hostname', 'config.set.ssh-username', 'config.set.ssh-password', 'sshproxy.reconfigure')
+@when_any('config.changed', 'sshproxy.reconfigure')
 def ssh_configured():
     """Check if charm is properly configured.
+
     Check to see if the charm is configured with SSH credentials. If so,
     set a state flag that can be used to execute ssh-only actions.
+
     For example:
+
     @when('sshproxy.configured')
     def run_remote_command(cmd):
         ...
+
     @when_not('sshproxy.configured')
     def run_local_command(cmd):
         ...
@@ -81,7 +84,7 @@ def ssh_configured():
             status_set('active', 'Ready!')
         else:
             clear_flag('sshproxy.configured')
-            status_set('blocked', "Remote machine not ready yet: {}".format(output))
+            status_set('blocked', "Verification failed: {}".format(output))
     else:
         log("No ssh credentials configured", DEBUG)
         clear_flag('sshproxy.configured')
@@ -90,6 +93,7 @@ def ssh_configured():
 
 def generate_ssh_key():
     """Generate a new 4096-bit rsa keypair.
+
     If there is an existing keypair for this unit, it will be overwritten.
     """
     cfg = config()
@@ -119,6 +123,7 @@ def generate_ssh_key():
 @when('actions.generate-ssh-key')
 def action_generate_ssh_key():
     """Generate a new 4096-bit rsa keypair.
+
     If there is an existing keypair for this unit, it will be overwritten.
     """
     try:
@@ -157,6 +162,7 @@ def action_get_ssh_public_key():
 @when('actions.verify-ssh-credentials')
 def action_verify_ssh_credentials():
     """Verify the ssh credentials have been installed to the VNF.
+
     Attempts to run a stock command - `hostname` on the remote host.
     """
     try:
@@ -176,6 +182,7 @@ def action_verify_ssh_credentials():
 @when('actions.run')
 def run_command():
     """Run an arbitrary command.
+
     Run an arbitrary command, either locally or over SSH with the configured
     credentials.
     """

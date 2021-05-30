@@ -73,7 +73,7 @@ export class MapComponent implements OnInit {
 
     // Icon options
     var iconOptions = {
-      iconUrl: 'assets/locationMarker.png',
+      iconUrl: 'assets/locationMarkerNetor.png',
       shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
       iconSize: [25, 41],
       iconAnchor: [12, 41],

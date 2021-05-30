@@ -23,7 +23,7 @@ nst:
 
     netslice-subnet:
     -   id: interdomain-tunnel-peer
-        is-shared-nss: true
+        is-shared-nss: false
         description: NetSlice Subnet (service) composed by 1 vnf with 2 cp
         nsd-ref: interdomain_slice_nsd
     -   id: interdomain-ns_2

@@ -69,8 +69,8 @@
 <span id="tooltip-span" style="display: none;" (mouseleave)="mouseLeftTooltip()">
     <div class="list-group">
         <div *ngIf="!tenant">
-            <a class="list-group-item list-group-item-action" type="button" (click)="deleteBlueprint()" id="deleteVSB">Delete</a>
             <a class="list-group-item list-group-item-action" type="button" (click)="viewMoreInfo()" id="viewMore">View More</a>
+            <a class="list-group-item list-group-item-action" type="button" (click)="deleteBlueprint()" id="deleteVSB">Delete</a>
         </div>
         <div *ngIf="tenant">
             <a class="list-group-item list-group-item-action" type="button" (click)="createDescriptor()" id="createDescriptor">Create VSD</a>

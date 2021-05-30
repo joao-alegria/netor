@@ -1,9 +1,8 @@
 "name": "interdomainvdu"
 "summary": "interdomain vdu juju charm"
 "maintainer": "joaoalegria <joaoalegria@pc>"
-"description": |
-  VNF "proxy" charms are a lightweight version of a charm that, rather than
-  installing software on the same machine, execute commands over an ssh channel.
+"description": |-
+  interdomain vdu juju charm
 "tags":
   # Replace "misc" with one or more whitelisted tags from this list:
   # https://jujucharms.com/docs/stable/authors-charm-metadata
@@ -14,8 +13,8 @@
 - "vpn"
 - "nfv"
 "series":
-- "xenial"
 - "bionic"
 - "focal"
 - "trusty"
+- "xenial"
 "subordinate": !!bool "false"

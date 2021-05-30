@@ -7,6 +7,8 @@
 4 = Usability catastrophe: imperative to fix this before product can be released
 ```
 
+# Evaluator 1
+
 1. ## Visibility of system status
     
     Severity: 0
@@ -66,3 +68,66 @@
     Severity: 1
     
     Problems: Although the tabs and fields are pretty specific and written in a way to be self explaining, sometimes additional information, possibly through a tooltip-like element would be recommended.
+
+
+# Evaluator 2
+
+1. ## Visibility of system status
+    
+    Severity: 0
+    
+    Problems: 
+
+2. ## Match between system and the real world
+    
+    Severity: 1
+    
+    Problems: 
+    
+3. ## User control and freedom
+    
+    Severity: 0
+    
+    Problems: 
+
+4. ## Consistency and standards
+   
+    Severity: 2
+    
+    Problems: 
+
+5. ## Error prevention
+   
+    Severity: 0
+    
+    Problems: 
+
+6. ## Recognition rather than recall
+   
+    Severity: 2
+    
+    Problems: 
+
+7. ## Flexibility and efficiency of use
+   
+    Severity: 0
+    
+    Problems: 
+
+8.  ## Aesthetic and minimalist design
+   
+    Severity: 0
+    
+    Problems: 
+
+9. ## Help users recognize, diagnose, and recover from errors
+    
+    Severity: 2
+    
+    Problems: não diz onde está o erro especificamente
+
+10. ## Help and documentation
+    
+    Severity: 1
+    
+    Problems: 

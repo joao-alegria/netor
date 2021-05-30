@@ -1,0 +1,28 @@
+nsd:
+  nsd:
+  - description: stupid ns
+    df:
+    - id: default-df
+      vnf-profile:
+      - id: '1'
+        virtual-link-connectivity:
+        - constituent-cpd-id:
+          - constituent-base-element-id: '1'
+            constituent-cpd-id: stupid-eth0-ext
+          virtual-link-profile-id: mgmtnet
+        - constituent-cpd-id:
+          - constituent-base-element-id: '1'
+            constituent-cpd-id: stupid-eth1-ext
+          virtual-link-profile-id: datanet
+        vnfd-id: stupid-vnf
+    id: stupid-ns
+    name: stupid-ns
+    version: '1.0'
+    virtual-link-desc:
+    - id: mgmtnet
+      mgmt-network: true
+      vim-network-name: external
+    - id: datanet
+      vim-network-name: test
+    vnfd-id:
+    - stupid-vnf

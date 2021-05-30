@@ -4,3 +4,4 @@ additionalParamsForVnf:
     tunnel_address: "10.0.0.1/24"
     tunnel_id: "test"
     vsi_id: "10"
+    bandwidth: "30"

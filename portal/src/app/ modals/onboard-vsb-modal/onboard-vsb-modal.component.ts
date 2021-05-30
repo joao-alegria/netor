@@ -211,7 +211,11 @@ export class OnboardVsbModalComponent implements OnInit {
       };
 
       reader.onload = () => {
-        resolve(JSON.parse(reader.result.toString()))
+        try {
+          resolve(JSON.parse(reader.result.toString()))
+        } catch (error) {
+          this.toastr.error(error,"Invalid Files", {positionClass: 'toast-bottom-center'})
+        }
       };
 
       reader.readAsText(file)

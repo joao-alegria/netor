@@ -43,6 +43,10 @@
     "type": "string"
     "default": "1"
     "description": "Current VSI ID"
+  "bandwidth":
+    "type": "string"
+    "default": "30"
+    "description": "Tunnel Bandwidth"
   "data_address":
     "type": "string"
     "default": "127.0.0.1/24"

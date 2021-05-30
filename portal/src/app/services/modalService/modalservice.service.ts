@@ -36,7 +36,7 @@ export class ModalserviceService {
     let title = ""
     switch (elementRef.constructor.name) {
       case "NstemplatesComponent":
-        title = data.nst.nstName
+        title = data.nst_name
         break
       case "TenantsComponent":
         if(data.name){

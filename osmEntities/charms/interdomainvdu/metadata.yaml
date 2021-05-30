@@ -1,4 +1,5 @@
 name: interdomainvdu
+description: "interdomain vdu juju charm"
 summary: "interdomain vdu juju charm"
 maintainer: joaoalegria <joaoalegria@pc>
 tags:
@@ -9,8 +10,6 @@ tags:
 - vpn
 - nfv
 series:
-- xenial
 - bionic
 - focal
-- trusty
 subordinate: !!bool "false"

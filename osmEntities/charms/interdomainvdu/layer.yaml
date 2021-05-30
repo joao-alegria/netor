@@ -1,16 +1,9 @@
 includes:
-- layer:options
 - layer:basic
+- layer:options
 - layer:sshproxy
 - layer:vnfproxy
 exclude: [".travis.yml", "tests", "tox.ini", "test-requirements.txt", "unit_tests"]
 options:
   basic:
-    use_venv: !!bool "false"
-    packages: []
-    python_packages: []
-    include_system_packages: !!bool "false"
-  sshproxy: {}
-  vnfproxy: {}
-  interdomainvdu: {}
-is: interdomainvdu
+    use_venv: false
