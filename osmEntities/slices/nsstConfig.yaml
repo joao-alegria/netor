@@ -3,6 +3,7 @@ netslice-subnet:
   additionalParamsForVnf:
   - member-vnf-index: "1"
     additionalParams:
-      tunnel_address: "10.0.0.1/24"
+      use_data_interfaces: "false"
+      tunnel_address: "10.100.100.1/24"
       tunnel_id: "1"
       vsi_id: "10"

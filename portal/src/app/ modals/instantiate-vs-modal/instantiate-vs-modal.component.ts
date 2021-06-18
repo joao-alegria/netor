@@ -33,7 +33,6 @@ export class InstantiateVsModalComponent implements OnInit {
     // if (localStorage.getItem("role") == "TENANT") {
     this.tenant = localStorage.getItem("username")
     // }
-    this.modalData={"descriptor":{"name":"test","vsDescriptorId":"1"}}
     console.log(modalData)
   }
 
@@ -92,7 +91,7 @@ export class InstantiateVsModalComponent implements OnInit {
     vsi["name"] = name
     vsi["tenantId"] = tenant
     vsi["description"] = description
-    vsi["vsdId"] = this.modalData.descriptor.vsDescriptorId.toString()
+    vsi["vsdId"] = this.modalData.descriptor.vs_descriptor_id.toString()
     // vsi.locationConstraints["altitude"] = altitude
     // vsi.locationConstraints["longitude"] = longitude
     // vsi.locationConstraints["latitude"] = latitude

@@ -26,11 +26,13 @@ class MessageReceiver(Thread):
                     del tenant["vsis"]
                     del tenant["vsds"]
                     message={"vsiId":data["vsiId"],"msgType":"tenantInfo", "data":tenant, "error":False}
-                    self.messaging.publish2Exchange("vsLCM_"+str(data["vsiId"]), json.dumps(message))
+                    # self.messaging.publish2Exchange("vsLCM_"+str(data["vsiId"]), json.dumps(message))
+                    self.messaging.publish2Exchange("vsLCM_Management", json.dumps(message))
                     service.addVsiToTenant(tenantId,data["vsiId"])
                 except Exception as e:
                     message={"vsiId":data["vsiId"],"msgType":"tenantInfo", "error":True, "message":"Invalid Tenant Id. Error: "+str(e)}
-                    self.messaging.publish2Exchange("vsLCM_"+str(self.vsiId), json.dumps(message))
+                    # self.messaging.publish2Exchange("vsLCM_"+str(self.vsiId), json.dumps(message))
+                    self.messaging.publish2Exchange("vsLCM_Management", json.dumps(message))
             elif data["msgType"]=="removeVSI":
                 service.deleteVsiFromTenant(data["tenantId"], data["vsiId"])
 

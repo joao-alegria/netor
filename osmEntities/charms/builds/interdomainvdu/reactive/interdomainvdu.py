@@ -323,11 +323,14 @@ def sendVnfIp():
     result=err = ''
 
     try:
+        use_data_interfaces = config['use_data_interfaces']
         vnfMgmtIp = config['ssh-hostname']
         tunnelAddress = config['tunnel_address']
         tunnelId = config['tunnel_id']
         vsiId = config['vsi_id']
         vsEndpoint = function_get('vsEndpoint')
+
+        bandwidth = config['bandwidth']
 
         log(config)
 
@@ -353,27 +356,51 @@ def sendVnfIp():
         finally:
             publicKey=result
 
-        if len(interfacesAndIps)==3:
 
+        if use_data_interfaces:
+            if len(interfacesAndIps)==3:
+
+                vnfMgmtIp=vnfMgmtIp.split("/")[0]
+                tunnelAddress=tunnelAddress.split("/")[0]
+
+                for key, value in interfacesAndIps.items():
+                    if str(value) != str(vnfMgmtIp) and str(value) != str(tunnelAddress):
+                        log("found data interface: "+key+", ip: "+value)
+                        vnfIp=str(value)
+                        config["data_address"]=vnfIp
+                        config["data_interface"]=str(key)
+                        db.set("data_interface", str(key))
+                        db.flush()
+                        break
+
+                try:
+                    log("using interface: "+key)
+                    cmd = ['sudo tc qdisc add dev {} root cake bandwidth {}kbit'.format(key, bandwidth)]
+                    result, err = charms.sshproxy._run(cmd)
+                    log("enabled tc-cake to interface")
+                except:
+                    log('command failed:' + result)
+                    log('command failed:' + err)
+                    set_flag('interdomainvdu.tccakeaddinterface.failed')
+
+                data={"vsiId":vsiId,"publicKey": publicKey,"vnfIp":vnfIp, "tunnelId":tunnelId}
+    
+                cmd = ['curl -X POST -H "Content-Type: application/json"  -d {} {}'.format(json.dumps(json.dumps(data)),vsEndpoint)]
+                log(cmd)
+                result, err = charms.sshproxy._run(cmd)
+            else:
+                log('Expecting 3 network interfaces')
+                function_fail('Expecting 3 network interfaces')
+
+        else:
             vnfMgmtIp=vnfMgmtIp.split("/")[0]
-            tunnelAddress=tunnelAddress.split("/")[0]
 
-            for key, value in interfacesAndIps.items():
-                if value != vnfMgmtIp and value != tunnelAddress:
-                    vnfIp=value
-                    config["data_address"]=vnfIp
-                    config["data_interface"]=key
-                    db.set("data_interface", key)
-                    db.flush()
+            data={"vsiId":vsiId,"publicKey": publicKey,"vnfIp":vnfMgmtIp, "tunnelId":tunnelId}
 
-            data={"vsiId":vsiId,"publicKey": publicKey,"vnfIp":vnfIp, "tunnelId":tunnelId}
-  
             cmd = ['curl -X POST -H "Content-Type: application/json"  -d {} {}'.format(json.dumps(json.dumps(data)),vsEndpoint)]
             log(cmd)
             result, err = charms.sshproxy._run(cmd)
-        else:
-            log('Expecting 3 network interfaces')
-            function_fail('Expecting 3 network interfaces')
+
     except:
         function_fail('command failed:' + err)
     else:
@@ -390,6 +417,7 @@ def sendVnfIp():
     result=err = ''
 
     try:
+        use_data_interfaces = config['use_data_interfaces']
         vnfMgmtIp = config['ssh-hostname']
         tunnelAddress = config['tunnel_address']
         tunnelId = config['tunnel_id']
@@ -421,35 +449,47 @@ def sendVnfIp():
         finally:
             publicKey=result
 
-        if len(interfacesAndIps)==3:
 
-            vnfMgmtIp=vnfMgmtIp.split("/")[0]
-            tunnelAddress=tunnelAddress.split("/")[0]
 
-            for key, value in interfacesAndIps.items():
-                if str(value) != str(vnfMgmtIp) and str(value) != str(tunnelAddress):
-                    log("found data interface: "+key+", ip: "+value)
-                    vnfIp=str(value)
-                    config["data_address"]=vnfIp
-                    config["data_interface"]=str(key)
-                    db.set("data_interface", str(key))
-                    db.flush()
-                    break
+        if use_data_interfaces:
+            if len(interfacesAndIps)==3:
 
-            try:
-                log("using interface: "+key)
-                cmd = ['sudo tc qdisc add dev {} root cake bandwidth {}kbit'.format(key, bandwidth)]
-                result, err = charms.sshproxy._run(cmd)
-                log("enabled tc-cake to interface")
-            except:
-                log('command failed:' + result)
-                log('command failed:' + err)
-                set_flag('interdomainvdu.tccakeaddinterface.failed')
+                vnfMgmtIp=vnfMgmtIp.split("/")[0]
+                tunnelAddress=tunnelAddress.split("/")[0]
 
-            result=json.dumps({"vsiId":vsiId,"publicKey": publicKey,"vnfIp":vnfIp, "tunnelId":tunnelId})
+                for key, value in interfacesAndIps.items():
+                    if str(value) != str(vnfMgmtIp) and str(value) != str(tunnelAddress):
+                        log("found data interface: "+key+", ip: "+value)
+                        vnfIp=str(value)
+                        config["data_address"]=vnfIp
+                        config["data_interface"]=str(key)
+                        db.set("data_interface", str(key))
+                        db.flush()
+                        break
+
+                try:
+                    log("using interface: "+key)
+                    cmd = ['sudo tc qdisc add dev {} root cake bandwidth {}kbit'.format(key, bandwidth)]
+                    result, err = charms.sshproxy._run(cmd)
+                    log("enabled tc-cake to interface")
+                except:
+                    log('command failed:' + result)
+                    log('command failed:' + err)
+                    set_flag('interdomainvdu.tccakeaddinterface.failed')
+
+                data={"vsiId":vsiId,"publicKey": publicKey,"vnfIp":vnfIp, "tunnelId":tunnelId}
+    
+                result=json.dumps({"vsiId":vsiId,"publicKey": publicKey,"vnfIp":vnfIp, "tunnelId":tunnelId})
+            else:
+                log('Expecting 3 network interfaces')
+                function_fail('Expecting 3 network interfaces')
+
         else:
-            log('Expecting 3 network interfaces')
-            function_fail('Expecting 3 network interfaces')
+            vnfMgmtIp=vnfMgmtIp.split("/")[0]
+
+            result=json.dumps({"vsiId":vsiId,"publicKey": publicKey,"vnfIp":vnfMgmtIp, "tunnelId":tunnelId})
+
+            
     except:
         function_fail('command failed:' + err)
     else:

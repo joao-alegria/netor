@@ -21,11 +21,13 @@ class MessageReceiver(Thread):
             self.newArbitrator(data)
         elif data["msgType"]=="removeVSI":
             self.tearDownArbitrator(data)
-        # else:
-        #     if data["vsiId"] in self.arbitrators:
-        #         self.arbitrators[data["vsiId"]].newMessage(data)
-        #     else:
-        #         logging.warning("VSI Id not found: "+data["vsiId"])
+        else:
+            if data["vsiId"] in self.arbitrators:
+                # self.arbitrators[data["vsiId"]].newMessage(data)
+                th=Thread(target=self.arbitrators[data["vsiId"]].processAction, args=[data])
+                th.start()
+            else:
+                logging.warning("VSI Id not found: "+data["vsiId"])
     
     def stop(self):
         try:

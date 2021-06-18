@@ -9,7 +9,7 @@
     {
       "branch": "refs/heads/master",
       "fetched_url": "https://github.com/juju-solutions/layer-basic.git",
-      "rev": "813f8b60ff8500434326cfd887104eb6de6f901f",
+      "rev": "a3ff62c32c993d80417f6e093e3ef95e42f62083",
       "url": "layer:basic"
     },
     {
@@ -26,7 +26,7 @@
     },
     {
       "branch": "refs/heads/main",
-      "rev": "b2b85b875d382dc84d64189078be1034ea320723",
+      "rev": "bee1f2d9771ff94d6f303ecac704df3908f7c3a5",
       "url": "interdomainvdu"
     }
   ],
@@ -39,7 +39,7 @@
     ".github/workflows/main.yml": [
       "layer:basic",
       "static",
-      "4424d3a5e3c97421bddf2371ae1c483aac9c76c8985a1751bb11b495e3325267"
+      "96a48a981ceb2a96f427a6b5226d2da6d7191981793804055d70a88ca1987473"
     ],
     ".gitignore": [
       "layer:sshproxy",
@@ -154,7 +154,7 @@
     "config.yaml": [
       "interdomainvdu",
       "dynamic",
-      "67ac981ae565dc97569291fedd2119457eccc5275f8e6ef81e3e3d30469a30ee"
+      "23a229bc4f0a1dd45a76b1344469f8b1d692a458d37761d6bd36be1035eb8c11"
     ],
     "copyright": [
       "layer:basic",
@@ -274,7 +274,7 @@
     "reactive/interdomainvdu.py": [
       "interdomainvdu",
       "static",
-      "728fa7261987ac216432aed13c21527203ac6cc4122447ac970d30803f1258da"
+      "1c3d28ccd3f75ab65af90fb9745888ea7b337fde5c1b800eb6ff181720a78a03"
     ],
     "reactive/sshproxy.py": [
       "interdomainvdu",
@@ -304,25 +304,25 @@
     "version": [
       "interdomainvdu",
       "dynamic",
-      "34b8e0ff9b48ed84ee47358948336be71399e6704ede954f171525fdde22f307"
+      "d9171687ed794731ef30a0097a13d2e0d9b14c0382f25397299fcb6348fa3feb"
     ],
     "wheelhouse.txt": [
-      "--wheelhouse-overrides",
+      "interdomainvdu",
       "dynamic",
-      "5fece2500a148aa7786a81d5135ed5487d3ca38800d8d6b308159a2b09479341"
+      "01779ccb479b627f1549d2c205f8a560f6a487def4f10bdd2807743b55c749db"
     ],
     "wheelhouse/Jinja2-2.10.1.tar.gz": [
-      "--wheelhouse-overrides",
+      "interdomainvdu",
       "dynamic",
       "065c4f02ebe7f7cf559e49ee5a95fb800a9e4528727aec6f24402a5374c65013"
     ],
     "wheelhouse/MarkupSafe-1.1.1.tar.gz": [
-      "--wheelhouse-overrides",
+      "interdomainvdu",
       "dynamic",
       "29872e92839765e546828bb7754a68c418d927cd064fd4708fab9fe9c8bb116b"
     ],
     "wheelhouse/PyYAML-5.2.tar.gz": [
-      "--wheelhouse-overrides",
+      "interdomainvdu",
       "dynamic",
       "c0ee8eca2c582d29c3c2ec6e2c4f703d1b7f1fb10bc72317355a746057e7346c"
     ],
@@ -331,38 +331,38 @@
       "dynamic",
       "cacecf0baa674d356641f1d406b8bff1d756d739c46b869a54de515d08e6fc9c"
     ],
-    "wheelhouse/charmhelpers-0.20.21.tar.gz": [
-      "--wheelhouse-overrides",
+    "wheelhouse/charmhelpers-0.20.22.tar.gz": [
+      "interdomainvdu",
       "dynamic",
-      "37dd06f9548724d38352d1eaf91216df9167066745774118481d40974599715c"
+      "b7550108118ce4f87488343384441797777d0da746e1346ed4e6361b4eab0ddb"
     ],
     "wheelhouse/charms.reactive-1.4.1.tar.gz": [
-      "--wheelhouse-overrides",
+      "interdomainvdu",
       "dynamic",
       "bba21b4fd40b26c240c9ef2aa10c6fdf73592031c68591da4e7ccc46ca9cb616"
     ],
-    "wheelhouse/ecdsa-0.16.1.tar.gz": [
+    "wheelhouse/ecdsa-0.17.0.tar.gz": [
       "__pip__",
       "dynamic",
-      "cfc046a2ddd425adbd1a78b3c46f0d1325c657811c0f45ecc3a0a6236c1e50ff"
+      "b9f500bb439e4153d0330610f5d26baaf18d17b8ced1bc54410d189385ea68aa"
     ],
     "wheelhouse/netaddr-0.7.19.tar.gz": [
-      "--wheelhouse-overrides",
+      "interdomainvdu",
       "dynamic",
       "38aeec7cdd035081d3a4c306394b19d677623bf76fa0913f6695127c7753aefd"
     ],
     "wheelhouse/paramiko-1.16.3.tar.gz": [
-      "--wheelhouse-overrides",
+      "interdomainvdu",
       "dynamic",
       "97d932fdb4fec9aadf6bea368123f3ee15b92199f92eb62666370c7fed62d072"
     ],
     "wheelhouse/pbr-5.5.1.tar.gz": [
-      "--wheelhouse-overrides",
+      "interdomainvdu",
       "dynamic",
       "5fad80b613c402d5b7df7bd84812548b2a61e9977387a80a5fc5c396492b13c9"
     ],
     "wheelhouse/pip-18.1.tar.gz": [
-      "--wheelhouse-overrides",
+      "interdomainvdu",
       "dynamic",
       "c0a292bd977ef590379a3f05d7b7f65135487b67470f6281289a94e015650ea1"
     ],
@@ -377,22 +377,22 @@
       "f2ce1e989b272cfcb677616763e0a2e7ec659effa67a88aa92b3a65528f60a3c"
     ],
     "wheelhouse/setuptools-41.6.0.zip": [
-      "--wheelhouse-overrides",
+      "interdomainvdu",
       "dynamic",
       "6afa61b391dcd16cb8890ec9f66cc4015a8a31a6e1c2b4e0c464514be1a3d722"
     ],
     "wheelhouse/setuptools_scm-1.17.0.tar.gz": [
-      "--wheelhouse-overrides",
+      "interdomainvdu",
       "dynamic",
       "70a4cf5584e966ae92f54a764e6437af992ba42ac4bca7eb37cc5d02b98ec40a"
     ],
     "wheelhouse/six-1.15.0.tar.gz": [
-      "--wheelhouse-overrides",
+      "interdomainvdu",
       "dynamic",
       "30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259"
     ],
     "wheelhouse/wheel-0.33.6.tar.gz": [
-      "--wheelhouse-overrides",
+      "interdomainvdu",
       "dynamic",
       "10c9da68765315ed98850f8e048347c3eb06dd81822dc2ab1d4fde9dc9702646"
     ]

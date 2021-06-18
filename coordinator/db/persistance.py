@@ -57,7 +57,6 @@ class VerticalServiceInstance(Base):
   vsiId = Column(String, primary_key=True)
   description=Column(String)
   domainId=Column(String)
-  additionalConf=Column(String)
   statusMessage=Column(String)
   altitude=Column(Float)
   latitude=Column(Float)
@@ -79,6 +78,15 @@ class VerticalServiceInstance(Base):
   nssis=relationship("NetworkSliceSubnetInstance", back_populates="vertical_service_instance")
   vssis=relationship("VerticalSubserviceInstance", back_populates="vertical_service_instance")
   domainPlacements=relationship("DomainPlacements", back_populates="vertical_service_instance")
+  additionalConf=relationship("ComponentConfigs", back_populates="vertical_service_instance")
+
+class ComponentConfigs(Base):
+  __tablename__ = 'componentConfigs'
+  domainPlacementId = Column(Integer, primary_key=True)
+  vertical_service_instance_id = Column(String, ForeignKey('verticalServiceInstance.vsiId'))
+  vertical_service_instance = relationship("VerticalServiceInstance", back_populates="additionalConf")
+  componentName=Column(String)
+  conf=Column(String)
 
 class DomainPlacements(Base):
   __tablename__ = 'domainPlacement'

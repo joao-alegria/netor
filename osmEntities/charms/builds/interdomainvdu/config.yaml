@@ -47,6 +47,10 @@
     "type": "string"
     "default": "30"
     "description": "Tunnel Bandwidth"
+  "use_data_interfaces":
+    "type": "boolean"
+    "default": !!bool "true"
+    "description": "Use Data Interfaces"
   "data_address":
     "type": "string"
     "default": "127.0.0.1/24"

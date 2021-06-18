@@ -160,7 +160,7 @@ export class OnboardVsbModalComponent implements OnInit {
         let parammax = $("#ruleparammax" + ruleNumber + "_" + inputNumber).val()
         userInput.push({ parameter_id: paramid, min_value: parseInt(parammin), max_value: parseInt(parammax) })
       }
-      if (nsdid == "") {
+      if (nsdid == "" && nstid == "") {
         break
       } else {
         if (blueprint["translation_rules"] == null) {

@@ -124,8 +124,16 @@ definitions:
         type: string
         example: error
       additionalConf:
-        type: string
-        example: yaml
+        type: array
+        items:
+          type: object
+          properties:
+            conf:
+              type: string
+              example: yaml
+            componentName:
+              type: string
+              example: 3_1-test
 info:
   title: VS LCM API
   swagger_ui: True

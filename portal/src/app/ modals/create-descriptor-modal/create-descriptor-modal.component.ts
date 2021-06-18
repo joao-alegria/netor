@@ -148,6 +148,7 @@ export class CreateDescriptorModalComponent implements OnInit {
     let coverageArea = $("#coverageArea").val()
     let isLowCost = $("#isLowCost").prop("checked")
     let sliceType = $("#sliceType").val().toLowerCase()
+    let defaultDomain = $("#sliceServiceDomain").val()
 
     // vsd.slice_service_parameters["type"] = sliceType
     // let sliceParameters = {}
@@ -172,6 +173,7 @@ export class CreateDescriptorModalComponent implements OnInit {
     vsd["version"] = version
     // vsd["sst"] = sliceServiceType
     vsd["management_type"] = manType
+    vsd["domain_id"] = defaultDomain
     vsd.service_constraints.push({ priority: priority, sharable: isSharable, can_include_shared_elements: includesSharedElems, preferred_providers: this.preferredProviders, non_preferred_providers: this.notPreferredProviders, prohibited_providers: this.prohibitedProviders })
     vsd.sla["service_creation_time"] = serviceCreationTime == "NO REQUIREMENTS" ? "UNDEFINED" : serviceCreationTime
     vsd.sla["availability_coverage"] = coverageArea == "NO REQUIREMENTS" ? "UNDEFINED" : coverageArea

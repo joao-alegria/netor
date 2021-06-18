@@ -21,11 +21,12 @@ def createNewVS(tenantName,request):
     vsInstance.tenantId=tenantName
     DB.persist(vsInstance)
     #create vsi queue
-    messaging.createExchange("vsLCM_"+str(vsInstance.vsiId))
-    messaging.createQueue("managementQueue-vsLCM_"+str(vsInstance.vsiId))
-    messaging.createQueue("placementQueue-vsLCM_"+str(vsInstance.vsiId))
-    messaging.bindQueue2Exchange("vsLCM_"+str(vsInstance.vsiId), "managementQueue-vsLCM_"+str(vsInstance.vsiId))
-    messaging.bindQueue2Exchange("vsLCM_"+str(vsInstance.vsiId), "placementQueue-vsLCM_"+str(vsInstance.vsiId))
+
+    # messaging.createExchange("vsLCM_"+str(vsInstance.vsiId))
+    # messaging.createQueue("managementQueue-vsLCM_"+str(vsInstance.vsiId))
+    # messaging.createQueue("placementQueue-vsLCM_"+str(vsInstance.vsiId))
+    # messaging.bindQueue2Exchange("vsLCM_"+str(vsInstance.vsiId), "managementQueue-vsLCM_"+str(vsInstance.vsiId))
+    # messaging.bindQueue2Exchange("vsLCM_"+str(vsInstance.vsiId), "placementQueue-vsLCM_"+str(vsInstance.vsiId))
     
     message={"msgType":"createVSI","vsiId": vsInstance.vsiId, "tenantId":tenantName, "data": request}
     #send needed info
@@ -55,7 +56,8 @@ def modifyVSI(tenantName, vsiId, request):
         message={"msgType":"terminate", "vsiId":vsiId}
     elif request["action"]=="modify":
         message={"msgType":"modifyVSI", "vsiId":vsiId}
-    messaging.publish2Exchange('vsLCM_'+str(vsiId),json.dumps(message))
+    # messaging.publish2Exchange('vsLCM_'+str(vsiId),json.dumps(message))
+    messaging.publish2Exchange('vsLCM_Management',json.dumps(message))
 
 def removeVSI(tenantName, vsiId):
     messaging=Messaging()

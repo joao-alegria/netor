@@ -12,6 +12,5 @@
     ],
     "version": "version_1",
     "name": "vsb-test",
-    "inter_site": true,
-    "blueprint_id": "1"
+    "inter_site": true
 }

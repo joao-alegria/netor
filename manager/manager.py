@@ -4,15 +4,25 @@ from threading import Thread
 import logging
 import yaml
 import time
+import requests
 import redisHandler as redis
 
 class Polling(Thread):
-    def __init__(self, vsiId, composition):
+    def __init__(self):
         Thread.__init__(self)
         self.runControl=True
-        self.vsiId=vsiId
-        self.composition=composition
+        # self.vsiId=vsiId
+        # self.composition=composition
         self.messaging=Messaging()
+        self.vs={}
+
+    def addVSI(self, vsiId, composition):
+        print(vsiId)
+        print(composition)
+        self.vs[vsiId]=composition
+
+    def removeVSI(self, vsiId):
+        del self.vs[vsiId]
 
     def stop(self):
         self.runControl=False
@@ -21,36 +31,39 @@ class Polling(Thread):
         while self.runControl:
             time.sleep(60)
             if self.runControl:
-                for component, componentData in self.composition.items():
-                    if componentData["sliceEnabled"]:
-                        message={"vsiId":self.vsiId,"msgType":"getNsiInfo", "data":{"domainId":componentData["domainId"], "nsiId":component}}
-                    else:
-                        message={"vsiId":self.vsiId,"msgType":"getNsInfo", "data":{"domainId":componentData["domainId"], "nsId":component}}
-                    logging.info("Polling action: {}".format(message))
-                    self.messaging.publish2Queue("vsDomain", json.dumps(message))
+                if len(self.vs)>0:
+                    for vsiId, composition in self.vs.items():
+                        for component, componentData in composition.items():
+                            if componentData["sliceEnabled"]:
+                                message={"vsiId":vsiId,"msgType":"getNsiInfo", "data":{"domainId":componentData["domainId"], "nsiId":component}}
+                            else:
+                                message={"vsiId":vsiId,"msgType":"getNsInfo", "data":{"domainId":componentData["domainId"], "nsId":component}}
+                            logging.info("Polling action: {}".format(message))
+                            self.messaging.publish2Queue("vsDomain", json.dumps(message))
         pass
 
-class CSMF(Thread):
-    def __init__(self, vsiId, vsiRequest):
+class CSMF():
+    def __init__(self, vsiId, vsiRequest, pollingThread):
         super().__init__()
         self.vsiId=vsiId
         self.interdomain=False
         redis.setKeyValue(vsiId,"vsiRequest",json.dumps(vsiRequest))
-        self.pollingThread=None
+        self.pollingThread=pollingThread
 
         redis.setKeyValue("createVSI", vsiId, "create")
         redis.setKeyValue("interdomainTunnel", vsiId, "off")
         self.messaging=Messaging()
-        self.messaging.consumeQueue("managementQueue-vsLCM_"+str(vsiId), self.vsCallback, ack=False)
+        # self.messaging.consumeQueue("managementQueue-vsLCM_"+str(vsiId), self.vsCallback, ack=False)
 
         statusUpdate={"msgType":"statusUpdate","data":{"vsiId":self.vsiId, "status":"creating", "message":"Created Management Function, waiting to receive all necessary information"}}
         self.messaging.publish2Queue("vsCoordinator", json.dumps(statusUpdate))
 
-    def vsCallback(self, channel, method_frame, header_frame, body):
-        logging.info("Received Message {}".format(body))
-        data=json.loads(body)
-        th=Thread(target=self.processAction, args=[data])
-        th.start()
+    # def vsCallback(self, channel, method_frame, header_frame, body):
+    #     logging.info("Received Message {}".format(body))
+    #     print(method_frame.exchange)
+    #     data=json.loads(body)
+    #     th=Thread(target=self.processAction, args=[data])
+    #     th.start()
 
     def processAction(self, data):
         if data["msgType"]=="nsInfo":
@@ -108,10 +121,15 @@ class CSMF(Thread):
             createVsi=redis.getHashValue("createVSI",self.vsiId).decode("UTF-8")
 
             if createVsi=="create" and set(["catalogueInfo","domainInfo","tenantInfo","placementInfo"]).issubset(receivedData):
+                print(self.vsiId)
+                print(createVsi)
+                print(receivedData)
+                redis.setKeyValue("createVSI", self.vsiId, "alreadyCreated")
                 self.instantiateVSI()
             return
 
     def instantiateVSI(self):
+        print("INSTANTIATING")
         messaging=Messaging()
 
         allVsiData={}
@@ -150,20 +168,45 @@ class CSMF(Thread):
                     domainId=domainPlacements[componentName]
                 message={"msgType":"instantiateNsi", "data":{"name":componentName, "description":vsiRequest["data"]["description"],"domainId":domainId,"nstId":creationData["nstId"]}}
                 if "additionalConf" in vsiRequest["data"] and vsiRequest["data"]["additionalConf"]!="":
-                    confStr=vsiRequest["data"]["additionalConf"]
+                    componentConfigs=vsiRequest["data"]["additionalConf"]
                     if catalogueInfo["data"]["vs_blueprint_info"]["vs_blueprint"]["inter_site"]:
                         self.interdomain=True
-                        config=yaml.safe_load(confStr)
+                        for componentConf in componentConfigs:
+                            if componentConf["componentName"]==componentName:
+                                config=json.loads(componentConf["conf"])
+                                break
                         if "netslice-subnet" in config:
-                            config["netslice-subnet"].append({'id':'interdomain-tunnel-peer','additionalParamsForVnf':[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':str(self.vsiId),'tunnel_address': '10.0.0.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]})
+                            configured=False
+                            for subnet in config["netslice-subnet"]:
+                                if subnet["id"]=="interdomain-tunnel-peer":
+                                    if "additionalParamsForVnf" in subnet:
+                                        internalConfigured=False
+                                        for member in subnet['additionalParamsForVnf']:
+                                            if member["member-vnf-index"]=="1":
+                                                if 'additionalParams' in member:
+                                                    member['additionalParams'].update({'vsi_id':str(self.vsiId),'tunnel_address': '10.100.100.'+str(composingComponentId)+'/24', 'tunnel_id': componentName})
+                                                else:
+                                                    member['additionalParams']={'vsi_id':str(self.vsiId),'tunnel_address': '10.100.100.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}
+                                                internalConfigured=True
+                                                configured=True
+                                                break
+                                        if not internalConfigured:
+                                            subnet['additionalParamsForVnf'].append({'member-vnf-index': '1', 'additionalParams': {'vsi_id':str(self.vsiId),'tunnel_address': '10.100.100.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}})
+                                            configured=True
+                                    else:
+                                        subnet['additionalParamsForVnf']=[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':str(self.vsiId),'tunnel_address': '10.100.100.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]
+                                        configured=True
+                                        break
+                            if not configured:
+                                config["netslice-subnet"].append({'id':'interdomain-tunnel-peer','additionalParamsForVnf':[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':str(self.vsiId),'tunnel_address': '10.100.100.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]})
                         else:
-                            config["netslice-subnet"]=[{'id':'interdomain-tunnel-peer','additionalParamsForVnf':[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':str(self.vsiId),'tunnel_address': '10.0.0.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]}]
+                            config["netslice-subnet"]=[{'id':'interdomain-tunnel-peer','additionalParamsForVnf':[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':str(self.vsiId),'tunnel_address': '10.100.100.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]}]
                         confStr=yaml.safe_dump(config)
                     message["data"]["additionalConf"]=confStr
                 else:
                     if catalogueInfo["data"]["vs_blueprint_info"]["vs_blueprint"]["inter_site"]:
                         self.interdomain=True
-                        config={"netslice-subnet":[{'id':'interdomain-tunnel-peer','additionalParamsForVnf':[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':str(self.vsiId),'tunnel_address': '10.0.0.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]}]}
+                        config={"netslice-subnet":[{'id':'interdomain-tunnel-peer','additionalParamsForVnf':[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':str(self.vsiId),'tunnel_address': '10.100.100.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]}]}
                         confStr=yaml.safe_dump(config)
                         message["data"]["additionalConf"]=confStr
 
@@ -179,24 +222,25 @@ class CSMF(Thread):
                         self.interdomain=True
                         config=yaml.safe_load(confStr)
                         if "additionalParamsForVnf" in config:
-                            config["additionalParamsForVnf"].append({'member-vnf-index': '1', 'additionalParams': {'vsi_id':str(self.vsiId),'tunnel_address': '10.0.0.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}})
+                            config["additionalParamsForVnf"].append({'member-vnf-index': '1', 'additionalParams': {'vsi_id':str(self.vsiId),'tunnel_address': '10.100.100.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}})
                         else:
-                            config["additionalParamsForVnf"]=[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':str(self.vsiId),'tunnel_address': '10.0.0.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]
+                            config["additionalParamsForVnf"]=[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':str(self.vsiId),'tunnel_address': '10.100.100.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]
                         confStr=yaml.safe_dump(config)
                     message["data"]["additionalConf"]=confStr
                 else:
                     if catalogueInfo["data"]["vs_blueprint_info"]["vs_blueprint"]["inter_site"]:
                         self.interdomain=True
-                        config={"additionalParamsForVnf":[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':str(self.vsiId),'tunnel_address': '10.0.0.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]}
+                        config={"additionalParamsForVnf":[{'member-vnf-index': '1', 'additionalParams': {'vsi_id':str(self.vsiId),'tunnel_address': '10.100.100.'+str(composingComponentId)+'/24', 'tunnel_id': componentName}}]}
                         confStr=yaml.safe_dump(config)
                         message["data"]["additionalConf"]=confStr
 
             serviceComposition=redis.getHashValue("serviceComposition", self.vsiId)
             if serviceComposition==None:
-                redis.setKeyValue("serviceComposition", self.vsiId,json.dumps({componentName:{"sliceEnabled":creationData["sliceEnabled"],"domainId":creationData["domainId"]}}))
+                serviceComposition={componentName:{"sliceEnabled":creationData["sliceEnabled"],"domainId":domainId}}
+                redis.setKeyValue("serviceComposition", self.vsiId,json.dumps(serviceComposition))
             else:
                 serviceComposition=json.loads(serviceComposition)
-                serviceComposition[componentName]={"sliceEnabled":creationData["sliceEnabled"],"domainId":creationData["domainId"]}
+                serviceComposition[componentName]={"sliceEnabled":creationData["sliceEnabled"],"domainId":domainId}
                 redis.setKeyValue("serviceComposition", self.vsiId,json.dumps(serviceComposition))
                 
             message["vsiId"]=str(self.vsiId)
@@ -206,12 +250,11 @@ class CSMF(Thread):
         
         statusUpdate={"msgType":"statusUpdate","data":{"vsiId":self.vsiId, "status":"deploying", "message":"Sent all instantiation requests to the appropriate domains"}}
         messaging.publish2Queue("vsCoordinator", json.dumps(statusUpdate))
-
-        redis.setKeyValue("createVSI", self.vsiId, "alreadyCreated")
         
 
-        self.pollingThread=Polling(self.vsiId, serviceComposition)
-        self.pollingThread.start()
+        # self.pollingThread=Polling(self.vsiId, serviceComposition)
+        # self.pollingThread.start()
+        self.pollingThread.addVSI(self.vsiId, serviceComposition)
         return
 
     def processVsiPrimitive(self, data):
@@ -293,47 +336,52 @@ class CSMF(Thread):
 
         interdomainInfo[data["tunnelId"]]=data
         if len(interdomainInfo)==len(serviceComposition):
+            tunnelActive=redis.getHashValue("interdomainTunnel",self.vsiId).decode("UTF-8")
+            if tunnelActive=="off":
 
-            allVsiData={}
-            for key,value in redis.getEntireHash(self.vsiId).items():
-                allVsiData[key.decode("UTF-8")]=json.loads(value)
+                redis.setKeyValue("interdomainTunnel", self.vsiId, "on")
 
-            catalogueInfo=allVsiData["catalogueInfo"]
-            tmpActions=catalogueInfo["data"]["vsb_actions"]
-            actions={}
-            for action in tmpActions:
-                actions[action["action_id"]]=action["parameters"]
+                allVsiData={}
+                for key,value in redis.getEntireHash(self.vsiId).items():
+                    allVsiData[key.decode("UTF-8")]=json.loads(value)
 
-            if "addpeer" not in actions:
-                statusUpdate={"msgType":"statusUpdate","vsiId":self.vsiId, "status":"Invalid Primitive", "message":"addpeer primitive not present in the blueprint."}
-                self.messaging.publish2Queue("vsCoordinator", json.dumps(statusUpdate))
-                return
+                catalogueInfo=allVsiData["catalogueInfo"]
+                tmpActions=catalogueInfo["data"]["vsb_actions"]
+                actions={}
+                for action in tmpActions:
+                    actions[action["action_id"]]=action["parameters"]
 
-            for componentSend, infoSend in interdomainInfo.items():
-                for componentReceive, infoReceive in interdomainInfo.items():
-                    if componentSend!=componentReceive:
-                        if serviceComposition[componentReceive]["sliceEnabled"]:
-                            #processed like a NS because OSM currently doesn't support NSI actions
-                            conf={"member_vnf_index":"1","primitive":"addpeer","primitive_params":{'peer_endpoint': infoSend["vnfIp"],'peer_key' : infoSend["publicKey"]}}
-                            for param in actions["addpeer"]:
-                                if "parameter_default_value" in param:
-                                    if param["parameter_default_value"]!=None and param["parameter_default_value"]!="":
-                                        conf["primitive_params"][param["parameter_id"]]=param["parameter_default_value"]
+                if "addpeer" not in actions:
+                    statusUpdate={"msgType":"statusUpdate","vsiId":self.vsiId, "status":"Invalid Primitive", "message":"addpeer primitive not present in the blueprint."}
+                    self.messaging.publish2Queue("vsCoordinator", json.dumps(statusUpdate))
+                    return
 
-                            message={"msgType":"actionNs", "data":{"primitiveName":"addpeer","domainId":serviceComposition[componentReceive]["domainId"], "nsId":serviceComposition[componentReceive]["nfvoId"], "additionalConf":conf}}
-                        else:
-                            conf={"member_vnf_index":"1","primitive":"addpeer","primitive_params":{'peer_endpoint': infoSend["vnfIp"],'peer_key' : infoSend["publicKey"]}}
-                            for param in actions["addpeer"]:
-                                if "parameter_default_value" in param:
-                                    if param["parameter_default_value"]!=None and param["parameter_default_value"]!="":
-                                        conf["primitive_params"][param["parameter_id"]]=param["parameter_default_value"]
+                for componentSend, infoSend in interdomainInfo.items():
+                    for componentReceive, infoReceive in interdomainInfo.items():
+                        if componentSend!=componentReceive:
+                            if serviceComposition[componentReceive]["sliceEnabled"]:
+                                #processed like a NS because OSM currently doesn't support NSI actions
+                                conf={"member_vnf_index":"1","primitive":"addpeer","primitive_params":{'peer_endpoint': infoSend["vnfIp"],'peer_key' : infoSend["publicKey"]}}
+                                for param in actions["addpeer"]:
+                                    if "parameter_default_value" in param:
+                                        if param["parameter_default_value"]!=None and param["parameter_default_value"]!="":
+                                            conf["primitive_params"][param["parameter_id"]]=param["parameter_default_value"]
 
-                            message={"msgType":"actionNs", "data":{"primitiveName":"addpeer","domainId":serviceComposition[componentReceive]["domainId"], "nsId":serviceComposition[componentReceive]["nfvoId"], "additionalConf":conf}}
+                                message={"msgType":"actionNs", "data":{"primitiveName":"addpeer","domainId":serviceComposition[componentReceive]["domainId"], "nsId":serviceComposition[componentReceive]["nfvoId"], "additionalConf":conf}}
+                            else:
+                                conf={"member_vnf_index":"1","primitive":"addpeer","primitive_params":{'peer_endpoint': infoSend["vnfIp"],'peer_key' : infoSend["publicKey"]}}
+                                for param in actions["addpeer"]:
+                                    if "parameter_default_value" in param:
+                                        if param["parameter_default_value"]!=None and param["parameter_default_value"]!="":
+                                            conf["primitive_params"][param["parameter_id"]]=param["parameter_default_value"]
 
-                        logging.info("Sending interdomain addpeer action: {}".format(message))
-                        self.messaging.publish2Queue("vsDomain", json.dumps(message))
+                                message={"msgType":"actionNs", "data":{"primitiveName":"addpeer","domainId":serviceComposition[componentReceive]["domainId"], "nsId":serviceComposition[componentReceive]["nfvoId"], "additionalConf":conf}}
 
-            redis.setKeyValue("interdomainTunnel", self.vsiId, "on")
+                            logging.info("Sending interdomain addpeer action: {}".format(message))
+                            self.messaging.publish2Queue("vsDomain", json.dumps(message))
+
+
+                requests.post("http://192.168.0.100:9999/stopTimer/1", data={"timestamp":str(round(time.time()*1000))})
 
     def tearDown(self):
         logging.info("Tearing down CSMF of VSI "+str(self.vsiId))
@@ -342,7 +390,8 @@ class CSMF(Thread):
         if tmp!=None:
             serviceComposition=json.loads(tmp)
 
-        self.pollingThread.stop()
+        # self.pollingThread.stop()
+        self.pollingThread.removeVSI(self.vsiId)
         
         for component, componentData in serviceComposition.items():
             if componentData["sliceEnabled"]:
@@ -361,19 +410,19 @@ class CSMF(Thread):
         redis.deleteHash("createVSI",self.vsiId)
         redis.deleteHash("interdomainTunnel",self.vsiId)
         
-        self.stop()
+        # self.stop()
 
 
-    def stop(self):
-        try:
-            self.messaging.stopConsuming()
-        except Exception as e:
-            logging.error("Pika exception: "+str(e))
+    # def stop(self):
+    #     try:
+    #         self.messaging.stopConsuming()
+    #     except Exception as e:
+    #         logging.error("Pika exception: "+str(e))
 
-    def run(self):
-        try:
-            logging.info('Started Consuming RabbitMQ Topics')
-            self.messaging.startConsuming()
-        except Exception as e:
-            logging.info("VSI "+str(self.vsiId)+" CSMF Ended")
-            logging.error("Pika exception: "+str(e))    
+    # def run(self):
+    #     try:
+    #         logging.info('Started Consuming RabbitMQ Topics')
+    #         self.messaging.startConsuming()
+    #     except Exception as e:
+    #         logging.info("VSI "+str(self.vsiId)+" CSMF Ended")
+    #         logging.error("Pika exception: "+str(e))    

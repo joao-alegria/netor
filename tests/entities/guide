@@ -1,0 +1,112 @@
+#VSB
+{
+    "vs_blueprint": {
+        "slice_service_type": "EMBB",
+        "embb_service_category":"URBAN_MACRO",
+        "parameters": [
+        {
+            "parameter_id": "peers",
+            "parameter_type": "number",
+            "applicability_field": "interdomain",
+            "parameter_name": "Peers",
+            "parameter_description": "#Peers"
+        }
+        ],
+        "version": "version_1",
+        "name": "vsb-testNST",
+        "inter_site": True
+    },
+    "translation_rules": [
+        {
+            "nst_id": "interdomain_e2e_nst",
+            "input": [
+            {
+                "max_value": 5,
+                "parameter_id": "peers",
+                "min_value": 1
+            }
+            ],
+            "nsd_version": "1.0",
+            "blueprint_id": "1"
+        }
+    ],
+    "available_actions": [
+        {
+            "action_name": "Add Tunnel Peer",
+            "action_id": "addpeer",
+            "parameters": [
+                {
+                    "parameter_name": "Peer Network",
+                    "parameter_id": "peer_network",
+                    "parameter_default_value":"10.0.0.0/24",
+                    "parameter_type": "STRING"
+                }
+            ]
+        },
+        {
+            "action_name": "Fetch Tunnel Peer Info",
+            "action_id": "getvnfinfo"
+        }
+    ],
+    "nsts":[
+      {
+        "nst_version": "1.0",
+        "nsst_ids": [
+          "interdomain_nsst_nst",
+          "interdomain_nsst_nst"
+        ],
+        "nsst_type": "NONE",
+        "nst_service_profile": {
+          "service_profile_id": "interdomain_profile",
+          "eMBB_perf_req": [
+            {
+              "user_density": 100,
+              "uE_speed": 10
+            }
+          ],
+          "latency": 100,
+          "sST": "EMBB",
+          "max_number_of_UEs": 1000,
+          "availability": 100
+        },
+        "nsd_version": "1.0",
+        "nst_id": "interdomain_e2e_nst",
+        "nst_provider": "ITAV",
+        "nst_name": "Interdomain Slice NST"
+      }
+    ]
+}
+
+
+#VSD
+{ 
+    "is_public": True,
+    "nested_vsd_ids": {},
+    "vs_blueprint_id": "60b3e3143fdbd6f45d616d18",
+    "domain_id": "ITAV",
+    "version": "1.0",
+    "management_type": "TENANT_MANAGED",
+    "name": "vsdTestNST",
+    "qos_parameters": {"peers":"2"},
+    "tenant_id": "user"
+}
+
+
+#VSI
+{
+    "name":"testNST",
+    "description":"test",
+    "vsdId":"60b3e3223fdbd6f45d616d1f",
+    "domainId":"ITAV",
+    "vsiId":"2",
+    "domainPlacements":[
+        {
+            "domainId":"DETI",
+            "componentName":"test_VSI-1_1"
+        },
+        {
+            "domainId":"DETI",
+            "componentName":"test_VSI-1_2"
+        }
+    ]
+}

@@ -19,14 +19,14 @@ class DB:
 
   def initDB(self):
     domain=self.session.query(Domain).filter(Domain.domainId=="ITAV").first()
-    if domain==None:
-      domain=Domain(domainId="ITAV",admin="ITAV",description="test domain",auth=False,interfaceType="HTTP",url="10.0.12.118",name="ITAV",owner="joao")
+    # if domain==None:
+    #   domain=Domain(domainId="ITAV",admin="ITAV",description="test domain",auth=False,interfaceType="HTTP",url="10.0.12.118",name="ITAV",owner="joao")
 
-      domainLayer=OsmDomainLayer(domainLayerId="OSM",domainLayerType="OSM_NSP",username="admin", password="admin", project="admin", vimAccount="microstack")
-      domainLayer.domains.append(domain)
+    #   domainLayer=OsmDomainLayer(domainLayerId="OSM",domainLayerType="OSM_NSP",username="admin", password="admin", project="admin", vimAccount="hal")
+    #   domainLayer.domains.append(domain)
 
-      self.persist(domain)
-      self.persist(domainLayer)
+    #   self.persist(domain)
+    #   self.persist(domainLayer)
 
   def createDB(self):
     if config.ENVIRONMENT=="testing":

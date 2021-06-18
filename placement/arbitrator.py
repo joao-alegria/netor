@@ -13,13 +13,13 @@ class Arbitrator(Thread):
         # self.received={}
         redis.setKeyValue("createVSI",vsiId, "create")
         self.messaging=Messaging()
-        self.messaging.consumeQueue("placementQueue-vsLCM_"+str(vsiId), self.vsCallback, ack=False)
+        # self.messaging.consumeQueue("placementQueue-vsLCM_"+str(vsiId), self.vsCallback, ack=False)
 
-    def vsCallback(self, channel, method_frame, header_frame, body):
-        logging.info("Received Message {}".format(body))
-        data=json.loads(body)
-        th=Thread(target=self.processAction, args=[data])
-        th.start()
+    # def vsCallback(self, channel, method_frame, header_frame, body):
+    #     logging.info("Received Message {}".format(body))
+    #     data=json.loads(body)
+    #     th=Thread(target=self.processAction, args=[data])
+    #     th.start()
 
     def processAction(self, data):
         if data["msgType"]=="modifyVSI":
@@ -104,20 +104,23 @@ class Arbitrator(Thread):
 
         if domainInfo["error"] or tenantInfo["error"] or catalogueInfo["error"]:
             message={"vsiId":domainInfo["vsiId"],"msgType":"placementInfo","error":True, "message":"Invalid Necessary Information. Error: " + "\nDomain error: "+domainInfo["message"] if domainInfo["error"] else "" + "\nTenant error: "+tenantInfo["message"] if tenantInfo["error"] else "" + "\nCatalogue error: "+catalogueInfo["message"] if catalogueInfo["error"] else "" }
-            self.messaging.publish2Exchange("vsLCM_"+str(self.vsiId), json.dumps(message))
+            # self.messaging.publish2Exchange("vsLCM_"+str(self.vsiId), json.dumps(message))
+            self.messaging.publish2Exchange("vsLCM_Management", json.dumps(message))
             return
 
         translation=self.translateVSD(catalogueInfo["data"])
         for component in translation:
             if component["domainId"] not in domainInfo["data"]:
                 message={"msgType":"placementInfo","error":True, "message":"Invalid Domain Id. Identifier "+component["domainId"]+" not present in the onboarded domains" }
-                self.messaging.publish2Exchange("vsLCM_"+str(self.vsiId), json.dumps(message))
+                # self.messaging.publish2Exchange("vsLCM_"+str(self.vsiId), json.dumps(message))
+                self.messaging.publish2Exchange("vsLCM_Management", json.dumps(message))
                 return
 
         #user defined domains in instantiation
 
         message={"vsiId":self.vsiId,"msgType":"placementInfo", "error":False, "message":"Success", "data":translation}
-        self.messaging.publish2Exchange("vsLCM_"+str(self.vsiId), json.dumps(message))
+        # self.messaging.publish2Exchange("vsLCM_"+str(self.vsiId), json.dumps(message))
+        self.messaging.publish2Exchange("vsLCM_Management", json.dumps(message))
         return
 
     # def newMessage(self, data):
@@ -130,18 +133,18 @@ class Arbitrator(Thread):
         logging.info("Tearing down Arbitrator of VSI "+str(self.vsiId))
         redis.deleteKey(self.vsiId)
         redis.deleteHash("createVSI",self.vsiId)
-        self.stop()
+        # self.stop()
 
-    def stop(self):
-        try:
-            self.messaging.stopConsuming()
-        except Exception as e:
-            logging.error("Pika exception: "+str(e))
+    # def stop(self):
+    #     try:
+    #         self.messaging.stopConsuming()
+    #     except Exception as e:
+    #         logging.error("Pika exception: "+str(e))
 
-    def run(self):
-        try:
-            logging.info('Started Consuming RabbitMQ Topics')
-            self.messaging.startConsuming()
-        except Exception as e:
-            logging.info("VSI "+str(self.vsiId)+" Arbitrator Ended")
-            logging.error("Pika exception: "+str(e))
+    # def run(self):
+    #     try:
+    #         logging.info('Started Consuming RabbitMQ Topics')
+    #         self.messaging.startConsuming()
+    #     except Exception as e:
+    #         logging.info("VSI "+str(self.vsiId)+" Arbitrator Ended")
+    #         logging.error("Pika exception: "+str(e))

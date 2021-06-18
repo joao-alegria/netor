@@ -3,9 +3,11 @@
 # even with installing setuptools before upgrading pip ends up with pip seeing
 # the older setuptools at the system level if include_system_packages is true
 # pip>=18.1,<19.0  # overridden by interdomainvdu
-# pin Jinja2 and PyYAML to the last versions supporting python 3.4 for trusty
+# pin Jinja2, PyYAML and MarkupSafe to the last versions supporting python 3.5
+# for trusty
 # Jinja2<=2.10.1  # overridden by interdomainvdu
 # PyYAML<=5.2  # overridden by interdomainvdu
+# MarkupSafe<2.0.0  # overridden by interdomainvdu
 # setuptools<42  # overridden by interdomainvdu
 # setuptools-scm<=1.17.0  # overridden by interdomainvdu
 # charmhelpers>=0.4.0,<1.0.0  # overridden by interdomainvdu
@@ -35,47 +37,6 @@
 # paramiko>=1.16.0,<1.17  # overridden by interdomainvdu
 
 # interdomainvdu
-# layer:basic
-# pip is pinned to <19.0 to avoid https://github.com/pypa/pip/issues/6164
-# even with installing setuptools before upgrading pip ends up with pip seeing
-# the older setuptools at the system level if include_system_packages is true
-# pip>=18.1,<19.0  # overridden by --wheelhouse-overrides
-# pin Jinja2 and PyYAML to the last versions supporting python 3.4 for trusty
-# Jinja2<=2.10.1  # overridden by --wheelhouse-overrides
-# PyYAML<=5.2  # overridden by --wheelhouse-overrides
-# setuptools<42  # overridden by --wheelhouse-overrides
-# setuptools-scm<=1.17.0  # overridden by --wheelhouse-overrides
-# charmhelpers>=0.4.0,<1.0.0  # overridden by --wheelhouse-overrides
-# charms.reactive>=0.1.0,<2.0.0  # overridden by --wheelhouse-overrides
-# wheel<0.34  # overridden by --wheelhouse-overrides
-# pin netaddr to avoid pulling importlib-resources
-# netaddr<=0.7.19  # overridden by --wheelhouse-overrides
-
-# layer:sshproxy
-##
-# Copyright 2016 Canonical Ltd.
-# All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License"); you may
-# not use this file except in compliance with the License. You may obtain
-# a copy of the License at
-#
-#         http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
-##
-
-# paramiko>=1.16.0,<1.17  # overridden by --wheelhouse-overrides
-
-# MarkupSafe<=1.1.1  # overridden by --wheelhouse-overrides
-# pbr<=5.5.1  # overridden by --wheelhouse-overrides
-# six<=1.15.0  # overridden by --wheelhouse-overrides
-
-# --wheelhouse-overrides
 # layer:basic
 # pip is pinned to <19.0 to avoid https://github.com/pypa/pip/issues/6164
 # even with installing setuptools before upgrading pip ends up with pip seeing

@@ -11,15 +11,27 @@ class MessageReceiver(Thread):
         self.messaging=Messaging()
         self.messaging.createExchange("vsLCM_Management")
         self.messaging.consumeExchange("vsLCM_Management",self.callback)
+        self.pollingThread=manager.Polling()
+        self.pollingThread.start()
         self.csmfs={}
 
     def callback(self, channel, method_frame, header_frame, body):
         logging.info("Received Message {}".format(body))
+        # exchange = method_frame.exchange
         data=json.loads(body)
+        # if exchange=="vsLCM_Management":
         if data["msgType"]=="createVSI":
             self.newCSMF(data)
         elif data["msgType"]=="removeVSI":
             self.tearDownCSMF(data)
+        else:
+            vsiId=data["vsiId"]
+            if vsiId in self.csmfs:
+                th=Thread(target=self.csmfs[vsiId].processAction, args=[data])
+                th.start()
+            else:
+                logging.warning("VSI Id not found: "+data["vsiId"])
+                
         # else:
         #     newCsmfMessage(data)
 
@@ -36,11 +48,12 @@ class MessageReceiver(Thread):
         except Exception as e:
             logging.info("Stop consuming now!")
             logging.error("Pika exception: "+str(e))
+        self.pollingThread.stop()
     
     def newCSMF(self,data):
-        csmf=manager.CSMF(data["vsiId"], data)
+        csmf=manager.CSMF(data["vsiId"], data, self.pollingThread)
         self.csmfs[data["vsiId"]]=csmf
-        csmf.start()
+        # self.messaging.consumeQueue("managementQueue-vsLCM_"+str(data["vsiId"]), self.callback, ack=False)
 
     def tearDownCSMF(self,data):
         vsiId=str(data["vsiId"])

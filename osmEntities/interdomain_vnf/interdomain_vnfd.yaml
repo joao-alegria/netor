@@ -39,6 +39,8 @@ vnfd:
               value: <tunnel_id>
             - name: vsi_id
               value: <vsi_id>
+            - name: use_data_interfaces
+              value: <use_data_interfaces>
             seq: '1'
           config-primitive:
           - name: touch
