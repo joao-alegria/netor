@@ -1,0 +1,20 @@
+"name": "interdomainvdu"
+"summary": "interdomain vdu juju charm"
+"maintainer": "joaoalegria <joaoalegria@pc>"
+"description": |-
+  interdomain vdu juju charm
+"tags":
+  # Replace "misc" with one or more whitelisted tags from this list:
+  # https://jujucharms.com/docs/stable/authors-charm-metadata
+- "misc"
+- "osm"
+- "vnf"
+- "network"
+- "vpn"
+- "nfv"
+"series":
+- "bionic"
+- "focal"
+- "trusty"
+- "xenial"
+"subordinate": !!bool "false"

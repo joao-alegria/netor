@@ -1,11 +1,12 @@
 from flask import g, Flask, jsonify, render_template, request, make_response, redirect
 from flasgger import Swagger, validate
 from flasgger.utils import swag_from
-from db.persistance import Tenant, OauthClient, DB
+from db.persistance import Tenant, OauthClient, DB, OauthToken
 from api.oauth import OauthProvider
 import service
 from api.loginConfig import loginManager, loginUser
 from flask_cors import CORS, cross_origin
+import logging
 
 app = Flask(__name__)
 CORS(app)
@@ -48,8 +49,14 @@ def load_current_user():
         g.client = client
     # if "username" in request.args:
     #     username=request.args.get("username")
-    user = DB.session.query(Tenant).first()
-    g.user = user
+
+    if "Authorization" in request.headers:
+        token=request.headers["Authorization"].replace("Bearer ","")
+        token=DB.session.query(OauthToken).filter(OauthToken.access_token==token).first()
+        g.user = token.user
+    else:
+        g.user=None
+
 
 @app.route('/oauth/authorize', methods=['GET', 'POST'])
 # @login_required
@@ -315,7 +322,6 @@ def removeTenant(tenantId):
                         $ref: '#/definitions/Acknowledge'
     """
     try:
-        service.removeTenant(tenantId)
-        return jsonify({"message":"Success"}),200
+        return jsonify(service.removeTenant(tenantId)),200
     except Exception as e:
         return jsonify({"message":"Error: "+str(e)}),500

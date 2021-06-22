@@ -3,6 +3,8 @@ import json
 from threading import Thread
 import logging
 import manager
+import redisHandler as redis
+
 
 class MessageReceiver(Thread):
 
@@ -23,7 +25,7 @@ class MessageReceiver(Thread):
         if data["msgType"]=="createVSI":
             self.newCSMF(data)
         elif data["msgType"]=="removeVSI":
-            self.tearDownCSMF(data)
+            self.deleteVsi(data)
         else:
             vsiId=data["vsiId"]
             if vsiId in self.csmfs:
@@ -55,26 +57,22 @@ class MessageReceiver(Thread):
         self.csmfs[data["vsiId"]]=csmf
         # self.messaging.consumeQueue("managementQueue-vsLCM_"+str(data["vsiId"]), self.callback, ack=False)
 
-    def tearDownCSMF(self,data):
-        vsiId=str(data["vsiId"])
-        if vsiId in self.csmfs:
-            self.csmfs[vsiId].tearDown()
-            del self.csmfs[vsiId]
-        else:
-            logging.info("VSI Id not found during tearDown: "+str(vsiId))
-
-    # def newCsmfMessage(data):
-    #     vsiId=int(data["vsiId"])
-    #     if vsiId in csmfs:
-    #         csmfs[vsiId].newMessage(data)
-    #     else:
-    #         logging.warning("VSI Id not found: "+str(vsiId))
-
-    def newVnfInfo(self,data):
+    def deleteVsi(self,data):
         vsiId=data["vsiId"]
         if vsiId in self.csmfs:
-            self.csmfs[vsiId].interdomainHandler(data)
+            self.csmfs[vsiId].deleteVsi(force=data["force"])
+            # del self.csmfs[vsiId]
         else:
-            logging.warning("VSI Id not found during newVnfInfo: "+str(vsiId))
-            return {"error":True,"message": "Error: VSI Id not found during newVnfInfo: "+str(vsiId)}
-        return {"error":False,"message": "Acknowledge"}
+            self.forceDelete(vsiId)
+            logging.info("VSI Id not found during tearDown: "+str(vsiId))
+
+    def forceDelete(self, vsiId):
+        self.pollingThread.removeVSI(vsiId)
+        redis.deleteKey(vsiId)
+        redis.deleteHash("serviceComposition",vsiId)
+        redis.deleteHash("interdomainInfo",vsiId)
+        redis.deleteHash("createVSI",vsiId)
+        redis.deleteHash("interdomainTunnel",vsiId)
+
+        statusUpdate={"msgType":"statusUpdate","data":{"vsiId":vsiId, "status":"terminated","message":"Vertical Service Instance Terminated."}}
+        self.messaging.publish2Queue("vsCoordinator", json.dumps(statusUpdate))

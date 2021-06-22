@@ -1,8 +1,8 @@
-from locust import HttpUser, TaskSet, between, task
+from locust import HttpUser, TaskSet, between, task, events
 import os
 import json
+import requests
 #import time
-#import requests
 
 # Change these variables if you wish to personalize the script
 
@@ -11,45 +11,45 @@ import json
 # postFailures = {}
 
 
-class UserBehavior(TaskSet):
+# class UserBehavior(TaskSet):
     
-    def __init__(self):
-        super().__init__() 
+#     def __init__(self):
+#         super().__init__() 
 
-        self.host = "http://localhost"
+#         self.host = "http://localhost"
 
-        self.totalUsers = 0
-        # maxUsers = int(os.environ["USERS"])
-        self.maxUsers = 10
+#         self.totalUsers = 0
+#         # maxUsers = int(os.environ["USERS"])
+#         self.maxUsers = 10
 
-        parameters={'response_type': 'code','grant_type': 'password', 'client_id': 'portal', 'client_secret': 'portal', 'username': 'admin', 'password': 'admin'}
-        response = self.client.post(host+"/tenant/oauth/token", headers={"Content-Type": "application/json"}, data=parameters)
+#         parameters={'response_type': 'code','grant_type': 'password', 'client_id': 'portal', 'client_secret': 'portal', 'username': 'admin', 'password': 'admin'}
+#         response = self.client.post(host+"/tenant/oauth/token", headers={"Content-Type": "application/json"}, data=parameters)
 
-        self.adminToken=response.json["access_token"]
+#         self.adminToken=response.json["access_token"]
 
-    @task
-    def get(self):
+#     @task
+#     def get(self):
         
-        if self.totalUsers == self.maxUsers:
-            return
+#         if self.totalUsers == self.maxUsers:
+#             return
         
-        self.totalUsers+=1
-        #print("Total Purchase Attempts: "+str(UserBehavior.totalPurchaseAttempts))
+#         self.totalUsers+=1
+#         #print("Total Purchase Attempts: "+str(UserBehavior.totalPurchaseAttempts))
 
-        #create user
-        createUser={"group": "user","username": "user"+self.totalUsers,"password": "test","role": "TENANT","storage": 100,"memory": 100,"vcpu": 100}
+#         #create user
+#         createUser={"group": "user","username": "user"+self.totalUsers,"password": "test","role": "TENANT","storage": 100,"memory": 100,"vcpu": 100}
 
-        response = self.client.post(host+"/lcm/vs", headers={"Authorization": "Bearer " + self.adminToken, "Content-Type": "application/json"}, data=json.dumps(createUser))
+#         response = self.client.post(host+"/lcm/vs", headers={"Authorization": "Bearer " + self.adminToken, "Content-Type": "application/json"}, data=json.dumps(createUser))
 
-        #login user
-        parameters={'response_type': 'code','grant_type': 'password', 'client_id': 'portal', 'client_secret': 'portal', 'username': 'user'+self.totalUsers, 'password': 'test'}
+#         #login user
+#         parameters={'response_type': 'code','grant_type': 'password', 'client_id': 'portal', 'client_secret': 'portal', 'username': 'user'+self.totalUsers, 'password': 'test'}
 
-        response = self.client.post(host+"/tenant/oauth/token", headers={"Content-Type": "application/json"}, data=parameters)
-        token=response.json["access_token"]
-        #create VSI
-        vsiData={"name":"test","vsdId":"60808fbd3e25d8e8e1238849","domainId":"ITAV","vsiId":self.totalUsers}
+#         response = self.client.post(host+"/tenant/oauth/token", headers={"Content-Type": "application/json"}, data=parameters)
+#         token=response.json["access_token"]
+#         #create VSI
+#         vsiData={"name":"test","vsdId":"60ca601412002d67ff294e67","domainId":"ITAV","vsiId":self.totalUsers}
         
-        response = self.client.post(host+"/lcm/vs", headers={"Authorization": "Bearer " + token, "Content-Type": "application/json"}, data=json.dumps(vsiData))
+#         response = self.client.post(host+"/lcm/vs", headers={"Authorization": "Bearer " + token, "Content-Type": "application/json"}, data=json.dumps(vsiData))
 
         # response_code = int(str(response).split("[")[1].split("]")[0])
         # while response_code == 409: #"201" not in str(response):
@@ -92,6 +92,60 @@ class UserBehavior(TaskSet):
         #         getFailures[response_code] = 1
         #     print(getFailures)
 
+ids=[i for i in range(1000,0,-1)]
+
+parameters={'response_type': 'code','grant_type': 'password', 'client_id': 'portal', 'client_secret': 'portal', 'username': 'admin', 'password': 'admin'}
+response = requests.post("http://localhost/tenant/oauth/token", params=parameters)
+
+adminToken=response.json()["access_token"]
+
+
 class WebsiteUser(HttpUser):
-    task_set = UserBehavior
-    wait_time = between(0.1, 0.9)
+    wait_time = between(1,2)
+
+    def on_start(self):
+        self.identifier=ids.pop()
+        print(self.identifier)
+    
+        createUser={"role":"TENANT","group": "user","username": "user_"+str(self.identifier),"password": "test","role": "TENANT","storage": 100,"memory": 100,"vcpu": 100}
+
+        response = self.client.post("/tenant/tenant", headers={"Authorization": "Bearer " + adminToken, "Content-Type": "application/json"}, data=json.dumps(createUser))
+        if response.status_code!=200:
+            print(response.text)
+
+        #login user
+        parameters={'response_type': 'code','grant_type': 'password', 'client_id': 'portal', 'client_secret': 'portal', 'username': 'user_'+str(self.identifier), 'password': 'test'}
+
+        response = self.client.post("/tenant/oauth/token", headers={"Content-Type": "application/json"}, params=parameters)
+        if response.status_code!=200:
+            print(response.text)
+
+        self.token=response.json()["access_token"]
+        #create VSI
+        vsiData={"name":"test","description":"test","vsdId":"60ca601412002d67ff294e67","domainId":"ITAV","vsiId":str(self.identifier)}
+        
+        response = self.client.post("/lcm/vs", headers={"Authorization": "Bearer " + self.token, "Content-Type": "application/json"}, data=json.dumps(vsiData))
+        if response.status_code!=200:
+            print(response.text)
+        
+
+    def on_stop(self):
+        print(self.token)
+        parameters={'force': True}
+        response = requests.delete("http://localhost/lcm/vs/"+str(self.identifier), headers={"Authorization": "Bearer " + self.token, "Content-Type": "application/json"}, params=parameters)
+        if response.status_code!=200:
+            print(response.text)
+
+        response = requests.delete("http://localhost/tenant/tenant/user_"+str(self.identifier), headers={"Authorization": "Bearer " + adminToken, "Content-Type": "application/json"})
+        if response.status_code!=200:
+            print(response.text)
+
+
+    @task
+    def get(self):
+        # if self.token:
+        #     response = self.client.get("/lcm/vs", headers={"Authorization": "Bearer " + self.token, "Content-Type": "application/json"})
+        #     if response.status_code!=200:
+        #         print(response.text)
+        return
+        

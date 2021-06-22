@@ -129,7 +129,8 @@ def removeVs(vsiId):
     """
 
     try:
-        message=vsService.removeVSI(current_user.name, vsiId)
+        force=request.args.get("force")
+        message=vsService.removeVSI(current_user.name, vsiId, force=force)
         return jsonify({"message":message}),200
     except Exception as e:
         return jsonify({"message":"Error: "+str(e)}),500

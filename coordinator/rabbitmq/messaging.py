@@ -20,7 +20,7 @@ class MessageReceiver(Thread):
             if data["msgType"]=="statusUpdate":
                 service.changeStatusVSI(data)
         except Exception as e:
-            logging.error("Error while processing message: {}".format(body))
+            logging.error("Error while processing message: {}".format(body)+" | "+str(e))
 
     def stop(self):
         try:

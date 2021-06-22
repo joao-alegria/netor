@@ -2,6 +2,9 @@ import db.schemas as schemas
 import db.persistance as persistance
 from hashlib import blake2b
 import logging
+from rabbitmq.adaptor import Messaging
+from datetime import datetime, timedelta
+import json
 
 def getAllGroups():
     schema=schemas.GroupSchema()
@@ -52,11 +55,15 @@ def createTenant(tenantName, tenantData):
     if tenantData["group"] not in groupNames:
         raise Exception("Group "+tenantData["group"]+" does not exist.")
 
+    tenants=getAllTenants()
+    tenantNames=[tenant["username"] for tenant in tenants]
+    if tenantData["username"] in tenantNames:
+        raise Exception("Tenant "+tenantData["username"]+" already exists.")
+
     tenantData["password"]=blake2b(tenantData["password"].encode("utf-8")).hexdigest()
 
     tenant=schema.load(tenantData, session=persistance.DB.session)
     persistance.DB.persist(tenant)
-    #TODO verifications
 
 def getTenantById(tenantName):
     schema=schemas.TenantSchema()
@@ -73,9 +80,17 @@ def modifyTenant(tenantName):
     return schema.dump(tenant)
 
 def removeTenant(tenantName):
+    messaging=Messaging()
     tenant=persistance.DB.session.query(persistance.Tenant).filter(persistance.Tenant.username==tenantName).first()
     #TODO: add deletion verification
+    if tenant==None:
+        return {"message":"Tenant doesn't exist"}
+    for vsi in tenant.vsis:
+        persistance.DB.delete(vsi)
+        message={"msgType":"removeVSI", "vsiId":str(vsi.id), "tenantId":tenantName, "force":True}
+        messaging.publish2Exchange('vsLCM_Management',json.dumps(message))
     persistance.DB.delete(tenant)
+    return {"message":"Success"}
 
 def deleteVsiFromTenant(tenantName, vsiId):
     vsi=persistance.DB.session.query(persistance.VSI).filter(persistance.VSI.tenantUsername==tenantName, persistance.VSI.id==vsiId).first()

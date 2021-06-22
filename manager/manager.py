@@ -22,7 +22,8 @@ class Polling(Thread):
         self.vs[vsiId]=composition
 
     def removeVSI(self, vsiId):
-        del self.vs[vsiId]
+        if vsiId in self.vs:
+            del self.vs[vsiId]
 
     def stop(self):
         self.runControl=False
@@ -66,32 +67,52 @@ class CSMF():
     #     th.start()
 
     def processAction(self, data):
+        serviceComposition={}
+        tmp=redis.getHashValue("serviceComposition", self.vsiId)
+        if tmp!=None:
+            serviceComposition=json.loads(tmp)
+
+
         if data["msgType"]=="nsInfo":
             statusUpdate={"msgType":"statusUpdate", "data":{"vsiId":self.vsiId, "status":data["data"]["nsInfo"]["operational-status"], "message":data["data"]["nsId"]+": "+data["data"]["nsInfo"]["detailed-status"]}}
             self.messaging.publish2Queue("vsCoordinator", json.dumps(statusUpdate))
             if "running" in data["data"]["nsInfo"]["operational-status"].lower():
+                if serviceComposition=={}:
+                    redis.setKeyValue("serviceComposition", self.vsiId,json.dumps({data["data"]["nsId"]:{"status":"instantiated"}}))
+                else:
+                    serviceComposition[data["data"]["nsId"]]["status"]="instantiated"
+                    redis.setKeyValue("serviceComposition", self.vsiId,json.dumps(serviceComposition))
+
                 tunnelActive=redis.getHashValue("interdomainTunnel",self.vsiId).decode("UTF-8")
                 if self.interdomain and tunnelActive=="off":
                     primitiveData={"data":{"primitiveName":"getvnfinfo", "primitiveTarget":data["data"]["nsId"], "primitiveInternalTarget":"1"}}
                     self.processVsiPrimitive(primitiveData)
+            elif "terminated" in data["data"]["nsiInfo"]["operational-status"].lower():
+                self.tearDown(data["data"]["nsId"])
             return
         elif data["msgType"]=="nsiInfo":
             statusUpdate={"msgType":"statusUpdate", "data":{"vsiId":self.vsiId, "status":data["data"]["nsiInfo"]["operational-status"], "message":data["data"]["nsiId"]+": "+data["data"]["nsiInfo"]["detailed-status"]}}
             self.messaging.publish2Queue("vsCoordinator", json.dumps(statusUpdate))
             if "running" in data["data"]["nsiInfo"]["operational-status"].lower():
+                if serviceComposition=={}:
+                    redis.setKeyValue("serviceComposition", self.vsiId,json.dumps({data["data"]["nsiId"]:{"status":"instantiated"}}))
+                else:
+                    serviceComposition[data["data"]["nsiId"]]["status"]="instantiated"
+                    redis.setKeyValue("serviceComposition", self.vsiId,json.dumps(serviceComposition))
+
                 tunnelActive=redis.getHashValue("interdomainTunnel",self.vsiId).decode("UTF-8")
                 if self.interdomain and tunnelActive=="off":
                     primitiveData={"data":{"primitiveName":"getvnfinfo", "primitiveTarget":data["data"]["nsiId"], "primitiveInternalTarget":"1"}}
                     self.processVsiPrimitive(primitiveData)
+            elif "terminated" in data["data"]["nsiInfo"]["operational-status"].lower():
+                self.tearDown(data["data"]["nsiId"])
             return
         elif data["msgType"]=="updateResourcesNfvoIds":
             nfvoData=data["data"]
 
-            serviceComposition=redis.getHashValue("serviceComposition", self.vsiId)
-            if serviceComposition==None:
+            if serviceComposition=={}:
                 redis.setKeyValue("serviceComposition", self.vsiId,json.dumps({nfvoData["componentName"]:{"nfvoId":nfvoData["componentId"]}}))
             else:
-                serviceComposition=json.loads(serviceComposition)
                 serviceComposition[nfvoData["componentName"]]["nfvoId"]=nfvoData["componentId"]
                 redis.setKeyValue("serviceComposition", self.vsiId,json.dumps(serviceComposition))
 
@@ -121,9 +142,6 @@ class CSMF():
             createVsi=redis.getHashValue("createVSI",self.vsiId).decode("UTF-8")
 
             if createVsi=="create" and set(["catalogueInfo","domainInfo","tenantInfo","placementInfo"]).issubset(receivedData):
-                print(self.vsiId)
-                print(createVsi)
-                print(receivedData)
                 redis.setKeyValue("createVSI", self.vsiId, "alreadyCreated")
                 self.instantiateVSI()
             return
@@ -171,6 +189,7 @@ class CSMF():
                     componentConfigs=vsiRequest["data"]["additionalConf"]
                     if catalogueInfo["data"]["vs_blueprint_info"]["vs_blueprint"]["inter_site"]:
                         self.interdomain=True
+                        config={}
                         for componentConf in componentConfigs:
                             if componentConf["componentName"]==componentName:
                                 config=json.loads(componentConf["conf"])
@@ -236,11 +255,11 @@ class CSMF():
 
             serviceComposition=redis.getHashValue("serviceComposition", self.vsiId)
             if serviceComposition==None:
-                serviceComposition={componentName:{"sliceEnabled":creationData["sliceEnabled"],"domainId":domainId}}
+                serviceComposition={componentName:{"sliceEnabled":creationData["sliceEnabled"],"domainId":domainId, "status":"instantiating"}}
                 redis.setKeyValue("serviceComposition", self.vsiId,json.dumps(serviceComposition))
             else:
                 serviceComposition=json.loads(serviceComposition)
-                serviceComposition[componentName]={"sliceEnabled":creationData["sliceEnabled"],"domainId":domainId}
+                serviceComposition[componentName]={"sliceEnabled":creationData["sliceEnabled"],"domainId":domainId,"status":"instantiating"}
                 redis.setKeyValue("serviceComposition", self.vsiId,json.dumps(serviceComposition))
                 
             message["vsiId"]=str(self.vsiId)
@@ -277,7 +296,7 @@ class CSMF():
                 actions[action["action_id"]]=action["parameters"]
 
             if data["data"]["primitiveName"] not in actions:
-                statusUpdate={"msgType":"statusUpdate","vsiId":self.vsiId, "status":"Invalid Primitive", "message":"Primitive "+data["data"]["primitiveName"]+" is not defined in the VSB."}
+                statusUpdate={"msgType":"statusUpdate","data":{"vsiId":self.vsiId, "status":"Invalid Primitive", "message":"Primitive "+data["data"]["primitiveName"]+" is not defined in the VSB."}}
                 self.messaging.publish2Queue("vsCoordinator", json.dumps(statusUpdate))
                 return
 
@@ -314,7 +333,7 @@ class CSMF():
             message["data"]["primitiveName"]=data["data"]["primitiveName"]
             self.messaging.publish2Queue("vsDomain", json.dumps(message))
         else:
-            statusUpdate={"msgType":"statusUpdate","vsiId":self.vsiId, "status":"Invalid Primitive Trigger", "message":"Triggered primitive before VSI deployment finalized."}
+            statusUpdate={"msgType":"statusUpdate","data":{"vsiId":self.vsiId, "status":"Invalid Primitive Trigger", "message":"Triggered primitive before VSI deployment finalized."}}
             self.messaging.publish2Queue("vsCoordinator", json.dumps(statusUpdate))
 
     def interdomainHandler(self,data):
@@ -352,7 +371,7 @@ class CSMF():
                     actions[action["action_id"]]=action["parameters"]
 
                 if "addpeer" not in actions:
-                    statusUpdate={"msgType":"statusUpdate","vsiId":self.vsiId, "status":"Invalid Primitive", "message":"addpeer primitive not present in the blueprint."}
+                    statusUpdate={"msgType":"statusUpdate","data":{"vsiId":self.vsiId, "status":"Invalid Primitive", "message":"addpeer primitive not present in the blueprint."}}
                     self.messaging.publish2Queue("vsCoordinator", json.dumps(statusUpdate))
                     return
 
@@ -383,32 +402,59 @@ class CSMF():
 
                 requests.post("http://192.168.0.100:9999/stopTimer/1", data={"timestamp":str(round(time.time()*1000))})
 
-    def tearDown(self):
-        logging.info("Tearing down CSMF of VSI "+str(self.vsiId))
+    def deleteVsi(self, force=False):
         serviceComposition={}
         tmp=redis.getHashValue("serviceComposition", self.vsiId)
         if tmp!=None:
             serviceComposition=json.loads(tmp)
 
-        # self.pollingThread.stop()
-        self.pollingThread.removeVSI(self.vsiId)
-        
         for component, componentData in serviceComposition.items():
+            serviceComposition[component]["status"]="terminating"
             if componentData["sliceEnabled"]:
                 message={"vsiId":self.vsiId,"msgType":"deleteNsi", "data":{"domainId":componentData["domainId"], "nsiId":component}}
             else:
                 message={"vsiId":self.vsiId,"msgType":"deleteNs", "data":{"domainId":componentData["domainId"], "nsId":component}}
             self.messaging.publish2Queue("vsDomain", json.dumps(message))
 
+        redis.setKeyValue("serviceComposition", self.vsiId,json.dumps(serviceComposition))
 
-        statusUpdate={"vsiId":self.vsiId, "status":"terminating"}
+        statusUpdate={"msgType":"statusUpdate","data":{"vsiId":self.vsiId, "status":"terminating", "message":"Terminating Vertical Service Instance."}}
         self.messaging.publish2Queue("vsCoordinator", json.dumps(statusUpdate))
 
-        redis.deleteKey(self.vsiId)
-        redis.deleteHash("serviceComposition",self.vsiId)
-        redis.deleteHash("interdomainInfo",self.vsiId)
-        redis.deleteHash("createVSI",self.vsiId)
-        redis.deleteHash("interdomainTunnel",self.vsiId)
+        if serviceComposition=={} or force:
+            if force:
+                self.tearDown(None, force=force)
+            else:
+                self.tearDown(None)
+
+
+    def tearDown(self, componentName, force=False):
+        serviceComposition={}
+        tmp=redis.getHashValue("serviceComposition", self.vsiId)
+        if tmp!=None:
+            serviceComposition=json.loads(tmp)
+
+        if componentName in serviceComposition:
+            serviceComposition[componentName]["status"]="terminated"
+            redis.setKeyValue("serviceComposition", self.vsiId,json.dumps(serviceComposition))
+
+        terminated=True
+        for component in serviceComposition:
+            terminated = terminated and serviceComposition[component]["status"]=="terminated"
+
+        if terminated or force:
+            logging.info("Tearing down CSMF of VSI "+str(self.vsiId))
+            self.pollingThread.removeVSI(self.vsiId)
+            redis.deleteKey(self.vsiId)
+            redis.deleteHash("serviceComposition",self.vsiId)
+            redis.deleteHash("interdomainInfo",self.vsiId)
+            redis.deleteHash("createVSI",self.vsiId)
+            redis.deleteHash("interdomainTunnel",self.vsiId)
+
+            statusUpdate={"msgType":"statusUpdate","data":{"vsiId":self.vsiId, "status":"terminated","message":"Vertical Service Instance Terminated."}}
+            self.messaging.publish2Queue("vsCoordinator", json.dumps(statusUpdate))
+
+            # requests.post("http://192.168.0.100:9999/stopTimer/2", data={"timestamp":str(round(time.time()*1000))})
         
         # self.stop()
 

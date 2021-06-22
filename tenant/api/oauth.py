@@ -41,25 +41,33 @@ def OauthProvider(app):
 
     @oauth.tokensetter
     def set_token(token, request, *args, **kwargs):
-        toks = DB.session.query(OauthToken).filter(OauthToken.client_id==request.client.client_id, OauthToken.user_id==request.user.username)
-        # make sure that every client has only one token connected to a user
-        for t in toks:
-            DB.session.delete(t)
+        tok = DB.session.query(OauthToken).filter(OauthToken.client_id==request.client.client_id, OauthToken.user_id==request.user.username).first()
 
+        # make sure that every client has only one token connected to a user
         expires_in = token.get('expires_in')
         expires = datetime.utcnow() + timedelta(seconds=expires_in)
+        if tok==None:
+            tok = OauthToken(
+                access_token=token['access_token'],
+                refresh_token=token['refresh_token'],
+                token_type=token['token_type'],
+                _scopes=token['scope'],
+                expires=expires,
+                client_id=request.client.client_id,
+                user_id=request.user.username,
+            )
+        else:
+            tok.access_token=token['access_token']
+            tok.refresh_token=token['refresh_token']
+            tok.token_type=token['token_type']
+            tok._scopes=token['scope']
+            tok.expires=expires
+            tok.client_id=request.client.client_id
+            tok.user_id=request.user.username
 
-        tok = OauthToken(
-            access_token=token['access_token'],
-            refresh_token=token['refresh_token'],
-            token_type=token['token_type'],
-            _scopes=token['scope'],
-            expires=expires,
-            client_id=request.client.client_id,
-            user_id=request.user.username,
-        )
         DB.session.add(tok)
         DB.session.commit()
+
         return tok
 
     @oauth.usergetter

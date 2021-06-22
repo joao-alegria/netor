@@ -1,5 +1,5 @@
 from sqlalchemy import Table, Column, Integer, Float, String, Boolean, ForeignKey, create_engine, inspect, Text, DateTime
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import relationship, sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 import json
 from datetime import timedelta, datetime
@@ -225,7 +225,7 @@ class DB:
         if config.ENVIRONMENT=="testing":
             self.engine = create_engine('sqlite:///:memory:')
         else:
-            self.engine = create_engine('postgresql://'+str(config.POSTGRES_USER)+':'+str(config.POSTGRES_PASS)+'@'+str(config.POSTGRES_IP)+':'+str(config.POSTGRES_PORT)+'/'+str(config.POSTGRES_DB))
+            self.engine = create_engine('postgresql://'+str(config.POSTGRES_USER)+':'+str(config.POSTGRES_PASS)+'@'+str(config.POSTGRES_IP)+':'+str(config.POSTGRES_PORT)+'/'+str(config.POSTGRES_DB), pool_size=50)
         try:
             self.Base.metadata.create_all(self.engine)
         except Exception as e:
@@ -236,8 +236,8 @@ class DB:
                 conn.execute("create database \""+str(config.POSTGRES_DB)+"\"")
                 conn.close()
                 self.Base.metadata.create_all(self.engine)
-        Session = sessionmaker(bind=self.engine)
-        self.session=Session()
+        # Session = scoped_session(sessionmaker(bind=self.engine))
+        self.session=scoped_session(sessionmaker(bind=self.engine))
 
 
     def removeDB(self):

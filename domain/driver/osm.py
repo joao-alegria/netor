@@ -11,7 +11,7 @@ def getNS(domainIp, nsId):
 def instantiateNS(domainIp, nsName, nsdName, account, additionalConf=None):
     tmpClient = client.Client(host=domainIp)
     #valueExtraction
-    # requests.post("http://192.168.0.100:9999/stopTimer/"+nsName, data={"timestamp":str(round(time.time()*1000))})
+    # requests.post("http://192.168.0.100:9999/stopTimer/1", data={"timestamp":str(round(time.time()*1000))})
     return tmpClient.ns.create(nsd_name=nsdName, nsr_name=nsName, account=account, config=additionalConf)
 
 def sendActionNS(domainIp, nsId, additionalConf=None):
@@ -25,6 +25,8 @@ def modifyNS(domainIp):
 
 def terminateNS(domainIp, nsName):
     tmpClient = client.Client(host=domainIp)
+    #valueExtraction
+    # requests.post("http://192.168.0.100:9999/stopTimer/2", data={"timestamp":str(round(time.time()*1000))})
     return tmpClient.ns.delete(nsName)
 
 def getNSI(domainIp, nsiId):
@@ -34,7 +36,7 @@ def getNSI(domainIp, nsiId):
 def instantiateNSI(domainIp,nsiName,nstName,account, additionalConf=None):
     tmpClient = client.Client(host=domainIp)
     #valueExtraction
-    # requests.post("http://192.168.0.100:9999/stopTimer/"+nsiName, data={"timestamp":str(round(time.time()*1000))})
+    # requests.post("http://192.168.0.100:9999/stopTimer/1", data={"timestamp":str(round(time.time()*1000))})
     tmpClient.nsi.create(nst_name=nstName,nsi_name=nsiName,account=account,config=additionalConf)
 
     nsiId=tmpClient.nsi.get(nsiName)["id"]
@@ -51,13 +53,6 @@ def modifyNSI(domainIp):
 
 def terminateNSI(domainIp,nsiName):
     tmpClient = client.Client(host=domainIp)
+    #valueExtraction
+    # requests.post("http://192.168.0.100:9999/stopTimer/2", data={"timestamp":str(round(time.time()*1000))})
     return tmpClient.nsi.delete(nsiName)
-
-# def instantiateNSSI(domainIp):
-#     return 
-
-# def modifyNSSI(domainIp):
-#     return 
-
-# def terminateNSSI(domainIp):
-#     return 

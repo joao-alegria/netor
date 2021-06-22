@@ -3,6 +3,7 @@ COPY . .
 RUN apt-get update
 RUN apt-get install -y python3.8
 RUN apt-get install -y python3-pip
+RUN apt-get install -y libpq-dev
 RUN pip3 install -r requirements.txt
 RUN chmod +x installDrivers.sh
 RUN ./installDrivers.sh
