@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flasgger import Swagger, validate
-import manager
+from manager import getCSMF
 from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
@@ -30,5 +30,8 @@ def getAllDomains():
     """
 
     data=request.json
-
-    return jsonify(manager.newVnfInfo(data))
+    csmf=getCSMF(data["vsiId"])
+    if csmf:
+        return jsonify(manager.interdomainHandler(data))
+    else:
+        return "VSI Id not found", 500

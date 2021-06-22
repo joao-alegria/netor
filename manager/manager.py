@@ -400,7 +400,7 @@ class CSMF():
                             self.messaging.publish2Queue("vsDomain", json.dumps(message))
 
 
-                requests.post("http://192.168.0.100:9999/stopTimer/1", data={"timestamp":str(round(time.time()*1000))})
+                requests.post("http://10.0.12.117:9999/stopTimer/1", data={"timestamp":str(round(time.time()*1000))})
 
     def deleteVsi(self, force=False):
         serviceComposition={}
@@ -454,7 +454,7 @@ class CSMF():
             statusUpdate={"msgType":"statusUpdate","data":{"vsiId":self.vsiId, "status":"terminated","message":"Vertical Service Instance Terminated."}}
             self.messaging.publish2Queue("vsCoordinator", json.dumps(statusUpdate))
 
-            # requests.post("http://192.168.0.100:9999/stopTimer/2", data={"timestamp":str(round(time.time()*1000))})
+            requests.post("http://10.0.12.117:9999/stopTimer/2", data={"timestamp":str(round(time.time()*1000))})
         
         # self.stop()
 
@@ -472,3 +472,42 @@ class CSMF():
     #     except Exception as e:
     #         logging.info("VSI "+str(self.vsiId)+" CSMF Ended")
     #         logging.error("Pika exception: "+str(e))    
+
+csmfs={}
+pollingThread=Polling()
+pollingThread.start()
+
+def newCSMF(data):
+    csmf=CSMF(data["vsiId"], data, pollingThread)
+    csmfs[data["vsiId"]]=csmf
+    # self.messaging.consumeQueue("managementQueue-vsLCM_"+str(data["vsiId"]), self.callback, ack=False)
+
+def getCSMF(vsiId):
+    if vsiId in csmfs:
+        return csmfs[vsiId]
+    else:
+        return None
+
+def deleteVsi(data):
+    vsiId=data["vsiId"]
+    if vsiId in csmfs:
+        csmfs[vsiId].deleteVsi(force=data["force"])
+        # del self.csmfs[vsiId]
+    else:
+        forceDelete(vsiId)
+        logging.info("VSI Id not found during tearDown: "+str(vsiId))
+
+def forceDelete(vsiId):
+    pollingThread.removeVSI(vsiId)
+    redis.deleteKey(vsiId)
+    redis.deleteHash("serviceComposition",vsiId)
+    redis.deleteHash("interdomainInfo",vsiId)
+    redis.deleteHash("createVSI",vsiId)
+    redis.deleteHash("interdomainTunnel",vsiId)
+
+    messaging=Messaging()
+    statusUpdate={"msgType":"statusUpdate","data":{"vsiId":vsiId, "status":"terminated","message":"Vertical Service Instance Terminated."}}
+    messaging.publish2Queue("vsCoordinator", json.dumps(statusUpdate))
+
+def stopPollingThread():
+    pollingThread.stop()
