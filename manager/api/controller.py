@@ -32,6 +32,6 @@ def getAllDomains():
     data=request.json
     csmf=getCSMF(data["vsiId"])
     if csmf:
-        return jsonify(manager.interdomainHandler(data))
+        return jsonify(csmf.interdomainHandler(data))
     else:
         return "VSI Id not found", 500

@@ -23,6 +23,6 @@ nsd:
       mgmt-network: true
       vim-network-name: mgmtnet
     - id: datanet
-      vim-network-name: nsd_vnfd_vld_data
+      vim-network-name: datanet
     vnfd-id:
     - interdomain-vnf

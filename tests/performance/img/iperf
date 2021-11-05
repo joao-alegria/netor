@@ -1,0 +1,13 @@
+Connecting to host 192.168.95.35, port 5201
+[  5] local 10.0.13.109 port 53560 connected to 192.168.95.35 port 5201
+[ ID] Interval           Transfer     Bitrate         Retr  Cwnd
+[  5]   0.00-10.00  sec   997 MBytes   836 Mbits/sec    3    106 KBytes       
+[  5]  10.00-20.00  sec   952 MBytes   798 Mbits/sec  167    112 KBytes       
+[  5]  20.00-30.00  sec   986 MBytes   827 Mbits/sec    3    134 KBytes       
+[  5]  30.00-40.00  sec   964 MBytes   808 Mbits/sec    1    106 KBytes       
+[  5]  40.00-50.00  sec   984 MBytes   825 Mbits/sec  254    104 KBytes       
+[  5]  50.00-60.00  sec  1015 MBytes   852 Mbits/sec    1    104 KBytes       
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bitrate         Retr
+[  5]   0.00-60.00  sec  5.76 GBytes   824 Mbits/sec  429             sender
+[  5]   0.00-60.00  sec  5.76 GBytes   824 Mbits/sec                  receiver

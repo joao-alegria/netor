@@ -1,8 +1,8 @@
 {
     "nst_version": "1.0",
     "nsst_ids": [
-      "interdomain_nsst_nst",
-      "interdomain_nsst_nst"
+      "interdomain_nsst_nst_HAL",
+      "interdomain_nsst_nst_DEV"
     ],
     "nsst_type": "NONE",
     "nst_service_profile": {
