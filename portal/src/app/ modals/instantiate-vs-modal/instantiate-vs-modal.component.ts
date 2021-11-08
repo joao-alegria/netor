@@ -18,6 +18,7 @@ export class InstantiateVsModalComponent implements OnInit {
 
   objectKeys = Object.keys;
   domainPlacements = [0]
+  additionalConf=[0]
   parameterOptions = { "NONE": "none", "UE Speed": "uUSpeed", "Coverage": "coverage", "UserDensity": "userDensity", "ActivityFactor": "activityFactor", "Reliability": "reliability", "Survival Time": "survivalTime", "Payload Size": "payloadSize", "Connection Density": "connDensity" }
   tenant
   coords
@@ -87,6 +88,20 @@ export class InstantiateVsModalComponent implements OnInit {
     }
 
 
+    let confs = []
+
+    for (let configNum of this.additionalConf) {
+      let param = $("#config" + configNum).val()
+      let value = $("#configValue" + configNum).val()
+      if (param != "") {
+        confs.push({componentName:param, conf: value})
+      }
+    }
+
+    if (this.objectKeys(confs).length > 0) {
+      vsi["additionalConf"] = confs
+    }
+
     vsi["vsiId"] = vsiId
     vsi["name"] = name
     vsi["tenantId"] = tenant
@@ -108,7 +123,7 @@ export class InstantiateVsModalComponent implements OnInit {
 
   myStyle(i) {
     let styles = {
-      'border-left': i != 0 ? 'solid 2px #007bff' : '',
+      'border-left': i != 0 ? 'solid 2px #ffa500' : '',
       'border-radius': i != 0 ? '10px' : ''
     };
 
@@ -121,6 +136,14 @@ export class InstantiateVsModalComponent implements OnInit {
 
   removePlacement(j) {
     this.domainPlacements.splice(j, 1);
+  }
+
+  addConfig() {
+    this.additionalConf.push(this.additionalConf[this.additionalConf.length - 1] + 1)
+  }
+
+  removeConfig(j) {
+    this.additionalConf.splice(j, 1);
   }
 
   onConfirm(coords) {

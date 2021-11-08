@@ -26,7 +26,7 @@
     },
     {
       "branch": "refs/heads/main",
-      "rev": "bee1f2d9771ff94d6f303ecac704df3908f7c3a5",
+      "rev": "7a4a1895c8258deee9244a195622b604b48f256c",
       "url": "interdomainvdu"
     }
   ],
@@ -154,7 +154,7 @@
     "config.yaml": [
       "interdomainvdu",
       "dynamic",
-      "23a229bc4f0a1dd45a76b1344469f8b1d692a458d37761d6bd36be1035eb8c11"
+      "dbe8a610b7e3a30c44268b58791d702fd4898260d1f18d4720bfc500f8d99e7b"
     ],
     "copyright": [
       "layer:basic",
@@ -274,7 +274,7 @@
     "reactive/interdomainvdu.py": [
       "interdomainvdu",
       "static",
-      "1c3d28ccd3f75ab65af90fb9745888ea7b337fde5c1b800eb6ff181720a78a03"
+      "36dc9cbdc98fb64fa6aed7fa05e2d92d3f9c7b8af2c7d30ce95ecbb1cbee60f2"
     ],
     "reactive/sshproxy.py": [
       "interdomainvdu",
@@ -304,7 +304,7 @@
     "version": [
       "interdomainvdu",
       "dynamic",
-      "d9171687ed794731ef30a0097a13d2e0d9b14c0382f25397299fcb6348fa3feb"
+      "e282fcf0c6c5e040c934d3454a825ccda7774e4cdb7e16928604377a01ac215d"
     ],
     "wheelhouse.txt": [
       "interdomainvdu",
@@ -326,15 +326,15 @@
       "dynamic",
       "c0ee8eca2c582d29c3c2ec6e2c4f703d1b7f1fb10bc72317355a746057e7346c"
     ],
-    "wheelhouse/Tempita-0.5.2.tar.gz": [
+    "wheelhouse/Tempita-0.4.tar.gz": [
       "__pip__",
       "dynamic",
-      "cacecf0baa674d356641f1d406b8bff1d756d739c46b869a54de515d08e6fc9c"
+      "abf66d20932f1875a9c290345f19f35dad9031d4a9397de242a2b34e87ccddb5"
     ],
-    "wheelhouse/charmhelpers-0.20.22.tar.gz": [
+    "wheelhouse/charmhelpers-0.20.23.tar.gz": [
       "interdomainvdu",
       "dynamic",
-      "b7550108118ce4f87488343384441797777d0da746e1346ed4e6361b4eab0ddb"
+      "59a9776594e91cd3e3e000043f8668b4d7b279422dbb17e320f01dc16385b80e"
     ],
     "wheelhouse/charms.reactive-1.4.1.tar.gz": [
       "interdomainvdu",
@@ -366,10 +366,10 @@
       "dynamic",
       "c0a292bd977ef590379a3f05d7b7f65135487b67470f6281289a94e015650ea1"
     ],
-    "wheelhouse/pyaml-20.4.0.tar.gz": [
+    "wheelhouse/pyaml-21.10.1.tar.gz": [
       "__pip__",
       "dynamic",
-      "29a5c2a68660a799103d6949167bd6c7953d031449d08802386372de1db6ad71"
+      "c6519fee13bf06e3bb3f20cacdea8eba9140385a7c2546df5dbae4887f768383"
     ],
     "wheelhouse/pycrypto-2.6.1.tar.gz": [
       "__pip__",

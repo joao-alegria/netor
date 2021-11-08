@@ -45,7 +45,7 @@
     "description": "Current VSI ID"
   "bandwidth":
     "type": "string"
-    "default": "30"
+    "default": "1000"
     "description": "Tunnel Bandwidth"
   "use_data_interfaces":
     "type": "boolean"
