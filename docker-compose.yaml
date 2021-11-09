@@ -42,7 +42,7 @@ services:
       - REDIS_REPLICATION_MODE=master
 
   mongo1:
-    build: ./catalogue/slicer-catalogue/db/primary
+    image: netor/mongo1
     ports:
       - 27017:27017
     restart: always
@@ -59,7 +59,7 @@ services:
   mongo2:
     depends_on:
       - mongo1
-    build: ./catalogue/slicer-catalogue/db/secondary1
+    image: netor/mongo2
     ports:
       - 27012:27017
     restart: always
@@ -74,7 +74,7 @@ services:
   mongo3:
     depends_on:
       - mongo1
-    build: ./catalogue/slicer-catalogue/db/secondary2
+    image: netor/mongo3
     ports:
       - 27013:27017
     restart: always
@@ -95,7 +95,7 @@ services:
       - 443:443
 
   netor_coordinator:
-    build: ./coordinator
+    image: netor/coordinator
     restart: always
     depends_on:
       - postgres
@@ -115,7 +115,7 @@ services:
       ENVIRONMENT: prod
 
   netor_domain:
-    build: ./domain
+    image: netor/domain
     restart: always
     depends_on:
       - postgres
@@ -135,7 +135,7 @@ services:
       ENVIRONMENT: prod
 
   netor_manager:
-    build: ./manager
+    image: netor/manager
     restart: always
     depends_on:
       - redis
@@ -151,7 +151,7 @@ services:
       ENVIRONMENT: prod
 
   netor_placement:
-    build: ./placement
+    image: netor/placement
     restart: always
     depends_on:
       - redis
@@ -164,7 +164,7 @@ services:
       ENVIRONMENT: prod
 
   netor_tenant:
-    build: ./tenant
+    image: netor/tenant
     restart: always
     depends_on:
       - postgres
@@ -183,7 +183,7 @@ services:
       ENVIRONMENT: prod
 
   netor_catalogue:
-    build: ./catalogue/slicer-catalogue
+    image: netor/catalogue
     restart: always
     ports:
       - 5010:5010
@@ -205,7 +205,7 @@ services:
       ENVIRONMENT: prod
 
   # netor_portal:
-  #   build: ./portal
+  #   image: netor/portal
   #   restart: always
   #   ports:
   #     - '4200:4200'
