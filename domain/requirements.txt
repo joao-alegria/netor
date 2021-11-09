@@ -10,4 +10,5 @@ verboselogs
 importlib-metadata
 jsonschema
 flask-cors
+pycurl==7.44.1
 packaging==21.2
