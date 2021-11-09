@@ -10,3 +10,4 @@ verboselogs
 importlib-metadata
 jsonschema
 flask-cors
+packaging==21.2
