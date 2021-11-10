@@ -1,9 +1,9 @@
 #!/bin/bash
-until mongo < /replica.js
-do
-  echo "..."
-  sleep 1
-done
+#until mongo < /replica.js
+#do
+#  echo "..."
+#  sleep 1
+#done
 
 
 until mongo --eval "admin = db.getSiblingDB(\"admin\"); admin.createUser({user: \"$MONGO_INITDB_ROOT_USERNAME\", pwd: \"$MONGO_INITDB_ROOT_PASSWORD\", roles: [ { role: \"userAdminAnyDatabase\", db: \"admin\" }]})"
@@ -16,4 +16,4 @@ until mongo --username $MONGO_INITDB_ROOT_USERNAME --password $MONGO_INITDB_ROOT
 do
   echo "..."
   sleep 1
-done
+dones

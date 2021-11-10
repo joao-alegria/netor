@@ -56,34 +56,34 @@ services:
       CATALOGUES_USERNAME: catalogues
       CATALOGUES_PASSWORD: catalogues
 
-  mongo2:
-    depends_on:
-      - mongo1
-    image: netor/mongo2
-    ports:
-      - 27012:27017
-    restart: always
-    volumes:
-      - thesisMongo2ConfigVolume:/data/configdb
-      - thesisMongo2DataVolume:/data/db
-    environment:
-      DATABASE_NAME: catalogues
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
+#  mongo2:
+#    depends_on:
+#      - mongo1
+#    image: netor/mongo2
+#    ports:
+#      - 27012:27017
+#    restart: always
+#    volumes:
+#      - thesisMongo2ConfigVolume:/data/configdb
+#      - thesisMongo2DataVolume:/data/db
+#    environment:
+#      DATABASE_NAME: catalogues
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: root
 
-  mongo3:
-    depends_on:
-      - mongo1
-    image: netor/mongo3
-    ports:
-      - 27013:27017
-    restart: always
-    volumes:
-      - thesisMongo3ConfigVolume:/data/configdb
-      - thesisMongo3DataVolume:/data/db
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
+#  mongo3:
+#    depends_on:
+#      - mongo1
+#    image: netor/mongo3
+#    ports:
+#      - 27013:27017
+#    restart: always
+#    volumes:
+#      - thesisMongo3ConfigVolume:/data/configdb
+#      - thesisMongo3DataVolume:/data/db
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: root
 
   netor_up_nginx: 
     image: nginx:latest
