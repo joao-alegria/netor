@@ -1,0 +1,5 @@
+{
+  "message": "<p>Vs Descriptor with descriptor_id 11111 tenant_id tenant not found in DB</p>",
+  "error": true,
+  "data": {}
+}

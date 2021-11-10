@@ -1,0 +1,59 @@
+{
+  "msgType": "createVSI",
+  "vsiId": 1,
+  "data": {
+    "description": "desc",
+    "domainId": "1",
+    "errorMessage": "error",
+    "mappedInstanceId": "1",
+    "name": "vetService",
+    "nestedVsi": {
+      "vsiId": "2"
+    },
+    "networkSliceId": "1",
+    "nssis": [
+      {
+        "domain_id": 1,
+        "ns_deployment_flavor_id": 1,
+        "ns_instantiation_level_id": 1,
+        "nssiId": 1,
+        "nsst_id": 1,
+        "status": 1
+      }
+    ],
+    "ranEndPointId": "1",
+    "status": 1,
+    "vsdId": "1",
+    "vsiId": "1",
+    "vssis": [
+      {
+        "blueprint_id": "1",
+        "descriptor_id": "1",
+        "domain_id": "1",
+        "instance_id": "1",
+        "vertical_service_status": "1"
+      },
+      {
+        "blueprint_id": "2",
+        "descriptor_id": "2",
+        "domain_id": "2",
+        "instance_id": "2",
+        "vertical_service_status": "2"
+      },
+      {
+        "blueprint_id": "3",
+        "descriptor_id": "3",
+        "domain_id": "3",
+        "instance_id": "3",
+        "vertical_service_status": "3"
+      },
+      {
+        "blueprint_id": "4",
+        "descriptor_id": "4",
+        "domain_id": "4",
+        "instance_id": "4",
+        "vertical_service_status": "4"
+      }
+    ]
+  }
+}
