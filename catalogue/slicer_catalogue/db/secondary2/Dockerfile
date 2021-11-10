@@ -1,4 +1,4 @@
-FROM mongo
+FROM mongo:4.4
 
 COPY mongo.key /
 RUN chmod 600 mongo.key
