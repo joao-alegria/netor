@@ -42,48 +42,49 @@ services:
       - REDIS_REPLICATION_MODE=master
 
   mongo1:
-    image: netor/mongo1
-    ports:
-      - 27017:27017
-    restart: always
-    volumes:
-      - thesisMongo1ConfigVolume:/data/configdb
-      - thesisMongo1DataVolume:/data/db
+    image: docker.io/bitnami/mongodb-sharded:4.2
+    hostname: mongo1
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
-      CATALOGUES_DATABASE: catalogues
-      CATALOGUES_USERNAME: catalogues
-      CATALOGUES_PASSWORD: catalogues
+      - MONGODB_ADVERTISED_HOSTNAME=mongo1
+      - MONGODB_SHARDING_MODE=mongos
+      - MONGODB_MONGOS_HOST=mongo1
+      - MONGODB_CFG_PRIMARY_HOST=mongodb-cfg
+      - MONGODB_CFG_REPLICA_SET_NAME=cfgreplicaset
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+      - MONGODB_ROOT_PASSWORD=root
+    ports:
+      - "27017:27017"
 
-#  mongo2:
-#    depends_on:
-#      - mongo1
-#    image: netor/mongo2
-#    ports:
-#      - 27012:27017
-#    restart: always
-#    volumes:
-#      - thesisMongo2ConfigVolume:/data/configdb
-#      - thesisMongo2DataVolume:/data/db
-#    environment:
-#      DATABASE_NAME: catalogues
-#      MONGO_INITDB_ROOT_USERNAME: root
-#      MONGO_INITDB_ROOT_PASSWORD: root
+  secondary_mongo1:
+    image: docker.io/bitnami/mongodb-sharded:4.2
+    environment:
+      - MONGODB_ADVERTISED_HOSTNAME=secondary_mongo1
+      - MONGODB_SHARDING_MODE=shardsvr
+      - MONGODB_MONGOS_HOST=mongo1
+      - MONGODB_ROOT_PASSWORD=root
+      - MONGODB_USERNAME=catalogues
+      - MONGODB_PASSWORD=catalogues 
+      - MONGODB_DATABASE=catalogues 
+      - MONGODB_REPLICA_SET_MODE=primary
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+      - MONGODB_REPLICA_SET_NAME=shard0
+    volumes:
+      - 'shard0_data:/bitnami'
 
-#  mongo3:
-#    depends_on:
-#      - mongo1
-#    image: netor/mongo3
-#    ports:
-#      - 27013:27017
-#    restart: always
-#    volumes:
-#      - thesisMongo3ConfigVolume:/data/configdb
-#      - thesisMongo3DataVolume:/data/db
-#    environment:
-#      MONGO_INITDB_ROOT_USERNAME: root
-#      MONGO_INITDB_ROOT_PASSWORD: root
+  mongodb-cfg:
+    image: docker.io/bitnami/mongodb-sharded:4.2
+    volumes:
+      - 'cfg_data:/bitnami'
+    environment:
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb-cfg
+      - MONGODB_SHARDING_MODE=configsvr
+      - MONGODB_ROOT_PASSWORD=root
+      - MONGODB_USERNAME=catalogues
+      - MONGODB_PASSWORD=catalogues 
+      - MONGODB_DATABASE=catalogues 
+      - MONGODB_REPLICA_SET_MODE=primary
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+      - MONGODB_REPLICA_SET_NAME=cfgreplicaset
 
   netor_up_nginx: 
     image: nginx:latest
@@ -221,15 +222,16 @@ volumes:
     external: false
   thesisRedisDataVolume:
     external: false
-  thesisMongo1ConfigVolume:
-    external: false
-  thesisMongo1DataVolume:
-    external: false
-  thesisMongo2ConfigVolume:
-    external: false
-  thesisMongo2DataVolume:
-    external: false
-  thesisMongo3ConfigVolume:
-    external: false
-  thesisMongo3DataVolume:
-    external: false
+  #thesisMongo1ConfigVolume:
+    #external: false
+  #thesisMongo1DataVolume:
+    #external: false
+    #driver:
+  #thesisMongo2ConfigVolume:
+    #external: false
+  shard0_data:
+    driver: local
+  cfg_data:
+    driver: local
+  #thesisMongo3DataVolume:
+    #external: false
