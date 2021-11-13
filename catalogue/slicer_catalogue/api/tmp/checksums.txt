@@ -1,0 +1,2 @@
+e6b9cac0466207bbc7b82e6791f41e4b  ubuntu-cloudinit_vnfd.yaml
+5258deb5db3cb1925dd9d58f8aad85dd  cloud_init/cloud-init.cfg

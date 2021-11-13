@@ -1,0 +1,348 @@
+{
+  "vnfd": {
+    "provider": "My Company",
+    "product-name": "complex-vnf",
+    "software-version": "1.0",
+    "version": "1.0",
+    "vnfm-info": "netconf",
+    "id": "complex-vnf",
+    "vdu": [
+      {
+        "id": "control-plane-active",
+        "name": "control-plane-active",
+        "int-cpd": [
+          {
+            "id": "internal",
+            "int-virtual-link-desc": "internal-vl",
+            "layer-protocol": "ipv4"
+          },
+          {
+            "id": "mgmt",
+            "int-virtual-link-desc": "mgmt",
+            "layer-protocol": "ipv4"
+          }
+        ],
+        "virtual-compute-desc": "CP",
+        "virtual-storage-desc": [
+          "root"
+        ],
+        "sw-image-desc": "CP"
+      },
+      {
+        "id": "control-plane-standby",
+        "name": "control-plane-standby",
+        "int-cpd": [
+          {
+            "id": "internal",
+            "int-virtual-link-desc": "internal-vl",
+            "layer-protocol": "ipv4"
+          },
+          {
+            "id": "mgmt",
+            "int-virtual-link-desc": "mgmt",
+            "layer-protocol": "ipv4"
+          }
+        ],
+        "virtual-compute-desc": "CP",
+        "virtual-storage-desc": [
+          "root"
+        ],
+        "sw-image-desc": "CP"
+      },
+      {
+        "id": "data-plane",
+        "name": "data-plane",
+        "int-cpd": [
+          {
+            "id": "in",
+            "layer-protocol": "ipv4"
+          },
+          {
+            "id": "internal",
+            "int-virtual-link-desc": "internal-vl",
+            "layer-protocol": "ipv4"
+          },
+          {
+            "id": "out",
+            "layer-protocol": "ipv4"
+          }
+        ],
+        "virtual-compute-desc": "DP",
+        "virtual-storage-desc": [
+          "root"
+        ],
+        "sw-image-desc": "DP"
+      }
+    ],
+    "virtual-compute-desc": [
+      {
+        "id": "CP",
+        "virtual-memory": {
+          "size": "16.0"
+        },
+        "virtual-cpu": {
+          "num-virtual-cpu": "8"
+        }
+      },
+      {
+        "id": "DP",
+        "virtual-memory": {
+          "size": "32.0"
+        },
+        "virtual-cpu": {
+          "num-virtual-cpu": "16"
+        }
+      }
+    ],
+    "virtual-storage-desc": [
+      {
+        "id": "root",
+        "type-of-storage": "ephemeral-storage",
+        "size-of-storage": "10",
+        "rdma-enabled": "true",
+        "sw-image-desc": "CP"
+      }
+    ],
+    "sw-image-desc": [
+      {
+        "id": "CP",
+        "name": "CP",
+        "version": "1.1",
+        "checksum": {
+          "algorithm": "sha-224",
+          "hash": "deadbeef"
+        },
+        "container-format": "bare",
+        "disk-format": "qcow2",
+        "min-disk": "1",
+        "min-ram": "2.0",
+        "size": "1",
+        "image": "http://mycompany.images.com/control-plane.qcow2"
+      },
+      {
+        "id": "DP",
+        "name": "DP",
+        "version": "1.1",
+        "checksum": {
+          "algorithm": "sha-224",
+          "hash": "deadbeef"
+        },
+        "container-format": "bare",
+        "disk-format": "qcow2",
+        "min-disk": "1",
+        "min-ram": "2.0",
+        "size": "1",
+        "image": "http://mycompany.images.com/data-plane.qcow2"
+      }
+    ],
+    "int-virtual-link-desc": [
+      {
+        "id": "internal-vl",
+        "connectivity-type": {
+          "layer-protocol": "ipv4"
+        }
+      },
+      {
+        "id": "mgmt",
+        "connectivity-type": {
+          "layer-protocol": "ipv4"
+        }
+      }
+    ],
+    "ext-cpd": [
+      {
+        "id": "in",
+        "int-cpd": {
+          "vdu-id": "data-plane",
+          "cpd": "in"
+        },
+        "layer-protocol": "ipv4"
+      },
+      {
+        "id": "mgmt",
+        "int-virtual-link-desc": "mgmt",
+        "layer-protocol": "ipv4"
+      },
+      {
+        "id": "out",
+        "int-cpd": {
+          "vdu-id": "data-plane",
+          "cpd": "out"
+        },
+        "layer-protocol": "ipv4"
+      }
+    ],
+    "df": [
+      {
+        "id": "gold",
+        "vdu-profile": [
+          {
+            "id": "control-plane-active",
+            "min-number-of-instances": "1",
+            "max-number-of-instances": "1",
+            "affinity-or-anti-affinity-group": [
+              {
+                "id": "control-plane"
+              }
+            ]
+          },
+          {
+            "id": "control-plane-standby",
+            "min-number-of-instances": "1",
+            "max-number-of-instances": "1",
+            "affinity-or-anti-affinity-group": [
+              {
+                "id": "control-plane"
+              }
+            ]
+          },
+          {
+            "id": "data-plane",
+            "min-number-of-instances": "2",
+            "max-number-of-instances": "8"
+          }
+        ],
+        "instantiation-level": [
+          {
+            "id": "il-1",
+            "vdu-level": [
+              {
+                "vdu-id": "control-plane-active",
+                "number-of-instances": "1"
+              },
+              {
+                "vdu-id": "control-plane-standby",
+                "number-of-instances": "1"
+              },
+              {
+                "vdu-id": "data-plane",
+                "number-of-instances": "2"
+              }
+            ]
+          },
+          {
+            "id": "il-2",
+            "vdu-level": [
+              {
+                "vdu-id": "control-plane-active",
+                "number-of-instances": "1"
+              },
+              {
+                "vdu-id": "control-plane-standby",
+                "number-of-instances": "1"
+              },
+              {
+                "vdu-id": "data-plane",
+                "number-of-instances": "4"
+              }
+            ]
+          }
+        ],
+        "default-instantiation-level": "il-1",
+        "lcm-operations-configuration": {
+          "scale-vnf-to-level-op-config": {
+            "arbitrary-target-levels-supported": "true"
+          },
+          "terminate-vnf-op-config": {
+            "min-graceful-termination": "1"
+          },
+          "operate-vnf-op-config": {
+            "min-graceful-stop-timeout": "1"
+          }
+        },
+        "affinity-or-anti-affinity-group": [
+          {
+            "id": "control-plane",
+            "type": "anti-affinity",
+            "scope": "nfvi-node"
+          }
+        ]
+      },
+      {
+        "id": "silver",
+        "vdu-profile": [
+          {
+            "id": "control-plane-active",
+            "min-number-of-instances": "1",
+            "max-number-of-instances": "1",
+            "affinity-or-anti-affinity-group": [
+              {
+                "id": "control-plane"
+              }
+            ]
+          },
+          {
+            "id": "control-plane-standby",
+            "min-number-of-instances": "1",
+            "max-number-of-instances": "1",
+            "affinity-or-anti-affinity-group": [
+              {
+                "id": "control-plane"
+              }
+            ]
+          },
+          {
+            "id": "data-plane",
+            "min-number-of-instances": "1",
+            "max-number-of-instances": "4"
+          }
+        ],
+        "instantiation-level": [
+          {
+            "id": "il-1",
+            "vdu-level": [
+              {
+                "vdu-id": "control-plane-active",
+                "number-of-instances": "1"
+              },
+              {
+                "vdu-id": "control-plane-standby",
+                "number-of-instances": "1"
+              },
+              {
+                "vdu-id": "data-plane",
+                "number-of-instances": "1"
+              }
+            ]
+          },
+          {
+            "id": "il-2",
+            "vdu-level": [
+              {
+                "vdu-id": "control-plane-active",
+                "number-of-instances": "1"
+              },
+              {
+                "vdu-id": "control-plane-standby",
+                "number-of-instances": "1"
+              },
+              {
+                "vdu-id": "data-plane",
+                "number-of-instances": "2"
+              }
+            ]
+          }
+        ],
+        "default-instantiation-level": "il-1",
+        "lcm-operations-configuration": {
+          "scale-vnf-to-level-op-config": {
+            "arbitrary-target-levels-supported": "true"
+          },
+          "terminate-vnf-op-config": {
+            "min-graceful-termination": "1"
+          },
+          "operate-vnf-op-config": {
+            "min-graceful-stop-timeout": "1"
+          }
+        },
+        "affinity-or-anti-affinity-group": [
+          {
+            "id": "control-plane",
+            "type": "anti-affinity",
+            "scope": "nfvi-node"
+          }
+        ]
+      }
+    ]
+  }
+}

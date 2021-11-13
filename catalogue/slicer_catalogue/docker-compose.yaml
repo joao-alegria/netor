@@ -1,0 +1,25 @@
+version: "3.6"
+
+services:
+  catalogues:
+    build: ./
+    restart: always
+    ports:
+      - 5010:5010
+
+    environment:
+      APPLICATION_NAME: catalogues
+      MONGO_USERNAME: catalogues
+      MONGO_PASSWORD: catalogues
+      MONGO_URL: mongo1
+      MONGO_DB: catalogues
+      SECRET_KEY: wz3DefHxgQTElMvACRAs1KgAUDPHgTqq
+      RABBIT_HOST: rabbitmq
+      RABBIT_USERNAME: admin
+      RABBIT_PASSWORD: admin
+      IDP_IP: netor_tenant
+      IDP_PORT: 5002
+      IDP_ENDPOINT: /validate
+
+
+

@@ -5,11 +5,11 @@ COPY . .
 RUN apt-get update
 RUN apt-get -y install \
     python3.8 \
-    python3-pip \
-    libpq-dev \
-    libcurl4-openssl-dev \
-    libssl-dev \
-    curl
+    python3-pip=9.0.* \
+    libpq-dev=10.* \
+    libcurl4-openssl-dev=7.58.* \
+    libssl-dev=1.1.* \
+    curl=7.58.*
 
 ARG PYTHON3_OSMCLIENT_URL
 ARG PYTHON3_OSM_IM_URL
