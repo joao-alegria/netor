@@ -1,9 +1,15 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Vertical Service Catalogue API",
+    "title": "Vertical Service Catalogueee API",
     "version": "1.0.0"
   },
+  "servers": [
+    {
+      "url": "https://virtserver.swaggerhub.com/Rafaelyot/VSB_catalogue/1.0.0",
+      "description": "SwaggerHub API Auto Mocking"
+    }
+  ],
   "security": [
     {
       "implicit": [
@@ -390,8 +396,26 @@
       "body_1": {
         "type": "object",
         "properties": {
-          "VsBlueprint": {
+          "translations_rules": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "available_actions": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "vs_blueprint": {
             "type": "object"
+          },
+          "nsts": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
           }
         }
       },
