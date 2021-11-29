@@ -3,6 +3,7 @@ from flasgger import Swagger, validate
 import service as domainService
 from api.loginConfig import loginManager, login_required
 from flask_cors import CORS, cross_origin
+import requests
 
 app = Flask(__name__)
 CORS(app)
@@ -68,6 +69,11 @@ def createNewDomain():
     db_domain = domainService.getOsmDomain(data['ownedLayers'][0]['domainLayerId'])
     if(db_domain['username'] == data['ownedLayers'][0]['username'] and db_domain['password'] == data['ownedLayers'][0]['password'] and db_domain['project'] == data['ownedLayers'][0]['project']):
         return jsonify({"message":"Error: domain already exists"}),500
+
+    r = requests.post("http://10.0.12.216/osm/admin/v1/tokens", data = {"username": data['ownedLayers'][0]['username'], "password": data['ownedLayers'][0]['password'], "project_id": data['ownedLayers'][0]['project']})
+
+    if r.status_code != 200:
+        return jsonify({"message":"Error: Unauthorized"}),401
 
     try:
         domainService.createDomain(data)
