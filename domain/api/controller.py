@@ -63,6 +63,12 @@ def createNewDomain():
 
     data=request.json
     validate(data, 'Domain', 'definitions.yaml')
+
+    # check if domain already exists in db
+    db_domain = domainService.getOsmDomain(data['ownedLayers'][0]['domainLayerId'])
+    if(db_domain['username'] == data['ownedLayers'][0]['username'] and db_domain['password'] == data['ownedLayers'][0]['password'] and db_domain['project'] == data['ownedLayers'][0]['project']):
+        return jsonify({"message":"Error: domain already exists"}),500
+
     try:
         domainService.createDomain(data)
         return jsonify({"message":"Success"}),200
