@@ -179,7 +179,6 @@ def _on_board_ns_template(nst, nsds, vnf_packages):
                 'args': (all_nsd_data,)
             }
         ]
-    print(nst)
     nst_name, nst_version, nst_id = nst.get('nst_name'), nst.get('nst_version'), nst.get('nst_id')
     if Nst.objects.filter((Q(nst_name=nst_name) & Q(nst_version=nst_version)) | Q(nst_id=nst_id)).count() > 0:
         print(Nst.objects.filter((Q(nst_name=nst_name) & Q(nst_version=nst_version)) | Q(nst_id=nst_id)).count())
