@@ -10,12 +10,24 @@ from flask_mongoengine import MongoEngine
 from rabbitmq.messaging import MessageReceiver
 from api.auth import loginManager
 from flask_cors import CORS
+from flask_swagger_ui import get_swaggerui_blueprint
 
 APPLICATION_NAME = os.environ.get('APPLICATION_NAME', 'catalogues')
 
 
 def init_flask():
     app = Flask(APPLICATION_NAME)
+    SWAGGER_URL = '/apidocs'
+    # API_URL = 'templates/swagger.json'
+    print(app.root_path)
+    API_URL = '/static/documentation.json'
+    SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
+        SWAGGER_URL,
+        API_URL,
+        config={
+            'app_name': "Catalogue API"
+        }
+    )
     CORS(app)
 
     # Configurations settings
@@ -24,6 +36,9 @@ def init_flask():
     # Register flask's blueprints
     app.register_blueprint(vs_blueprint_api)
     app.register_blueprint(vs_descriptor_api)
+
+    #Register SwaggerUI Blueprint
+    app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
 
     #  Connect database
     db = MongoEngine()
