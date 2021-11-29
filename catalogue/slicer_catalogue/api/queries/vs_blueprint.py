@@ -1,3 +1,4 @@
+import logging
 import api.queries.vs_descriptor as vs_descriptor_queries
 import uuid
 from bson import ObjectId
@@ -178,11 +179,10 @@ def _on_board_ns_template(nst, nsds, vnf_packages):
                 'args': (all_nsd_data,)
             }
         ]
-
     nst_name, nst_version, nst_id = nst.get('nst_name'), nst.get('nst_version'), nst.get('nst_id')
     if Nst.objects.filter((Q(nst_name=nst_name) & Q(nst_version=nst_version)) | Q(nst_id=nst_id)).count() > 0:
         raise AlreadyExistingEntityException(
-            f"NsTemplate with name {nst_name} and version {nst_version} or ID exists")
+            f"NsTemplate with name {nst_name} and version {nst_version} or ID {nst_id} exists")
 
     if len(nst) > 0:
         transaction_data += [
@@ -219,9 +219,13 @@ def _create_vs_blueprint(data):
 
     name, version, owner = vs_blueprint.get('name'), vs_blueprint.get('version'), data.get('owner')
 
+    blueprints = VsBlueprint.objects.filter(name=name, version=version)
+
     if VsBlueprintInfo.objects.filter(name=name, vs_blueprint_version=version).count() > 0 or \
-            VsBlueprint.objects.filter(name=name, version=version).count() > 0:
-        class_name, args = exception_message_elements(VsBlueprint, name=name, version=version)
+           blueprints.count() > 0:
+        blueprint_id =blueprints.first().blueprint_id
+        class_name, args = exception_message_elements(VsBlueprint, name=name, blueprint_id=blueprint_id,\
+            version=version)
         raise AlreadyExistingEntityException(f"{class_name} with {args} already present in DB")
 
     _id = ObjectId()

@@ -1,0 +1,470 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Vertical Service Catalogueee API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://virtserver.swaggerhub.com/Rafaelyot/VSB_catalogue/1.0.0",
+      "description": "SwaggerHub API Auto Mocking"
+    }
+  ],
+  "security": [
+    {
+      "implicit": [
+        "read",
+        "write"
+      ]
+    }
+  ],
+  "paths": {
+    "/vsblueprint": {
+      "get": {
+        "summary": "Get ALL the Vertical Service Blueprints",
+        "description": "Get all the Vertical Service Blueprints",
+        "responses": {
+          "200": {
+            "description": "List of all the Vertical Service Blueprints"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new Vertical Service Blueprints",
+        "description": "Create a new Vertical Service Blueprints as an admin",
+        "requestBody": {
+          "description": "Vertical Service Blueprints Object attributes",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Vertical Service Blueprints created with success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/vsblueprint/{vsbId}": {
+      "get": {
+        "summary": "Get a Vertical Service Blueprint with a given ID",
+        "description": "Get a Vertical Service Blueprint with a given ID",
+        "parameters": [
+          {
+            "name": "vsbId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The Vertical Service Blueprint"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a Vertical Service Blueprint with a given ID as an admin",
+        "description": "Update a Vertical Service Blueprint with a given ID as an admin",
+        "parameters": [
+          {
+            "name": "vsbId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Vertical Service Blueprints Object attributes",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/body_1"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Vertical Service Blueprint updated with success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a Vertical Service Blueprint with a given ID as an admin",
+        "description": "Delete a Vertical Service Blueprint with a given ID as an admin",
+        "parameters": [
+          {
+            "name": "vsbId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vertical Service Blueprint deleted with success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/vsdescriptor": {
+      "get": {
+        "summary": "Get ALL the Vertical Service Descriptors",
+        "description": "Get all the Vertical Service Descriptors",
+        "responses": {
+          "200": {
+            "description": "List of all the Vertical Service Descriptors"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new Vertical Service Descriptor",
+        "description": "Create a new Vertical Service Descriptor as an admin",
+        "requestBody": {
+          "description": "Vertical Service Descriptor Object attributes",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/body_2"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Vertical Service Descriptor created with success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/vsdescriptor/{vsdId}": {
+      "get": {
+        "summary": "Get a Vertical Service Descriptor with a given ID",
+        "description": "Get a Vertical Service Descriptor with a given ID",
+        "parameters": [
+          {
+            "name": "vsdId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The Vertical Service Descriptor"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a Vertical Service Descriptor with a given ID as an admin",
+        "description": "Update a Vertical Service Descriptor with a given ID as an admin",
+        "parameters": [
+          {
+            "name": "vsdId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Vertical Service Descriptor Object attributes",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/body_3"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Vertical Service Descriptor updated with success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a Vertical Service Descriptor with a given ID as an admin",
+        "description": "Delete a Vertical Service Descriptor with a given ID as an admin",
+        "parameters": [
+          {
+            "name": "vsdId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vertical Service Descriptor deleted with success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/nstemplate": {
+      "get": {
+        "summary": "Get ALL NS Templates",
+        "description": "Get all NS Templates",
+        "responses": {
+          "200": {
+            "description": "List of all NS Templates"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new NS Template",
+        "description": "Create a new NS Template as an admin",
+        "requestBody": {
+          "description": "NS Template Object attributes",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/body_4"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "NS Template created with success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/nstemplate/{nstId}": {
+      "get": {
+        "summary": "Get a NS Template with a given ID",
+        "description": "Get a NS Template with a given ID",
+        "parameters": [
+          {
+            "name": "nstId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The NS Template"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a NS Template with a given ID as an admin",
+        "description": "Update a NS Template with a given ID as an admin",
+        "parameters": [
+          {
+            "name": "nstId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "NS Template Object attributes",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/body_5"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "NS Template updated with success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a NS Template with a given ID as an admin",
+        "description": "Delete a NS Template with a given ID as an admin",
+        "parameters": [
+          {
+            "name": "nstId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "NS Template deleted with success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "body": {
+        "type": "object",
+        "properties": {
+          "VsBlueprint": {
+            "type": "object"
+          }
+        }
+      },
+      "body_1": {
+        "type": "object",
+        "properties": {
+          "translations_rules": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "available_actions": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "vs_blueprint": {
+            "type": "object"
+          },
+          "nsts": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "body_2": {
+        "type": "object",
+        "properties": {
+          "VsDescriptor": {
+            "type": "object"
+          }
+        }
+      },
+      "body_3": {
+        "type": "object",
+        "properties": {
+          "VsDescriptor": {
+            "type": "object"
+          }
+        }
+      },
+      "body_4": {
+        "type": "object",
+        "properties": {
+          "NSTemplate": {
+            "type": "object"
+          }
+        }
+      },
+      "body_5": {
+        "type": "object",
+        "properties": {
+          "NSTemplate": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "implicit": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "http://example.com/oauth/auth",
+            "scopes": {
+              "write": "allows modifying resources",
+              "read": "allows reading resources"
+            }
+          }
+        }
+      }
+    }
+  }
+}

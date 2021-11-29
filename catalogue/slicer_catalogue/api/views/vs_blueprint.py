@@ -15,7 +15,6 @@ app = Blueprint('vsblueprint', __name__)
 
 handle_exception(app)  # Handle errors
 
-
 @app.route('/vsblueprint', methods=('GET',))
 @login_required
 def get_vs_blueprints():
@@ -54,7 +53,7 @@ def create_vs_blueprint():
         raise BadVsBlueprintBody(error.messages)
 
     vs_blueprint_id = queries.create_vs_blueprint(validated_data)
-
+    
     return response_template('Success', data={'vs_blueprint_id': vs_blueprint_id}, status_code=HTTPStatus.CREATED)
 
 
