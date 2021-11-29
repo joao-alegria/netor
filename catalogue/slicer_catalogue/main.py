@@ -19,7 +19,6 @@ def init_flask():
     app = Flask(APPLICATION_NAME)
     SWAGGER_URL = '/apidocs'
     # API_URL = 'templates/swagger.json'
-    print(app.root_path)
     API_URL = '/static/documentation.json'
     SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
         SWAGGER_URL,
