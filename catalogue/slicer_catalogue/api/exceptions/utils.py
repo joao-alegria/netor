@@ -27,6 +27,6 @@ def exception_message_elements(cls, **kwargs):
 
     args = []
     for arg_name, arg_value in kwargs.items():
-        args += [arg_name, str(arg_value)]
-
-    return class_name, " ".join(args)
+        args += [f"{arg_name} {str(arg_value)}"]
+    
+    return class_name, ", ".join(args)

@@ -51,6 +51,7 @@ def create_vs_blueprint():
     try:
         validated_data = serializer.load(request_data)
     except ValidationError as error:
+        print(error.messages)
         raise BadVsBlueprintBody(error.messages)
 
     vs_blueprint_id = queries.create_vs_blueprint(validated_data)
