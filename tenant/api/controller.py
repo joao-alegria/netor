@@ -113,6 +113,8 @@ def getAllGroups():
     """
     Return all the Groups in the system
     ---
+    tags:
+      - groups
     responses:
         200:
             description: returns a list with all the groups in the system
@@ -135,6 +137,8 @@ def createNewGroup():
     """
     Creates a new Group
     ---
+    tags:
+      - groups
     requestBody:
         content:
             application/json:
@@ -163,6 +167,8 @@ def getGroupById(groupId):
     """
     Returns the Group requested
     ---
+    tags:
+      - groups
     responses:
         200:
             description: returns the group indicated
@@ -183,6 +189,8 @@ def modifyGroup(groupId):
     """
     Modifies the Group indicated
     ---
+    tags:
+      - groups
     responses:
         200:
             description: acknowledges the request
@@ -203,6 +211,8 @@ def removeGroup(groupId):
     """
     Deletes the Group indicated and the attached tenants
     ---
+    tags:
+      - groups
     responses:
         200:
             description: acknowledges the request
@@ -223,6 +233,8 @@ def getAllTenants():
     """
     Return all the Tenants in the system
     ---
+    tags:
+      - tenants
     responses:
         200:
             description: returns a list with all the tenants in the system
@@ -245,6 +257,8 @@ def createNewTenant():
     """
     Creates a new Tenant
     ---
+    tags:
+      - tenants
     requestBody:
         content:
             application/json:
@@ -273,6 +287,8 @@ def getTenantById(tenantId):
     """
     Returns the Tenant requested
     ---
+    tags:
+      - tenants
     responses:
         200:
             description: returns the tenant indicated
@@ -293,6 +309,8 @@ def modifyTenant(tenantId):
     """
     Modifies the Tenant indicated
     ---
+    tags:
+      - tenant
     responses:
         200:
             description: acknowledges the request
@@ -313,6 +331,8 @@ def removeTenant(tenantId):
     """
     Deletes the Tenant indicated and the attached tenants
     ---
+    tags:
+      - tenant
     responses:
         200:
             description: acknowledges the request
