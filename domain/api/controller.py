@@ -68,13 +68,19 @@ def createNewDomain():
 
     # check if domain already exists in db
     db_domain = domainService.getOsmDomain(data['ownedLayers'][0]['domainLayerId'])
-    if(db_domain['username'] == data['ownedLayers'][0]['username'] and db_domain['password'] == data['ownedLayers'][0]['password'] and db_domain['project'] == data['ownedLayers'][0]['project']):
-        return jsonify({"message":"Error: domain already exists"}),500
+    if db_domain:
+        if(db_domain['username'] == data['ownedLayers'][0]['username'] and db_domain['password'] == data['ownedLayers'][0]['password']\
+        and db_domain['project'] == data['ownedLayers'][0]['project']):
+            return jsonify({"message":"Error: domain already exists"}),500
 
-    r = requests.post(OSM_IP + "/admin/v1/tokens", data = {"username": data['ownedLayers'][0]['username'], "password": data['ownedLayers'][0]['password'], "project_id": data['ownedLayers'][0]['project']})
-
-    if r.status_code != 200:
-        return jsonify({"message":"Error: Unauthorized"}),401
+    try:
+        r = requests.post(f"http://{data['url']}/osm/admin/v1/tokens", data = {"username": data['ownedLayers'][0]['username'], \
+            "password": data['ownedLayers'][0]['password'], "project_id": data['ownedLayers'][0]['project']}, timeout=15)
+        r.raise_for_status()
+    except requests.exceptions.ConnectionError as e:
+        return jsonify({'message': f"Error: Could not connect to {data['url']}"})
+    except Exception as e:
+        return jsonify({"message":f"Error: {e}"}),400
 
     try:
         domainService.createDomain(data)
