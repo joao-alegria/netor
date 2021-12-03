@@ -8,7 +8,6 @@ loginManager=LoginManager()
 @loginManager.user_loader
 def user_loader(username):
     user = DB.session.query(Tenant).filter(Tenant.username==username).first()
-    g.user=user
     return user
 
 @loginManager.request_loader
@@ -27,7 +26,6 @@ def request_loader(request):
             user=DB.session.query(Tenant).filter(Tenant.username==data[0]).first()
         except TypeError:
             pass
-    g.user=user
     return user
 
 @loginManager.unauthorized_handler

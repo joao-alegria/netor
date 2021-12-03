@@ -71,14 +71,14 @@ def createNewDomain():
     if db_domain:
         if(db_domain['username'] == data['ownedLayers'][0]['username'] and db_domain['password'] == data['ownedLayers'][0]['password']\
         and db_domain['project'] == data['ownedLayers'][0]['project']):
-            return jsonify({"message":"Error: domain already exists"}),500
+            return jsonify({"message":f"Error: domain with Id {db_domain['domainId']} already exists"}),409
 
     try:
         r = requests.post(f"http://{data['url']}/osm/admin/v1/tokens", data = {"username": data['ownedLayers'][0]['username'], \
             "password": data['ownedLayers'][0]['password'], "project_id": data['ownedLayers'][0]['project']}, timeout=15)
         r.raise_for_status()
     except requests.exceptions.ConnectionError as e:
-        return jsonify({'message': f"Error: Could not connect to {data['url']}"})
+        return jsonify({'message': f"Error: Could not connect to {data['url']}"}),400
     except Exception as e:
         return jsonify({"message":f"Error: {e}"}),400
 
