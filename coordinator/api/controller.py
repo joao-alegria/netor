@@ -115,9 +115,10 @@ def modifyVs(vsiId):
     try:
         data=request.json
         vsService.modifyVSI(current_user.name, vsiId, data)
-        return jsonify({"message":"Success"}),200
+        return prepare_response(message=f"Sucess updating VS with Id {vsiId}")
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        message = f"Error Updating VS With Id {vsiId}: {e}"
+        return prepare_response(message=message, status_code=400)
 
 @app.route('/vs/<vsiId>', methods=["DELETE"])
 @login_required

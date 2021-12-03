@@ -5,7 +5,7 @@ import logging
 from rabbitmq.adaptor import Messaging
 from datetime import datetime, timedelta
 import json
-
+from api.exception import CustomException
 def getAllGroups():
     schema=schemas.GroupSchema()
     groups=persistance.DB.session.query(persistance.Group).all()
@@ -18,14 +18,18 @@ def createGroup(tenantName, groupData):
     if tenantName != "admin":
         raise Exception("Invalid user. No permissions to create a new Group.")
     schema=schemas.GroupSchema()
+    if getGroupById(groupData['name']) != {}:
+        raise CustomException(message=f"Invalid Group. There is already a group with the name {groupData['name']}",status_code=403)
     group=schema.load(groupData, session=persistance.DB.session)
     persistance.DB.persist(group)
-    #TODO verifications
+    return schema.dump(group)
 
 def getGroupById(groupName):
     schema=schemas.GroupSchema()
     group=persistance.DB.session.query(persistance.Group).filter(persistance.Group.name==groupName).first()
     return schema.dump(group)
+
+
 
 def modifyGroup(groupName):
     schema=schemas.GroupSchema()
