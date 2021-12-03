@@ -71,7 +71,7 @@ def createNewDomain():
     if db_domain:
         if(db_domain['username'] == data['ownedLayers'][0]['username'] and db_domain['password'] == data['ownedLayers'][0]['password']\
         and db_domain['project'] == data['ownedLayers'][0]['project']):
-            return jsonify({"message":"Error: domain already exists"}),409
+            return jsonify({"message":f"Error: domain with Id {db_domain['domainId']} already exists"}),409
 
     try:
         r = requests.post(f"{data['url']}/admin/v1/tokens", data = {"username": data['ownedLayers'][0]['username'], \
