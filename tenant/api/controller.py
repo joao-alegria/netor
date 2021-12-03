@@ -53,7 +53,10 @@ def load_current_user():
     if "Authorization" in request.headers:
         token=request.headers["Authorization"].replace("Bearer ","")
         token=DB.session.query(OauthToken).filter(OauthToken.access_token==token).first()
-        g.user = token.user
+        if token:
+            g.user = token.user
+        else:
+            g.user = None
     else:
         g.user=None
 

@@ -1,9 +1,0 @@
-includes:
-- layer:basic
-- layer:options
-- layer:sshproxy
-- layer:vnfproxy
-exclude: [".travis.yml", "tests", "tox.ini", "test-requirements.txt", "unit_tests"]
-options:
-  basic:
-    use_venv: false

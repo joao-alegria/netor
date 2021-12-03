@@ -1,0 +1,36 @@
+# layer:basic
+# pip is pinned to <19.0 to avoid https://github.com/pypa/pip/issues/6164
+# even with installing setuptools before upgrading pip ends up with pip seeing
+# the older setuptools at the system level if include_system_packages is true
+pip>=18.1,<19.0
+# pin Jinja2 and PyYAML to the last versions supporting python 3.4 for trusty
+Jinja2<=2.10.1
+PyYAML<=5.2
+setuptools<42
+setuptools-scm<=1.17.0
+charmhelpers>=0.4.0,<1.0.0
+charms.reactive>=0.1.0,<2.0.0
+wheel<0.34
+# pin netaddr to avoid pulling importlib-resources
+netaddr<=0.7.19
+
+# layer:sshproxy
+##
+# Copyright 2016 Canonical Ltd.
+# All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+##
+
+paramiko>=1.16.0,<1.17
+

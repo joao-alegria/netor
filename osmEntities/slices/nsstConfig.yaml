@@ -1,9 +1,0 @@
-netslice-subnet:
-- id: interdomain-tunnel-peer
-  additionalParamsForVnf:
-  - member-vnf-index: "1"
-    additionalParams:
-      use_data_interfaces: "false"
-      tunnel_address: "10.100.100.1/24"
-      tunnel_id: "1"
-      vsi_id: "10"

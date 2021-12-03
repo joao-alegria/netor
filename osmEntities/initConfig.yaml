@@ -1,9 +1,0 @@
-additionalParamsForVnf:
-- member-vnf-index: "1"
-  additionalParams:
-    tunnel_address: "10.0.0.1/24"
-    tunnel_id: "1"
-- member-vnf-index: "2"
-  additionalParams:
-    tunnel_address: "10.0.0.2/24"
-    tunnel_id: "2"
