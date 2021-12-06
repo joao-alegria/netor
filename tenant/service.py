@@ -14,12 +14,23 @@ def getAllGroups():
         groupsDict.append(schema.dump(group))
     return groupsDict
 
+
+def has_valid_role(tenantName, check_admin=False):
+    tenant = getTenantById(tenantName)
+    if tenant == {}:
+        return False    
+    role = tenant['role']
+    if check_admin:
+        return role == 'ADMIN'
+    return role == 'ADMIN' or role == 'TENANT'
+    
+
 def createGroup(tenantName, groupData):
-    if tenantName != "admin":
-        raise Exception("Invalid user. No permissions to create a new Group.")
+    if not has_valid_role(tenantName):
+        raise CustomException("Invalid user. No permissions to create a new Group.", status_code=401)
     schema=schemas.GroupSchema()
-    if getGroupById(groupData['name']) != {}:
-        raise CustomException(message=f"Invalid Group. There is already a group with the name {groupData['name']}",status_code=403)
+    if getGroupById(groupData['name']):
+        raise CustomException(message=f"Invalid Group. There is already a group with the name {groupData['name']}",status_code=409)
     group=schema.load(groupData, session=persistance.DB.session)
     persistance.DB.persist(group)
     return schema.dump(group)
@@ -27,13 +38,15 @@ def createGroup(tenantName, groupData):
 def getGroupById(groupName):
     schema=schemas.GroupSchema()
     group=persistance.DB.session.query(persistance.Group).filter(persistance.Group.name==groupName).first()
+    if not group:
+        return None
     return schema.dump(group)
-
 
 
 def modifyGroup(groupName):
     schema=schemas.GroupSchema()
     group=persistance.DB.session.query(persistance.Group).filter(persistance.Group.name==groupName).first()
+
     return schema.dump(group)
 
 def removeGroup(groupName):
@@ -41,12 +54,12 @@ def removeGroup(groupName):
     #TODO: add deletion verification
     persistance.DB.delete(group)
 
-def getAllTenants():
+def getAllTenants(tenantName):
+    if not has_valid_role(tenantName,check_admin=True):
+         raise CustomException("Invalid User. Can not obtains Tenants Informations.", status_code=401)
     schema=schemas.TenantSchema()
     tenants=persistance.DB.session.query(persistance.Tenant).all()
-    tenantsDict=[]
-    for tenant in tenants:
-        tenantsDict.append(schema.dump(tenant))
+    tenantsDict=[schema.dump(tenant) for tenant in tenants]
     return tenantsDict
 
 def createTenant(tenantName, tenantData):
@@ -73,6 +86,7 @@ def getTenantById(tenantName):
     schema=schemas.TenantSchema()
     tenant=persistance.DB.session.query(persistance.Tenant).filter(persistance.Tenant.username==tenantName).first()
     return schema.dump(tenant)
+
 
 def addVsiToTenant(tenantName, vsiId):
     vsi=persistance.VSI(id=vsiId, tenantUsername=tenantName)

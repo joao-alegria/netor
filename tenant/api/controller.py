@@ -7,6 +7,7 @@ import service
 from api.loginConfig import loginManager, loginUser
 from flask_cors import CORS, cross_origin
 import logging
+from api.utils import prepare_response
 
 app = Flask(__name__)
 CORS(app)
@@ -96,16 +97,16 @@ def revoke_token():
 def validateToken():
     try:
         tenant=service.getTenantById(request.oauth.user.username)
-        return jsonify({"message":"Success", "data":tenant}),200
+        return prepare_response(message="Success",data=tenant)
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        return prepare_response(message=f"Error: {e}", status_code=403)
 
 @oauth.invalid_response
 def require_oauth_invalid(req):
     try:
-        return jsonify(message=req.error_message), 401
+        return prepare_response(message=req.error_message,status_code= 401)
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        return prepare_response(message=f"Error: {e}",status_code=500)
 
 
 #-----------------TENANT API---------------------------
@@ -130,9 +131,9 @@ def getAllGroups():
     """
     try:
         groups=service.getAllGroups()
-        return jsonify({"message":"Success", "data":groups}),200
+        return prepare_response(message="Success getting all Groups",data=groups)
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        return prepare_response(message=f"Error getting all Groups: {e}",status_code=400)
 
 @app.route('/group', methods=["POST"])
 @oauth.require_oauth()
@@ -159,10 +160,11 @@ def createNewGroup():
     data=request.json
     validate(data, 'Group', 'definitions.yaml')
     try:
-        service.createGroup(request.oauth.user.username,data)
-        return jsonify({"message":"Success"}),200
+        group = service.createGroup(request.oauth.user.username,data)
+        return prepare_response(message="Success creating new Group", data=group)
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        message = f"Error creating new Group: {e.message}"
+        return prepare_response(message=message,status_code=e.status_code)
 
 @app.route('/group/<groupId>', methods=["GET"])
 @oauth.require_oauth()
@@ -182,9 +184,12 @@ def getGroupById(groupId):
     """
     try:
         group=service.getGroupById(groupId)
-        return jsonify({"message":"Success", "data":group}),200
+        if not group:
+            return prepare_response(message=f"Could not find group with id {groupId}", status_code=404)
+        return prepare_response(message="Success", data=group)
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        message = f"Error obtaining Group with id {groupId}: {e}"
+        return prepare_response(message=message, status_code=400)
 
 @app.route('/group/<groupId>', methods=["PUT"])
 @oauth.require_oauth()
@@ -206,7 +211,8 @@ def modifyGroup(groupId):
         service.modifyGroup(groupId)
         return jsonify({"message":"Success"}),200
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        message = f"Error modifying Group with id {groupId}: {e}"
+        return prepare_response(message=message, status_code=400)
 
 @app.route('/group/<groupId>', methods=["DELETE"])
 @oauth.require_oauth()
