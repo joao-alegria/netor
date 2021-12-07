@@ -161,7 +161,7 @@ def createNewGroup():
     validate(data, 'Group', 'definitions.yaml')
     try:
         group = service.createGroup(request.oauth.user.username,data)
-        return prepare_response(message="Success creating new Group", data=group)
+        return prepare_response(message="Success creating new Group", data=group, status_code=201)
     except Exception as e:
         message = f"Error creating new Group: {e.message}"
         return prepare_response(message=message,status_code=e.status_code)
@@ -209,7 +209,7 @@ def modifyGroup(groupId):
     """
     try:
         service.modifyGroup(groupId)
-        return jsonify({"message":"Success"}),200
+        return prepare_response(message=f"Success modifiying Group with id {groupId}")
     except Exception as e:
         message = f"Error modifying Group with id {groupId}: {e}"
         return prepare_response(message=message, status_code=400)
@@ -255,10 +255,12 @@ def getAllTenants():
                             $ref: '#/definitions/Tenant'
     """
     try:
-        tenants=service.getAllTenants()
-        return jsonify({"message":"Success", "data":tenants}),200
+        tenantName = request.oauth.user.username
+        tenants=service.getAllTenants(tenantName)
+        return prepare_response(message="Success getting all Tenants",data=tenants)
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        message = f"Error getting all Tenants: {e.message}"
+        return prepare_response(message=message,status_code=e.status_code)
 
 @app.route('/tenant', methods=["POST"])
 @oauth.require_oauth()
@@ -285,10 +287,11 @@ def createNewTenant():
     data=request.json
     validate(data, 'Tenant', 'definitions.yaml')
     try:
-        service.createTenant(request.oauth.user.username,data)
-        return jsonify({"message":"Success"}),200
+        tenant = service.createTenant(request.oauth.user.username,data)
+        return prepare_response(message="Success creating new Tenant", data=tenant, status_code=201)
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        message = f"Error creating Tenant: {e.message}"
+        return prepare_response(message=message, status_code=e.status_code)
 
 @app.route('/tenant/<tenantId>', methods=["GET"])
 @oauth.require_oauth()
@@ -307,10 +310,12 @@ def getTenantById(tenantId):
                         $ref: '#/definitions/Tenant'
     """
     try:
-        tenant=service.getTenantById(tenantId)
-        return jsonify({"message":"Success", "data":tenant}),200
+        tenant=service.getTenant(current_user=request.oauth.user.username,tenantName=tenantId)
+        if not tenant:
+            return prepare_response(message=f"Could not find Tenant with id {tenantId}", status_code=404)
+        return prepare_response(message=f"Success getting Tenant with id {tenantId}", data=tenant)
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        return prepare_response(message=f"Error getting getting Tenant with id {tenantId}: {e.message}",status_code=e.status_code)
 
 @app.route('/tenant/<tenantId>', methods=["PUT"])
 @oauth.require_oauth()
@@ -351,6 +356,10 @@ def removeTenant(tenantId):
                         $ref: '#/definitions/Acknowledge'
     """
     try:
-        return jsonify(service.removeTenant(tenantId)),200
+        tenant = service.removeTenant(current_user=request.oauth.user.username,tenantName=tenantId)
+        if not tenant:
+            return prepare_response(message=f"Could not find Tenant with id {tenantId}",status_code=404)
+        return prepare_response(message=f"Success deleting Tenant with {tenantId}")
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        message = f"Error Deleting Tenant with {tenantId}: {e.message}"
+        return prepare_response(message=message,status_code=e.status_code)
