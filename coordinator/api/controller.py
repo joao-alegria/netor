@@ -68,11 +68,10 @@ def createNewVS():
     validate(data, 'VS', 'definitions.yaml')
     try:
         vsi=vsService.createNewVS(current_user.name,data)
-        print(current_user)
-        return prepare_response(message="Success creating new VS", data=[{'vsiId':vsi}])
+        return prepare_response(message="Success creating new VS", data=vsi)
     except Exception as e:
-        message = f"Error creating new VS: {e}"
-        return prepare_response(message=message, status_code=400)
+        message = f"Error creating new VS: {e.message}"
+        return prepare_response(message=message, status_code=e.status_code)
 
 @app.route('/vs/<vsiId>', methods=["GET"])
 @login_required
@@ -91,6 +90,8 @@ def getVSById(vsiId):
 
     try:
         vsi=vsService.getVSI(current_user.name, vsiId)
+        if not vsi:
+            return prepare_response(message=f"VS With Id {vsiId} does not exist", status_code=404)
         return prepare_response(message="Success Getting VS",data=vsi)
         
     except Exception as e:
