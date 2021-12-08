@@ -206,13 +206,13 @@ services:
       IDP_ENDPOINT: /validate
       ENVIRONMENT: prod
 
-  netor_portal:
-    image: netor/portal
-    restart: always
-    ports:
-      - '4200:4200'
-    environment:
-      NETOR_ENDPOINT: netor_up_nginx
+  # netor_portal:
+  #   image: netor/portal
+  #   restart: always
+  #   ports:
+  #     - '4200:4200'
+  #   environment:
+  #     NETOR_ENDPOINT: netor_up_nginx
 
 volumes:
   thesisPostgresVolume:
