@@ -4,16 +4,36 @@ import db.schemas as schemas
 from rabbitmq.adaptor import Messaging
 import json
 import logging
+import config
+import requests
 from api.exception import CustomException
-def createNewVS(tenantName,request):
+
+
+def getCatalogueVSdInfo(token, vsd_id):
+    VSD_ENDPOINT=f"http://{config.CATALOGUE_IP}vsdescriptor?vsd_id={vsd_id}"
+    try:
+        r = requests.get(VSD_ENDPOINT,
+        headers={'Authorization': f"{token}"},
+         timeout=15)
+        r.raise_for_status()
+    except requests.exceptions.ConnectionError as e:
+        raise CustomException(message="Could not connect to the Catalogue", status_code=404)
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == 404:
+            raise CustomException(message="Could not find any vs descriptor with id {vsd_id}")
+        raise CustomException(message="Something went wrong", status_code=e.response.status_code)
+    return r.status_code
+    
+
+def createNewVS(token,tenantName,request):
     messaging=Messaging()
     vsi = getVSI(tenantName, request['vsiId'])
     if vsi:
         vsiId = request["vsiId"]
         message = f"VS with  with VSiId {vsiId} already exists"
         raise CustomException(message=message, status_code=400)
+    getCatalogueVSdInfo(token,request['vsdId'])
     
-
     #TODO: Verify if both Domains exist
 
     schema = schemas.VerticalServiceInstanceSchema()
