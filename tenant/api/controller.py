@@ -335,9 +335,9 @@ def modifyTenant(tenantId):
     """
     try:
         service.modifyTenant(tenantId)
-        return jsonify({"message":"Success"}),200
+        return prepare_response(message=f"Success modifying Tenant with Id {tenantId}")
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        return prepare_response(message=f"Success modifying Tenant with Id {tenantId}",status_code=400)
 
 @app.route('/tenant/<tenantId>', methods=["DELETE"])
 @oauth.require_oauth()
