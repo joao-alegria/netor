@@ -10,7 +10,8 @@ from api.exception import CustomException
 
 
 def getCatalogueVSdInfo(token, vsd_id):
-    VSD_ENDPOINT=f"http://{config.CATALOGUE_IP}vsdescriptor?vsd_id={vsd_id}"
+    VSD_ENDPOINT=f"http://{config.CATALOGUE_IP}:{config.CATALOGUE_PORT}/vsdescriptor?vsd_id={vsd_id}"
+    print(VSD_ENDPOINT)
     try:
         r = requests.get(VSD_ENDPOINT,
         headers={'Authorization': f"{token}"},
@@ -20,10 +21,26 @@ def getCatalogueVSdInfo(token, vsd_id):
         raise CustomException(message="Could not connect to the Catalogue", status_code=404)
     except requests.exceptions.HTTPError as e:
         if e.response.status_code == 404:
-            raise CustomException(message="Could not find any vs descriptor with id {vsd_id}")
+            raise CustomException(message=f"Could not find any vs descriptor with id {vsd_id}")
         raise CustomException(message="Something went wrong", status_code=e.response.status_code)
     return r.status_code
     
+
+def getDomainInfo(token, domain_id):
+    DOMAIN_ENDPOINT = f"http://{config.DOMAIN_IP}:{config.DOMAIN_PORT}/domain/{domain_id}"
+    try:
+        r = requests.get(DOMAIN_ENDPOINT,
+        headers={'Authorization': f"{token}"},
+         timeout=15)
+        r.raise_for_status()
+    except requests.exceptions.ConnectionError as e:
+        raise CustomException(message="Could not connect to the Domain Service", status_code=404)
+    except requests.exceptions.HTTPError as e:
+        raise CustomException(message=f"Could not find any domain with id {domain_id}")
+    except Exception as e:
+        raise CustomException(message="Something went wrong", status_code=e.response.status_code)
+    return r.status_code
+
 
 def createNewVS(token,tenantName,request):
     messaging=Messaging()
@@ -32,10 +49,19 @@ def createNewVS(token,tenantName,request):
         vsiId = request["vsiId"]
         message = f"VS with  with VSiId {vsiId} already exists"
         raise CustomException(message=message, status_code=400)
+
+    #Verify if vsd exists
     getCatalogueVSdInfo(token,request['vsdId'])
     
-    #TODO: Verify if both Domains exist
 
+    # Verify if both Domains exist
+    all_domains = request['domainPlacements']
+    for domain in all_domains:
+        domain_id = domain['domainId']
+        getDomainInfo(token,domain_id)
+    
+
+   
     schema = schemas.VerticalServiceInstanceSchema()
     vsInstance = schema.load(request,session=DB.session)
 

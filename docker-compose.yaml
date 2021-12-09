@@ -114,6 +114,7 @@ services:
       RABBIT_IP: rabbitmq
       IDP_IP: netor_tenant
       CATALOGUE_IP: netor_catalogue
+      DOMAIN_IP: netor_domain
       ENVIRONMENT: prod
 
   netor_domain:
