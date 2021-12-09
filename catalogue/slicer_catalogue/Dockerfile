@@ -2,6 +2,7 @@ FROM python:3.9-slim
 
 COPY api /api
 COPY rabbitmq /rabbitmq
+COPY static /static
 
 COPY requirements.txt /
 COPY main.py /
