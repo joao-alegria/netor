@@ -4,13 +4,17 @@ import db.schemas as schemas
 from rabbitmq.adaptor import Messaging
 import json
 import logging
-
+from api.exception import CustomException
 def createNewVS(tenantName,request):
     messaging=Messaging()
-    vsis=getAllVSIs(tenantName)
-    vsiIds=[vsi["vsiId"] for vsi in vsis]
-    if request["vsiId"] in vsiIds:
-        raise Exception("VSI Id "+request["vsiId"]+" already exists")
+    vsi = getVSI(tenantName, request['vsiId'])
+    if vsi:
+        vsiId = request["vsiId"]
+        message = f"VS with  with VSiId {vsiId} already exists"
+        raise CustomException(message=message, status_code=400)
+    
+
+    #TODO: Verify if both Domains exist
 
     schema = schemas.VerticalServiceInstanceSchema()
     vsInstance = schema.load(request,session=DB.session)
@@ -31,7 +35,7 @@ def createNewVS(tenantName,request):
     message={"msgType":"createVSI","vsiId": vsInstance.vsiId, "tenantId":tenantName, "data": request}
     #send needed info
     messaging.publish2Exchange('vsLCM_Management',json.dumps(message))
-    return vsInstance.vsiId
+    return schema.dump(vsInstance)
 
 def getAllVSIs(tenantName):
     schema = schemas.VerticalServiceInstanceSchema()

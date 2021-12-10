@@ -73,7 +73,8 @@ def OauthProvider(app):
     @oauth.usergetter
     def get_user(username, password, *args, **kwargs):
         user=DB.session.query(Tenant).filter(Tenant.username == username).first()
-        if user.check_password(password):
+
+        if user and user.check_password(password):
             return user
         return None
 

@@ -1,8 +1,10 @@
 from flask import Flask, jsonify, request
+from flask.helpers import make_response
 from flasgger import Swagger, validate
 import service as vsService
 from api.loginConfig import loginManager, current_user, login_required
 from flask_cors import CORS, cross_origin
+from api.utils import prepare_response
 
 app = Flask(__name__)
 CORS(app)
@@ -34,12 +36,12 @@ def getAllVSs():
                         items:
                             $ref: '#/definitions/VS'
     """
-
     try:
         vsis=vsService.getAllVSIs(current_user.name)
-        return jsonify({"message":"Success", "data":vsis}),200
+        return prepare_response(message='Success obtaining all VSs', data=vsis)
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        message = f"Error obtaining all Vertical Services: {e}"
+        return prepare_response(message=message,status_code=400)
 
 @app.route('/vs', methods=["POST"])
 @login_required
@@ -65,10 +67,11 @@ def createNewVS():
     data=request.json
     validate(data, 'VS', 'definitions.yaml')
     try:
-        vsiId=vsService.createNewVS(current_user.name,data)
-        return jsonify({"message":"Success", "data":{"vsiId":vsiId}}),200
+        vsi=vsService.createNewVS(current_user.name,data)
+        return prepare_response(message="Success creating new VS", data=vsi)
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        message = f"Error creating new VS: {e.message}"
+        return prepare_response(message=message, status_code=e.status_code)
 
 @app.route('/vs/<vsiId>', methods=["GET"])
 @login_required
@@ -87,9 +90,13 @@ def getVSById(vsiId):
 
     try:
         vsi=vsService.getVSI(current_user.name, vsiId)
-        return jsonify({"message":"Success", "data":vsi}),200
+        if not vsi:
+            return prepare_response(message=f"VS With Id {vsiId} does not exist", status_code=404)
+        return prepare_response(message="Success Getting VS",data=vsi)
+        
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        message = f'Error getting VS: {e}'
+        return prepare_response(message=message,status_code=400)
 
 @app.route('/vs/<vsiId>', methods=["PUT"])
 @login_required
@@ -109,9 +116,10 @@ def modifyVs(vsiId):
     try:
         data=request.json
         vsService.modifyVSI(current_user.name, vsiId, data)
-        return jsonify({"message":"Success"}),200
+        return prepare_response(message=f"Sucess updating VS with Id {vsiId}")
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        message = f"Error Updating VS With Id {vsiId}: {e}"
+        return prepare_response(message=message, status_code=400)
 
 @app.route('/vs/<vsiId>', methods=["DELETE"])
 @login_required
@@ -131,6 +139,7 @@ def removeVs(vsiId):
     try:
         force=request.args.get("force")
         message=vsService.removeVSI(current_user.name, vsiId, force=force)
-        return jsonify({"message":message}),200
+        return prepare_response(message=message)
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        message = f'Error deleting VS with Id {vsiId}: {e}'
+        return prepare_response(message=message,status_code=400)
