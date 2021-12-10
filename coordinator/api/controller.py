@@ -67,7 +67,8 @@ def createNewVS():
     data=request.json
     validate(data, 'VS', 'definitions.yaml')
     try:
-        vsi=vsService.createNewVS(current_user.name,data)
+        vsi=vsService.createNewVS(current_user.token,current_user.name,data)
+
         return prepare_response(message="Success creating new VS", data=vsi)
     except Exception as e:
         message = f"Error creating new VS: {e.message}"
@@ -89,6 +90,7 @@ def getVSById(vsiId):
     """
 
     try:
+
         vsi=vsService.getVSI(current_user.name, vsiId)
         if not vsi:
             return prepare_response(message=f"VS With Id {vsiId} does not exist", status_code=404)
