@@ -4,9 +4,20 @@ import service as domainService
 from api.loginConfig import loginManager, login_required
 from flask_cors import CORS, cross_origin
 import requests
-from config import OSM_IP
+import config
 
+
+class ReverseProxied(object):
+    def __init__(self, app, script_name):
+        self.app = app
+        self.script_name = script_name
+
+    def __call__(self, environ, start_response):
+        environ['SCRIPT_NAME'] = self.script_name
+        return self.app(environ, start_response)
 app = Flask(__name__)
+if config.ENVIRONMENT != 'testing':
+    app.wsgi_app = ReverseProxied(app.wsgi_app, script_name='/domain')
 CORS(app)
 
 swagger_config = {
@@ -71,7 +82,7 @@ def createNewDomain():
     if db_domain:
         if(db_domain['username'] == data['ownedLayers'][0]['username'] and db_domain['password'] == data['ownedLayers'][0]['password']\
         and db_domain['project'] == data['ownedLayers'][0]['project']):
-            return jsonify({"message":f"Error: domain with Id {db_domain['domainId']} already exists"}),409
+            return jsonify({"message":f"Error: domain with Id {data['ownedLayers'][0]['domainLayerId']} already exists"}),409
 
     try:
         r = requests.post(f"http://{data['url']}/osm/admin/v1/tokens", data = {"username": data['ownedLayers'][0]['username'], \
