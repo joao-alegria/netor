@@ -7,6 +7,15 @@ class VerticalServiceInstanceSchema(SQLAlchemyAutoSchema):
         include_relationships = True
         load_instance = True
 
+
+class VSIStatusSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = persistance.VSIStatus
+        include_relationships = True
+        load_instance = True
+
+
+
 class NetworkSliceSubnetInstanceSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = persistance.NetworkSliceSubnetInstance

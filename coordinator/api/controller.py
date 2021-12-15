@@ -158,3 +158,26 @@ def removeVs(vsiId):
     except Exception as e:
         message = f'Error deleting VS with Id {vsiId}: {e}'
         return prepare_response(message=message,status_code=400)
+
+
+@app.route('/vs/<vsiId>/status')
+def getVSiStatusHistory(vsiId):
+    """
+    Returns All Status that a Vertical Slice has been through
+    ---
+    responses:
+        200:
+            description: Returns All Status that a Vertical Slice has been through
+            content:
+                application/json:
+                    schema:
+                        type: array
+                        items:
+                            $ref: '#/definitions/VS'
+    """
+    try:
+        vsiStatus = vsService.getAllVSIStatus(current_user.name,vsiId)
+        return prepare_response(message=f'Success obtaining all Status for VSi {vsiId}', data=vsiStatus)
+    except Exception as e:
+        message = f'Error getting VS Status: {e.message}'
+        return prepare_response(message=message,status_code=e.status_code)
