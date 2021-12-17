@@ -65,7 +65,7 @@ DB=DB(Base)
 class VSIStatus(Base):
   __tablename__ = 'vsiStatus'
   status_id = Column(Integer, primary_key=True)
-  vsiId = Column(Integer, ForeignKey('verticalServiceInstance.vsiId'))
+  vsiId = Column(String, ForeignKey('verticalServiceInstance.vsiId'))
   status=Column(String)
   statusMessage=Column(String)
   timestamp = Column(DateTime, default=datetime.utcnow)
@@ -87,7 +87,7 @@ class VerticalServiceInstance(Base):
   networkSliceId=Column(String)
   ranEndPointId=Column(String)
   status=Column(String)
-  all_status= relationship('VSIStatus', backref='vertical_service_instance', lazy='dynamic')
+  all_status= relationship('VSIStatus')
   tenantId=Column(String)
   vsdId=Column(String)
   nestedParentId = Column(String, ForeignKey('verticalServiceInstance.vsiId'))
