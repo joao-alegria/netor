@@ -25,11 +25,14 @@ class DB:
 
     def createDB(self):
         if config.ENVIRONMENT=="testing":
+          self.engine = create_engine('sqlite:///:memory:')
+          '''
             self.engine = self.engine = create_engine(
                 "sqlite://", 
                 connect_args={"check_same_thread": False}, 
                 poolclass=StaticPool
             )
+          '''
         else:
             self.engine = create_engine('postgresql://'+str(config.POSTGRES_USER)+':'+str(config.POSTGRES_PASS)+'@'+str(config.POSTGRES_IP)+':'+str(config.POSTGRES_PORT)+'/'+str(config.POSTGRES_DB), pool_size=50)
         try:
