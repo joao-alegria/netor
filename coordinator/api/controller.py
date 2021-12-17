@@ -173,7 +173,7 @@ def getVSiStatusHistory(vsiId):
                     schema:
                         type: array
                         items:
-                            $ref: '#/definitions/VS'
+                            $ref: '#/definitions/VSIStatus'
     """
     try:
         vsiStatus = vsService.getAllVSIStatus(current_user.name,vsiId)

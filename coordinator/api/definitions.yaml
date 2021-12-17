@@ -6,6 +6,25 @@ definitions:
       message:
         type: string
         example: Success
+  VSIStatus:
+    type: object
+    properties:
+      status_id:
+        type: string
+        example: 1
+      vsiId:
+        type: string
+        example: 1
+      status:
+        type: string
+        example: creating
+      statusMessage:
+        type: string
+        example: Creating Vertical Service Instance
+      timestamp:
+        type: string
+        format: date-time
+      
   VS:
     type: object
     required:
