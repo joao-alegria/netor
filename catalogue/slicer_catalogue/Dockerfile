@@ -8,8 +8,10 @@ COPY requirements.txt /
 COPY main.py /
 
 RUN apt update
+RUN apt-get install -y git
 RUN apt install -y build-essential
 
 RUN python3 -m pip install --upgrade pip
 RUN pip install -r requirements.txt
+RUN pip install -e git+https://github.com/sjaek/flask-swagger-ui.git@proxyfix-forwarded-prefix#egg=flask-swagger-ui
 CMD python3 main.py

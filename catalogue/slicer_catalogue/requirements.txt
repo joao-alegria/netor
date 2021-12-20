@@ -16,4 +16,4 @@ regex==2021.3.17
 six==1.15.0
 requests==2.25.1
 flask_cors==3.0.10
-flask-swagger-ui==3.36.0
+#flask-swagger-ui==3.36.0
