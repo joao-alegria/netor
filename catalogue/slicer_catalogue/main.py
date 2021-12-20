@@ -11,7 +11,6 @@ from rabbitmq.messaging import MessageReceiver
 from api.auth import loginManager
 from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
-   
 
 APPLICATION_NAME = os.environ.get('APPLICATION_NAME', 'catalogues')
 
@@ -31,11 +30,13 @@ class ReverseProxied(object):
 
 def init_flask():
     app = Flask(APPLICATION_NAME)
-    
-    app.wsgi_app = ReverseProxied(app.wsgi_app, script_name='/catalogue')
+    env = os.getenv('ENVIRONMENT','dev')
     SWAGGER_URL = '/apidocs'
+    API_URL = '/static/documentation.json'
+    if env == 'prod':
+        app.wsgi_app = ReverseProxied(app.wsgi_app, script_name='/catalogue')
+        API_URL = '/catalogue/static/documentation.json'
     # API_URL = 'templates/swagger.json'
-    API_URL = '/catalogue/static/documentation.json'
     SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
         SWAGGER_URL,
         API_URL,
