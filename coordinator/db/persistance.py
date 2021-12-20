@@ -1,8 +1,13 @@
+from datetime import datetime
 from sqlalchemy import Table, Column, Integer, Float, String, Boolean, ForeignKey, create_engine, inspect
 from sqlalchemy.orm import relationship, sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 import json
+
+from sqlalchemy.sql.sqltypes import DateTime
 import config
+from sqlalchemy.pool import StaticPool
+
 
 class DB:
 
@@ -20,7 +25,14 @@ class DB:
 
     def createDB(self):
         if config.ENVIRONMENT=="testing":
-            self.engine = create_engine('sqlite:///:memory:')
+          self.engine = create_engine('sqlite:///:memory:')
+          '''
+            self.engine = self.engine = create_engine(
+                "sqlite://", 
+                connect_args={"check_same_thread": False}, 
+                poolclass=StaticPool
+            )
+          '''
         else:
             self.engine = create_engine('postgresql://'+str(config.POSTGRES_USER)+':'+str(config.POSTGRES_PASS)+'@'+str(config.POSTGRES_IP)+':'+str(config.POSTGRES_PORT)+'/'+str(config.POSTGRES_DB), pool_size=50)
         try:
@@ -52,6 +64,17 @@ DB=DB(Base)
 #     Column('parentVsi', Integer, ForeignKey('verticalServiceInstance.vsiId'))
 # )
 
+
+class VSIStatus(Base):
+  __tablename__ = 'vsiStatus'
+  status_id = Column(Integer, primary_key=True)
+  vsiId = Column(String, ForeignKey('verticalServiceInstance.vsiId'))
+  status=Column(String)
+  statusMessage=Column(String)
+  timestamp = Column(DateTime, default=datetime.utcnow)
+
+
+
 class VerticalServiceInstance(Base):
   __tablename__ = 'verticalServiceInstance'
   vsiId = Column(String, primary_key=True)
@@ -67,6 +90,7 @@ class VerticalServiceInstance(Base):
   networkSliceId=Column(String)
   ranEndPointId=Column(String)
   status=Column(String)
+  all_status= relationship('VSIStatus')
   tenantId=Column(String)
   vsdId=Column(String)
   nestedParentId = Column(String, ForeignKey('verticalServiceInstance.vsiId'))
