@@ -400,7 +400,7 @@ class CSMF():
                             self.messaging.publish2Queue("vsDomain", json.dumps(message))
 
 
-                requests.post("http://10.0.12.117:9999/stopTimer/1", data={"timestamp":str(round(time.time()*1000))})
+                #requests.post("http://10.0.12.117:9999/stopTimer/1", data={"timestamp":str(round(time.time()*1000))})
 
     def deleteVsi(self, force=False):
         serviceComposition={}
@@ -454,7 +454,7 @@ class CSMF():
             statusUpdate={"msgType":"statusUpdate","data":{"vsiId":self.vsiId, "status":"terminated","message":"Vertical Service Instance Terminated."}}
             self.messaging.publish2Queue("vsCoordinator", json.dumps(statusUpdate))
 
-            requests.post("http://10.0.12.117:9999/stopTimer/2", data={"timestamp":str(round(time.time()*1000))})
+            #requests.post("http://10.0.12.117:9999/stopTimer/2", data={"timestamp":str(round(time.time()*1000))})
         
         # self.stop()
 
