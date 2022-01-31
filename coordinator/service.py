@@ -59,7 +59,7 @@ def createNewVS(token,tenantName,request):
     all_domains = request['domainPlacements']
     for domain in all_domains:
         domain_id = domain['domainId']
-        #getDomainInfo(token,domain_id)
+        getDomainInfo(token,domain_id)
     
     schema = schemas.VerticalServiceInstanceSchema()
     vsInstance = schema.load(request,session=DB.session)
