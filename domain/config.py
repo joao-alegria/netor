@@ -14,3 +14,4 @@ IDP_IP=os.getenv("IDP_IP","localhost")
 IDP_PORT=os.getenv("IDP_PORT",5002)
 IDP_ENDPOINT=os.getenv("IDP_ENDPOINT","/validate")
 ENVIRONMENT=os.getenv("ENVIRONMENT","testing")
+OSM_IP="http://10.0.12.216/osm"

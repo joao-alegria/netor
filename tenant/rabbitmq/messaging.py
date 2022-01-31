@@ -22,7 +22,7 @@ class MessageReceiver(Thread):
                 try:
                     tenantId=data["tenantId"]
                     tenant=service.getTenantById(tenantId)
-                    del tenant["password"]
+                    #del tenant["password"]
                     del tenant["vsis"]
                     del tenant["vsds"]
                     message={"vsiId":data["vsiId"],"msgType":"tenantInfo", "data":tenant, "error":False}

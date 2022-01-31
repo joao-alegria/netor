@@ -1,25 +1,76 @@
-from db.persistance import VerticalServiceInstance, DB
+from datetime import datetime
+from db.persistance import VerticalServiceInstance, DB, VSIStatus
 from flask import jsonify
 import db.schemas as schemas
 from rabbitmq.adaptor import Messaging
 import json
 import logging
+import config
+import requests
+from api.exception import CustomException
 
-def createNewVS(tenantName,request):
+
+def getCatalogueVSdInfo(token, vsd_id):
+    VSD_ENDPOINT=f"http://{config.CATALOGUE_IP}:{config.CATALOGUE_PORT}/vsdescriptor?vsd_id={vsd_id}"
+    print(VSD_ENDPOINT)
+    try:
+        r = requests.get(VSD_ENDPOINT,
+        headers={'Authorization': f"{token}"},
+         timeout=15)
+        r.raise_for_status()
+    except requests.exceptions.ConnectionError as e:
+        raise CustomException(message="Could not connect to the Catalogue", status_code=404)
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == 404:
+            raise CustomException(message=f"Could not find any vs descriptor with id {vsd_id}")
+        raise CustomException(message="Something went wrong", status_code=e.response.status_code)
+    return r.status_code
+    
+
+def getDomainInfo(token, domain_id):
+    DOMAIN_ENDPOINT = f"http://{config.DOMAIN_IP}:{config.DOMAIN_PORT}/domain/{domain_id}"
+    try:
+        r = requests.get(DOMAIN_ENDPOINT,
+        headers={'Authorization': f"{token}"},
+         timeout=15)
+        r.raise_for_status()
+    except requests.exceptions.ConnectionError as e:
+        raise CustomException(message="Could not connect to the Domain Service", status_code=404)
+    except requests.exceptions.HTTPError as e:
+        raise CustomException(message=f"Could not find any domain with id {domain_id}")
+    except Exception as e:
+        raise CustomException(message="Something went wrong", status_code=e.response.status_code)
+    return r.status_code
+
+
+def createNewVS(token,tenantName,request):
     messaging=Messaging()
-    vsis=getAllVSIs(tenantName)
-    vsiIds=[vsi["vsiId"] for vsi in vsis]
-    if request["vsiId"] in vsiIds:
-        raise Exception("VSI Id "+request["vsiId"]+" already exists")
+    vsi = getVSI(tenantName, request['vsiId'])
+    if vsi:
+        vsiId = request["vsiId"]
+        message = f"VS with  with VSiId {vsiId} already exists"
+        raise CustomException(message=message, status_code=400)
 
+    #Verify if vsd exists
+    getCatalogueVSdInfo(token,request['vsdId'])
+    
+
+    # Verify if both Domains exist
+    all_domains = request['domainPlacements']
+    for domain in all_domains:
+        domain_id = domain['domainId']
+        getDomainInfo(token,domain_id)
+    
     schema = schemas.VerticalServiceInstanceSchema()
     vsInstance = schema.load(request,session=DB.session)
-
+    status_table = VSIStatus(status='Creating',statusMessage="Creating Vertical Service Instance", timestamp=datetime.utcnow())
     vsInstance.status="creating"
     vsInstance.statusMessage="Creating Vertical Service Instance"
-
+    
     vsInstance.tenantId=tenantName
+    vsInstance.all_status=[status_table]
     DB.persist(vsInstance)
+    DB.persist(status_table)
     #create vsi queue
 
     # messaging.createExchange("vsLCM_"+str(vsInstance.vsiId))
@@ -31,7 +82,7 @@ def createNewVS(tenantName,request):
     message={"msgType":"createVSI","vsiId": vsInstance.vsiId, "tenantId":tenantName, "data": request}
     #send needed info
     messaging.publish2Exchange('vsLCM_Management',json.dumps(message))
-    return vsInstance.vsiId
+    return schema.dump(vsInstance)
 
 def getAllVSIs(tenantName):
     schema = schemas.VerticalServiceInstanceSchema()
@@ -73,11 +124,28 @@ def removeVSI(tenantName, vsiId, force=False):
 def changeStatusVSI(data):
     vsiId=data["data"]["vsiId"]
     vsi=DB.session.query(VerticalServiceInstance).filter(VerticalServiceInstance.vsiId==vsiId).first()
+    logging.info("changing status")
+    logging.info(data)
     if "fail" not in vsi.status.lower():
         if "status" in data["data"]:
             vsi.status=data["data"]["status"]
             vsi.statusMessage=data["data"]["message"]
+            status_table = VSIStatus(status=data["data"]["status"],statusMessage=data["data"]["message"], timestamp=datetime.utcnow())
+            vsi.all_status.append(status_table)
             DB.persist(vsi)
+            DB.persist(status_table)
     if "status" in data["data"] and "terminated" in data["data"]["status"]:
         vsi=DB.session.query(VerticalServiceInstance).filter(VerticalServiceInstance.vsiId==vsiId).first()
         DB.delete(vsi)
+
+def getAllVSIStatus(tenantName,vsiId):
+    vsi = getVSI(tenantName,vsiId)
+    if not vsi:
+        raise CustomException(f"Could not find vsiId with Id {vsiId}",status_code=400)
+    schema = schemas.VSIStatusSchema()
+    vsis_status=DB.session.query(VSIStatus).filter(VSIStatus.vsiId==vsiId).all()
+    statusDict=[]
+    for vsi in vsis_status:
+        statusDict.append(schema.dump(vsi))
+    return statusDict
+    

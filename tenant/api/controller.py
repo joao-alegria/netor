@@ -7,18 +7,28 @@ import service
 from api.loginConfig import loginManager, loginUser
 from flask_cors import CORS, cross_origin
 import logging
+from api.utils import prepare_response
+import config
+
+class ReverseProxied(object):
+    def __init__(self, app, script_name):
+        self.app = app
+        self.script_name = script_name
+
+    def __call__(self, environ, start_response):
+        environ['SCRIPT_NAME'] = self.script_name
+        return self.app(environ, start_response)
+
 
 app = Flask(__name__)
+if config.ENVIRONMENT != 'testing':
+    app.wsgi_app = ReverseProxied(app.wsgi_app, script_name='/tenant')
 CORS(app)
 
 swagger_config = {
-    "headers": [],
     "openapi": "3.0.3",
     "title": "Tenant and Group Service API",
-    "version": '',
-    "termsOfService": "",
     "swagger_ui": True,
-    "description": "",
 }
 swagger = Swagger(app, config=swagger_config, merge=True,template_file='definitions.yaml')
 
@@ -53,7 +63,10 @@ def load_current_user():
     if "Authorization" in request.headers:
         token=request.headers["Authorization"].replace("Bearer ","")
         token=DB.session.query(OauthToken).filter(OauthToken.access_token==token).first()
-        g.user = token.user
+        if token:
+            g.user = token.user
+        else:
+            g.user = None
     else:
         g.user=None
 
@@ -93,16 +106,16 @@ def revoke_token():
 def validateToken():
     try:
         tenant=service.getTenantById(request.oauth.user.username)
-        return jsonify({"message":"Success", "data":tenant}),200
+        return prepare_response(message="Success",data=tenant)
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        return prepare_response(message=f"Error: {e}", status_code=403)
 
 @oauth.invalid_response
 def require_oauth_invalid(req):
     try:
-        return jsonify(message=req.error_message), 401
+        return prepare_response(message=req.error_message,status_code= 401)
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        return prepare_response(message=f"Error: {e}",status_code=500)
 
 
 #-----------------TENANT API---------------------------
@@ -113,6 +126,8 @@ def getAllGroups():
     """
     Return all the Groups in the system
     ---
+    tags:
+      - groups
     responses:
         200:
             description: returns a list with all the groups in the system
@@ -125,9 +140,9 @@ def getAllGroups():
     """
     try:
         groups=service.getAllGroups()
-        return jsonify({"message":"Success", "data":groups}),200
+        return prepare_response(message="Success getting all Groups",data=groups)
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        return prepare_response(message=f"Error getting all Groups: {e}",status_code=400)
 
 @app.route('/group', methods=["POST"])
 @oauth.require_oauth()
@@ -135,6 +150,8 @@ def createNewGroup():
     """
     Creates a new Group
     ---
+    tags:
+      - groups
     requestBody:
         content:
             application/json:
@@ -152,10 +169,11 @@ def createNewGroup():
     data=request.json
     validate(data, 'Group', 'definitions.yaml')
     try:
-        service.createGroup(request.oauth.user.username,data)
-        return jsonify({"message":"Success"}),200
+        group = service.createGroup(request.oauth.user.username,data)
+        return prepare_response(message="Success creating new Group", data=group, status_code=201)
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        message = f"Error creating new Group: {e.message}"
+        return prepare_response(message=message,status_code=e.status_code)
 
 @app.route('/group/<groupId>', methods=["GET"])
 @oauth.require_oauth()
@@ -163,6 +181,8 @@ def getGroupById(groupId):
     """
     Returns the Group requested
     ---
+    tags:
+      - groups
     responses:
         200:
             description: returns the group indicated
@@ -173,9 +193,12 @@ def getGroupById(groupId):
     """
     try:
         group=service.getGroupById(groupId)
-        return jsonify({"message":"Success", "data":group}),200
+        if not group:
+            return prepare_response(message=f"Could not find group with id {groupId}", status_code=404)
+        return prepare_response(message="Success", data=group)
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        message = f"Error obtaining Group with id {groupId}: {e}"
+        return prepare_response(message=message, status_code=400)
 
 @app.route('/group/<groupId>', methods=["PUT"])
 @oauth.require_oauth()
@@ -183,6 +206,8 @@ def modifyGroup(groupId):
     """
     Modifies the Group indicated
     ---
+    tags:
+      - groups
     responses:
         200:
             description: acknowledges the request
@@ -193,9 +218,10 @@ def modifyGroup(groupId):
     """
     try:
         service.modifyGroup(groupId)
-        return jsonify({"message":"Success"}),200
+        return prepare_response(message=f"Success modifiying Group with id {groupId}")
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        message = f"Error modifying Group with id {groupId}: {e}"
+        return prepare_response(message=message, status_code=400)
 
 @app.route('/group/<groupId>', methods=["DELETE"])
 @oauth.require_oauth()
@@ -203,6 +229,8 @@ def removeGroup(groupId):
     """
     Deletes the Group indicated and the attached tenants
     ---
+    tags:
+      - groups
     responses:
         200:
             description: acknowledges the request
@@ -223,6 +251,8 @@ def getAllTenants():
     """
     Return all the Tenants in the system
     ---
+    tags:
+      - tenants
     responses:
         200:
             description: returns a list with all the tenants in the system
@@ -234,10 +264,12 @@ def getAllTenants():
                             $ref: '#/definitions/Tenant'
     """
     try:
-        tenants=service.getAllTenants()
-        return jsonify({"message":"Success", "data":tenants}),200
+        tenantName = request.oauth.user.username
+        tenants=service.getAllTenants(tenantName)
+        return prepare_response(message="Success getting all Tenants",data=tenants)
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        message = f"Error getting all Tenants: {e.message}"
+        return prepare_response(message=message,status_code=e.status_code)
 
 @app.route('/tenant', methods=["POST"])
 @oauth.require_oauth()
@@ -245,6 +277,8 @@ def createNewTenant():
     """
     Creates a new Tenant
     ---
+    tags:
+      - tenants
     requestBody:
         content:
             application/json:
@@ -262,10 +296,11 @@ def createNewTenant():
     data=request.json
     validate(data, 'Tenant', 'definitions.yaml')
     try:
-        service.createTenant(request.oauth.user.username,data)
-        return jsonify({"message":"Success"}),200
+        tenant = service.createTenant(request.oauth.user.username,data)
+        return prepare_response(message="Success creating new Tenant", data=tenant, status_code=201)
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        message = f"Error creating Tenant: {e.message}"
+        return prepare_response(message=message, status_code=e.status_code)
 
 @app.route('/tenant/<tenantId>', methods=["GET"])
 @oauth.require_oauth()
@@ -273,6 +308,8 @@ def getTenantById(tenantId):
     """
     Returns the Tenant requested
     ---
+    tags:
+      - tenants
     responses:
         200:
             description: returns the tenant indicated
@@ -282,10 +319,12 @@ def getTenantById(tenantId):
                         $ref: '#/definitions/Tenant'
     """
     try:
-        tenant=service.getTenantById(tenantId)
-        return jsonify({"message":"Success", "data":tenant}),200
+        tenant=service.getTenant(current_user=request.oauth.user.username,tenantName=tenantId)
+        if not tenant:
+            return prepare_response(message=f"Could not find Tenant with id {tenantId}", status_code=404)
+        return prepare_response(message=f"Success getting Tenant with id {tenantId}", data=tenant)
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        return prepare_response(message=f"Error getting getting Tenant with id {tenantId}: {e.message}",status_code=e.status_code)
 
 @app.route('/tenant/<tenantId>', methods=["PUT"])
 @oauth.require_oauth()
@@ -293,6 +332,8 @@ def modifyTenant(tenantId):
     """
     Modifies the Tenant indicated
     ---
+    tags:
+      - tenant
     responses:
         200:
             description: acknowledges the request
@@ -303,9 +344,9 @@ def modifyTenant(tenantId):
     """
     try:
         service.modifyTenant(tenantId)
-        return jsonify({"message":"Success"}),200
+        return prepare_response(message=f"Success modifying Tenant with Id {tenantId}")
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        return prepare_response(message=f"Success modifying Tenant with Id {tenantId}",status_code=400)
 
 @app.route('/tenant/<tenantId>', methods=["DELETE"])
 @oauth.require_oauth()
@@ -313,6 +354,8 @@ def removeTenant(tenantId):
     """
     Deletes the Tenant indicated and the attached tenants
     ---
+    tags:
+      - tenant
     responses:
         200:
             description: acknowledges the request
@@ -322,6 +365,10 @@ def removeTenant(tenantId):
                         $ref: '#/definitions/Acknowledge'
     """
     try:
-        return jsonify(service.removeTenant(tenantId)),200
+        tenant = service.removeTenant(current_user=request.oauth.user.username,tenantName=tenantId)
+        if not tenant:
+            return prepare_response(message=f"Could not find Tenant with id {tenantId}",status_code=404)
+        return prepare_response(message=f"Success deleting Tenant with {tenantId}")
     except Exception as e:
-        return jsonify({"message":"Error: "+str(e)}),500
+        message = f"Error Deleting Tenant with {tenantId}: {e.message}"
+        return prepare_response(message=message,status_code=e.status_code)

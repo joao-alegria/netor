@@ -41,6 +41,11 @@ def getDomain(domainId):
     domain=persistance.DB.session.query(persistance.Domain).filter(persistance.Domain.domainId==domainId).first()
     return schema.dump(domain)
 
+def getOsmDomain(domainLayerId):
+    schema=schemas.OsmDomainLayerSchema()
+    osm_domain=persistance.DB.session.query(persistance.OsmDomainLayer).filter(persistance.OsmDomainLayer.domainLayerId==domainLayerId).first()
+    return schema.dump(osm_domain)
+
 def updateDomain(domainId):
     domain=persistance.DB.session.query(persistance.Domain).filter(persistance.Domain.domainId==domainId).first()
     #update Domain

@@ -42,48 +42,49 @@ services:
       - REDIS_REPLICATION_MODE=master
 
   mongo1:
-    build: ./catalogue/slicer-catalogue/db/primary
-    ports:
-      - 27017:27017
-    restart: always
-    volumes:
-      - thesisMongo1ConfigVolume:/data/configdb
-      - thesisMongo1DataVolume:/data/db
+    image: docker.io/bitnami/mongodb-sharded:4.2
+    hostname: mongo1
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
-      CATALOGUES_DATABASE: catalogues
-      CATALOGUES_USERNAME: catalogues
-      CATALOGUES_PASSWORD: catalogues
+      - MONGODB_ADVERTISED_HOSTNAME=mongo1
+      - MONGODB_SHARDING_MODE=mongos
+      - MONGODB_MONGOS_HOST=mongo1
+      - MONGODB_CFG_PRIMARY_HOST=mongodb-cfg
+      - MONGODB_CFG_REPLICA_SET_NAME=cfgreplicaset
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+      - MONGODB_ROOT_PASSWORD=root
+    ports:
+      - "27017:27017"
 
-  mongo2:
-    depends_on:
-      - mongo1
-    build: ./catalogue/slicer-catalogue/db/secondary1
-    ports:
-      - 27012:27017
-    restart: always
-    volumes:
-      - thesisMongo2ConfigVolume:/data/configdb
-      - thesisMongo2DataVolume:/data/db
+  secondary_mongo1:
+    image: docker.io/bitnami/mongodb-sharded:4.2
     environment:
-      DATABASE_NAME: catalogues
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
+      - MONGODB_ADVERTISED_HOSTNAME=secondary_mongo1
+      - MONGODB_SHARDING_MODE=shardsvr
+      - MONGODB_MONGOS_HOST=mongo1
+      - MONGODB_ROOT_PASSWORD=root
+      - MONGODB_USERNAME=catalogues
+      - MONGODB_PASSWORD=catalogues 
+      - MONGODB_DATABASE=catalogues 
+      - MONGODB_REPLICA_SET_MODE=primary
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+      - MONGODB_REPLICA_SET_NAME=shard0
+    volumes:
+      - 'shard0_data:/bitnami'
 
-  mongo3:
-    depends_on:
-      - mongo1
-    build: ./catalogue/slicer-catalogue/db/secondary2
-    ports:
-      - 27013:27017
-    restart: always
+  mongodb-cfg:
+    image: docker.io/bitnami/mongodb-sharded:4.2
     volumes:
-      - thesisMongo3ConfigVolume:/data/configdb
-      - thesisMongo3DataVolume:/data/db
+      - 'cfg_data:/bitnami'
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb-cfg
+      - MONGODB_SHARDING_MODE=configsvr
+      - MONGODB_ROOT_PASSWORD=root
+      - MONGODB_USERNAME=catalogues
+      - MONGODB_PASSWORD=catalogues 
+      - MONGODB_DATABASE=catalogues 
+      - MONGODB_REPLICA_SET_MODE=primary
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+      - MONGODB_REPLICA_SET_NAME=cfgreplicaset
 
   netor_up_nginx: 
     image: nginx:latest
@@ -91,11 +92,10 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     ports:
-      - 80:80
-      - 443:443
+      - 8000:80
 
   netor_coordinator:
-    build: ./coordinator
+    image: netor/coordinator
     restart: always
     depends_on:
       - postgres
@@ -112,10 +112,12 @@ services:
       RABBIT_PASS: "admin"
       RABBIT_IP: rabbitmq
       IDP_IP: netor_tenant
+      CATALOGUE_IP: netor_catalogue
+      DOMAIN_IP: netor_domain
       ENVIRONMENT: prod
 
   netor_domain:
-    build: ./domain
+    image: netor/domain
     restart: always
     depends_on:
       - postgres
@@ -135,7 +137,7 @@ services:
       ENVIRONMENT: prod
 
   netor_manager:
-    build: ./manager
+    image: netor/manager
     restart: always
     depends_on:
       - redis
@@ -151,7 +153,7 @@ services:
       ENVIRONMENT: prod
 
   netor_placement:
-    build: ./placement
+    image: netor/placement
     restart: always
     depends_on:
       - redis
@@ -164,7 +166,7 @@ services:
       ENVIRONMENT: prod
 
   netor_tenant:
-    build: ./tenant
+    image: netor/tenant
     restart: always
     depends_on:
       - postgres
@@ -183,7 +185,7 @@ services:
       ENVIRONMENT: prod
 
   netor_catalogue:
-    build: ./catalogue/slicer-catalogue
+    image: netor/catalogue
     restart: always
     ports:
       - 5010:5010
@@ -205,7 +207,7 @@ services:
       ENVIRONMENT: prod
 
   # netor_portal:
-  #   build: ./portal
+  #   image: netor/portal
   #   restart: always
   #   ports:
   #     - '4200:4200'
@@ -221,15 +223,16 @@ volumes:
     external: false
   thesisRedisDataVolume:
     external: false
-  thesisMongo1ConfigVolume:
-    external: false
-  thesisMongo1DataVolume:
-    external: false
-  thesisMongo2ConfigVolume:
-    external: false
-  thesisMongo2DataVolume:
-    external: false
-  thesisMongo3ConfigVolume:
-    external: false
-  thesisMongo3DataVolume:
-    external: false
+  #thesisMongo1ConfigVolume:
+    #external: false
+  #thesisMongo1DataVolume:
+    #external: false
+    #driver:
+  #thesisMongo2ConfigVolume:
+    #external: false
+  shard0_data:
+    driver: local
+  cfg_data:
+    driver: local
+  #thesisMongo3DataVolume:
+    #external: false

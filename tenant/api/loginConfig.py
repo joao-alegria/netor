@@ -2,13 +2,12 @@ from flask_login import login_required, LoginManager, login_user, logout_user, c
 import base64
 from flask import jsonify
 from db.persistance import Tenant, OauthClient, DB
-
+from api.exception import CustomException
 loginManager=LoginManager()
 
 @loginManager.user_loader
 def user_loader(username):
     user = DB.session.query(Tenant).filter(Tenant.username==username).first()
-    g.user=user
     return user
 
 @loginManager.request_loader
@@ -27,13 +26,13 @@ def request_loader(request):
             user=DB.session.query(Tenant).filter(Tenant.username==data[0]).first()
         except TypeError:
             pass
-    g.user=user
     return user
 
 @loginManager.unauthorized_handler
 def unauthorized():
     # do stuff
-    return jsonify({"msg":"Unauthorized user"}), 401
+    raise CustomException(message="Unauthorized user", status_code=401)
+    #return jsonify({"msg":""}), 401
 
 def loginUser(user):
     login_user(user,remember=True)

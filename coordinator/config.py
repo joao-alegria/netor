@@ -14,3 +14,9 @@ IDP_IP=os.getenv("IDP_IP","localhost")
 IDP_PORT=os.getenv("IDP_PORT",5002)
 IDP_ENDPOINT=os.getenv("IDP_ENDPOINT","/validate")
 ENVIRONMENT=os.getenv("ENVIRONMENT","testing")
+CATALOGUE_IP=os.getenv("CATALOGUE_IP","localhost")
+CATALOGUE_PORT=os.getenv("IDP_PORT",5010)
+DOMAIN_IP=os.getenv('DOMAIN_IP',"localhost")
+DOMAIN_PORT=os.getenv("IDP_PORT",5001)
+
+

@@ -1,0 +1,43 @@
+version: "3.6"
+services:
+  primary_mongo:
+    hostname: mongo1
+    container_name: primary_database
+    build: ./primary
+    ports:
+      - 27017:27017
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      CATALOGUES_DATABASE: catalogues
+      CATALOGUES_USERNAME: catalogues
+      CATALOGUES_PASSWORD: catalogues
+
+
+  secondary_mongo1:
+    depends_on:
+      - primary_mongo
+    hostname: mongo2
+    container_name: secondary_database1
+    build: ./secondary1
+    ports:
+      - 27012:27017
+    restart: always
+    environment:
+      DATABASE_NAME: catalogues
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+
+  secondary_mongo2:
+    depends_on:
+      - primary_mongo
+    hostname: mongo3
+    container_name: secondary_database2
+    build: ./secondary2
+    ports:
+      - 27013:27017
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
