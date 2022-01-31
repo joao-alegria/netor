@@ -85,7 +85,7 @@ def createNewDomain():
             return jsonify({"message":f"Error: domain with Id {data['ownedLayers'][0]['domainLayerId']} already exists"}),409
 
     try:
-        r = requests.post(f"http://{data['url']}/osm/admin/v1/tokens", data = {"username": data['ownedLayers'][0]['username'], \
+        r = requests.post(f"{data['url']}/osm/admin/v1/tokens", data = {"username": data['ownedLayers'][0]['username'], \
             "password": data['ownedLayers'][0]['password'], "project_id": data['ownedLayers'][0]['project']}, timeout=15)
         r.raise_for_status()
     except requests.exceptions.ConnectionError as e:
