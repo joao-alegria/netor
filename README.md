@@ -20,7 +20,7 @@ One of the main use cases supported is the ability of deploying an End-to-End Ne
 
 ## Architecture
 
-<img src="docs/netor_docs/img/architecture.png">
+<img src="docs/netor_doc/img/architecture.png">
 
 NetOr is based on an micro-architeture and event-driven architecture. Every module is independent and all of them communicate through the Event Bus (RabbitMQ). All components were developed using Python, all REST APIs were implemented with Flask and the entire system can be deployed and managed through Docker.
 
