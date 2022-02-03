@@ -1,5 +1,5 @@
 # NetOr - Network Orchestrator
-a distributed and scalable 5G OSS/BSS system
+A distributed and scalable 5G OSS/BSS system
 
 ![](https://img.shields.io/badge/Academical%20Project-Yes-success)
 ![](https://img.shields.io/badge/Tests-passing-success)
@@ -20,7 +20,7 @@ One of the main use cases supported is the ability of deploying an End-to-End Ne
 
 ## Architecture
 
-![](docs/netor_docs/img/architecture.png)
+<img src="docs/netor_docs/img/architecture.png">
 
 NetOr is based on an micro-architeture and event-driven architecture. Every module is independent and all of them communicate through the Event Bus (RabbitMQ). All components were developed using Python, all REST APIs were implemented with Flask and the entire system can be deployed and managed through Docker.
 
